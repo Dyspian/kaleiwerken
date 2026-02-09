@@ -2,57 +2,110 @@
 
 import { Button } from "@/components/ui/button";
 import { siteContent } from "@/content/site";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
+import { ArrowDown, ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 
 export const Hero = () => {
-  return (
-    <section className="relative min-h-[90vh] flex items-center bg-brand-light overflow-hidden pt-16">
-      {/* Background Texture Effect */}
-      <div className="absolute inset-0 opacity-10 pointer-events-none bg-[url('/texture.png')] mix-blend-overlay"></div>
-      
-      {/* Subtle Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-r from-brand-light via-brand-light/95 to-transparent z-10 w-full lg:w-2/3"></div>
+    const { scrollY } = useScroll();
+    const y1 = useTransform(scrollY, [0, 500], [0, 100]);
+    const y2 = useTransform(scrollY, [0, 500], [0, -50]);
 
-      <div className="container mx-auto px-4 relative z-20 grid lg:grid-cols-2 gap-12 items-center">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          <div className="w-12 h-1 bg-brand-gold mb-6"></div>
-          <h1 className="text-4xl md:text-6xl font-bold text-brand-dark mb-6 leading-tight">
-            {siteContent.hero.title}
-          </h1>
-          <p className="text-lg md:text-xl text-brand-dark/70 mb-8 max-w-lg">
-            {siteContent.hero.subtitle}
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <Button size="lg" className="bg-brand-gold hover:bg-brand-goldLight text-brand-dark font-semibold px-8 py-6 text-lg rounded-sm" asChild>
-              <Link href="/offerte">{siteContent.hero.ctaPrimary}</Link>
-            </Button>
-            <Button variant="outline" size="lg" className="border-brand-dark/20 text-brand-dark hover:bg-brand-dark hover:text-white px-8 py-6 text-lg rounded-sm" asChild>
-              <Link href="/projecten">{siteContent.hero.ctaSecondary}</Link>
-            </Button>
-          </div>
-        </motion.div>
-        
-        {/* Placeholder Visual Right Side */}
-        <motion.div 
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.3, duration: 0.8 }}
-            className="hidden lg:block relative h-[600px] w-full"
-        >
-            <div className="absolute right-0 top-0 bottom-0 w-full bg-brand-dark/5 rounded-l-[100px] overflow-hidden shadow-2xl border-l-4 border-brand-gold">
-               {/* Replace with actual image later */}
-               <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400">
-                  <span className="text-center p-8">High-Quality Kalei Texture Image Placeholder</span>
-               </div>
+    return (
+        <section className="relative min-h-[95vh] w-full flex flex-col justify-center bg-brand-light overflow-hidden pt-24 px-6 md:px-12 lg:px-24">
+            
+            {/* Background Grain */}
+            <div className="absolute inset-0 z-0 bg-texture opacity-20 pointer-events-none"></div>
+
+            {/* Subtle Gradient Spotlights */}
+            <div className="absolute -top-1/4 -right-1/4 w-[800px] h-[800px] bg-brand-gold/10 rounded-full blur-[120px]"></div>
+            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-brand-light/50 rounded-full blur-[100px] mix-blend-multiply"></div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-center relative z-10">
+                
+                {/* Text Content */}
+                <motion.div 
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+                    className="col-span-1 lg:col-span-7"
+                >
+                    <div className="flex items-center gap-4 mb-8">
+                        <div className="h-[1px] w-12 bg-brand-gold"></div>
+                        <span className="uppercase text-xs tracking-[0.2em] text-brand-gold font-medium">Sinds 1998</span>
+                    </div>
+                    
+                    <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl leading-[1.1] md:leading-[1.05] text-brand-dark mb-8 text-balance">
+                        Authentieke <br />
+                        <span className="italic font-light text-brand-dark/90">Kaleiwerken.</span>
+                    </h1>
+                    
+                    <p className="text-brand-dark/60 text-lg md:text-xl font-light leading-relaxed max-w-lg mb-12 ml-1">
+                        {siteContent.hero.subtitle}
+                        <br className="hidden md:block"/>
+                        Transformeer uw woning met karakter.
+                    </p>
+
+                    <div className="flex flex-col sm:flex-row gap-6 items-start">
+                        <Button 
+                            size="lg" 
+                            className="bg-brand-dark hover:bg-brand-gold text-white hover:text-brand-dark transition-all duration-300 rounded-none px-10 py-7 text-sm uppercase tracking-widest group"
+                            asChild
+                        >
+                            <Link href="/offerte">
+                                {siteContent.hero.ctaPrimary}
+                                <ArrowUpRight className="ml-2 w-4 h-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 group-hover:-translate-y-1 transition-all" />
+                            </Link>
+                        </Button>
+                        <Link 
+                            href="/projecten" 
+                            className="group flex items-center gap-3 px-6 py-4 text-brand-dark/80 hover:text-brand-dark transition-colors text-sm uppercase tracking-widest border-b border-transparent hover:border-brand-dark/20"
+                        >
+                            {siteContent.hero.ctaSecondary}
+                            <div className="w-8 h-[1px] bg-brand-dark/20 group-hover:w-12 transition-all duration-300"></div>
+                        </Link>
+                    </div>
+                </motion.div>
+
+                {/* Hero Visual */}
+                <motion.div 
+                    style={{ y: y2 }}
+                    className="col-span-1 lg:col-span-5 relative h-[500px] lg:h-[700px] w-full"
+                >
+                    <div className="absolute inset-0 bg-brand-dark/5 overflow-hidden shadow-2xl z-10 border border-white/50 clip-image-slant group">
+                        {/* Placeholder for Hero Image */}
+                        <div className="w-full h-full bg-gray-200 relative">
+                             {/* Overlay for premium look if image is loaded */}
+                             <div className="absolute inset-0 bg-gradient-to-tr from-brand-dark/20 to-transparent mix-blend-multiply"></div>
+                             
+                             <div className="absolute inset-0 flex items-center justify-center">
+                                <span className="text-brand-dark/20 font-serif text-4xl italic rotate-[-5deg]">Architectural Texture</span>
+                             </div>
+                        </div>
+                    </div>
+
+                    {/* Decorative Elements */}
+                    <div className="absolute -bottom-12 -left-12 w-full h-full border border-brand-gold/30 z-0 hidden lg:block"></div>
+                </motion.div>
             </div>
-        </motion.div>
-      </div>
-    </section>
-  );
+
+            {/* Scroll Indicator */}
+            <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.5, duration: 1 }}
+                className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 text-brand-dark/30 hidden md:flex"
+            >
+                <span className="text-[10px] uppercase tracking-widest writing-vertical-rl">Scroll</span>
+                <div className="h-12 w-[1px] bg-brand-dark/10 relative overflow-hidden">
+                    <motion.div 
+                        animate={{ y: [0, 50] }}
+                        transition={{ repeat: Infinity, duration: 1.5, ease: "circIn" }}
+                        className="absolute top-0 w-full h-1/2 bg-brand-dark/40"
+                    />
+                </div>
+            </motion.div>
+        </section>
+    );
 };

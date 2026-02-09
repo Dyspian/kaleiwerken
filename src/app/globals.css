@@ -15,30 +15,26 @@
     --popover: 40 25% 94%;
     --popover-foreground: 216 18% 5%;
 
-    /* Primary: Near-black */
     --primary: 216 18% 5%;
     --primary-foreground: 40 25% 94%;
 
-    /* Secondary: Light beige tone */
     --secondary: 40 20% 90%;
     --secondary-foreground: 216 18% 5%;
 
     --muted: 40 10% 85%;
     --muted-foreground: 216 5% 40%;
 
-    /* Accent: Brand Gold #C8B07A */
     --accent: 42 43% 63%;
     --accent-foreground: 216 18% 5%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 40 25% 98%;
 
-    /* Border: Subtle gold/grey mix */
     --border: 40 10% 85%;
     --input: 40 10% 85%;
     --ring: 42 43% 63%;
 
-    --radius: 0.2rem; /* Straks, architecturaal */
+    --radius: 0px; /* SHARP corners for architectural feel, slightly rounded via classes if needed */
   }
 }
 
@@ -47,24 +43,33 @@
     @apply border-border;
   }
   body {
-    @apply bg-brand-light text-brand-dark font-sans antialiased selection:bg-brand-gold/30;
+    @apply bg-brand-light text-brand-dark font-sans antialiased selection:bg-brand-gold/30 selection:text-brand-dark relative;
   }
   h1, h2, h3, h4, h5, h6 {
-    @apply tracking-tight font-semibold;
+    @apply font-serif tracking-tight font-medium;
   }
 }
 
-/* Custom Scrollbar for premium feel */
-::-webkit-scrollbar {
-  width: 8px;
+/* CSS Noise Texture */
+.bg-texture {
+  position: relative;
 }
-::-webkit-scrollbar-track {
-  background: transparent;
+.bg-texture::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+  pointer-events: none;
+  opacity: 0.4;
 }
-::-webkit-scrollbar-thumb {
-  background: #C8B07A;
-  border-radius: 4px;
+
+/* Elegant utility classes */
+.text-balance {
+    text-wrap: balance;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: #D8C89A;
+
+.clip-image-slant {
+    clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
 }
+</style>
