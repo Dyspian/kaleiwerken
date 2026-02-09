@@ -74,15 +74,16 @@ export const Hero = () => {
                     className="col-span-1 lg:col-span-5 relative h-[500px] lg:h-[700px] w-full"
                 >
                     <div className="absolute inset-0 bg-brand-dark/5 overflow-hidden shadow-2xl z-10 border border-white/50 clip-image-slant group">
-                        {/* Placeholder for Hero Image */}
-                        <div className="w-full h-full bg-gray-200 relative">
-                             {/* Overlay for premium look if image is loaded */}
-                             <div className="absolute inset-0 bg-gradient-to-tr from-brand-dark/20 to-transparent mix-blend-multiply"></div>
-                             
-                             <div className="absolute inset-0 flex items-center justify-center">
-                                <span className="text-brand-dark/20 font-serif text-4xl italic rotate-[-5deg]">Architectural Texture</span>
-                             </div>
-                        </div>
+                        <Image
+                            src="/KALEIwerken-Vincent-Van-Roey-1.jpg"
+                            alt="Authentieke kaleiwerken in wijnkelder"
+                            fill
+                            className="object-cover transition-transform duration-1000 group-hover:scale-105"
+                            sizes="(max-width: 768px) 100vw, 50vw"
+                            priority
+                        />
+                         {/* Overlay for premium look */}
+                         <div className="absolute inset-0 bg-gradient-to-tr from-brand-dark/10 to-transparent mix-blend-multiply pointer-events-none"></div>
                     </div>
 
                     {/* Decorative Elements */}
