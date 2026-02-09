@@ -40,6 +40,13 @@ export default {
   				DEFAULT: 'hsl(var(--destructive))',
   				foreground: 'hsl(var(--destructive-foreground))'
   			},
+            // Brand specific colors
+            brand: {
+                dark: '#0B0D10',
+                light: '#F5F2EA',
+                gold: '#C8B07A',
+                goldLight: '#D8C89A',
+            },
   			border: 'hsl(var(--border))',
   			input: 'hsl(var(--input))',
   			ring: 'hsl(var(--ring))',
@@ -61,6 +68,10 @@ export default {
   				ring: 'hsl(var(--sidebar-ring))'
   			}
   		},
+        fontFamily: {
+            sans: ['var(--font-geist-sans)', 'ui-sans-serif', 'system-ui'],
+            mono: ['var(--font-geist-mono)', 'ui-monospace', 'SFMono-Regular'],
+        },
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
