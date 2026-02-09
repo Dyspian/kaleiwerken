@@ -81,6 +81,7 @@ export const Hero = () => {
                             className="object-cover transition-transform duration-1000 group-hover:scale-105"
                             sizes="(max-width: 768px) 100vw, 50vw"
                             priority
+                            unoptimized
                         />
                          {/* Overlay for premium look */}
                          <div className="absolute inset-0 bg-gradient-to-tr from-brand-dark/10 to-transparent mix-blend-multiply pointer-events-none"></div>
