@@ -43,9 +43,9 @@ export default {
             brand: {
                 dark: '#0B0D10',
                 light: '#F5F2EA',
-                gold: '#C8B07A',
-                goldLight: '#E8DCC0', // Softer light gold
-                goldDark: '#A68E59',
+                gold: '#A68E50', // Darker, richer gold for better contrast
+                goldLight: '#D9C8A3', 
+                goldDark: '#85703D',
             },
   			border: 'hsl(var(--border))',
   			input: 'hsl(var(--input))',
