@@ -8,7 +8,7 @@ export const siteContent = {
   },
   hero: {
     title: "Kaleiwerken met een premium afwerking.",
-    subtitle: "Duurzaam, ademend en tijdloos — uitgevoerd door Van Roey.",
+    subtitle: "Duurzaam, ademend en tijdloos — uitgevoerd door Vincent Van Roey.",
     ctaPrimary: "Vraag offerte aan",
     ctaSecondary: "Bekijk realisaties",
   },
