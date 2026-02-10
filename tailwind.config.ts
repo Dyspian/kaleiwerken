@@ -41,11 +41,12 @@ export default {
   				foreground: 'hsl(var(--destructive-foreground))'
   			},
             brand: {
-                dark: '#0B0D10',
-                light: '#F5F2EA',
-                gold: '#A68E50', // Darker, richer gold for better contrast
-                goldLight: '#D9C8A3', 
-                goldDark: '#85703D',
+                dark: '#1A1917', // Warm Charcoal/Mortar
+                stone: '#E6E4DD', // Limestone/Clay background
+                white: '#F7F6F2', // Off-white for cards
+                bronze: '#8C7B6C', // Muted Bronze/Earth tone (less yellow than gold)
+                bronzeLight: '#B8A89A',
+                accent: '#D4C5B0', 
             },
   			border: 'hsl(var(--border))',
   			input: 'hsl(var(--input))',
@@ -57,20 +58,10 @@ export default {
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
   			},
-  			sidebar: {
-  				DEFAULT: 'hsl(var(--sidebar-background))',
-  				foreground: 'hsl(var(--sidebar-foreground))',
-  				primary: 'hsl(var(--sidebar-primary))',
-  				'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-  				accent: 'hsl(var(--sidebar-accent))',
-  				'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-  				border: 'hsl(var(--sidebar-border))',
-  				ring: 'hsl(var(--sidebar-ring))'
-  			}
   		},
         fontFamily: {
             sans: ['var(--font-geist-sans)', 'ui-sans-serif', 'system-ui'],
-            serif: ['var(--font-playfair)', 'Georgia', 'serif'], // Added serif
+            serif: ['var(--font-playfair)', 'Georgia', 'serif'],
             mono: ['var(--font-geist-mono)', 'ui-monospace', 'SFMono-Regular'],
         },
   		borderRadius: {
@@ -78,28 +69,10 @@ export default {
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
   		},
-  		keyframes: {
-  			'accordion-down': {
-  				from: {
-  					height: '0'
-  				},
-  				to: {
-  					height: 'var(--radix-accordion-content-height)'
-  				}
-  			},
-  			'accordion-up': {
-  				from: {
-  					height: 'var(--radix-accordion-content-height)'
-  				},
-  				to: {
-  					height: '0'
-  				}
-  			}
-  		},
-  		animation: {
-  			'accordion-down': 'accordion-down 0.2s ease-out',
-  			'accordion-up': 'accordion-up 0.2s ease-out'
-  		}
+        transitionDuration: {
+            '400': '400ms',
+            '2000': '2000ms',
+        }
   	}
   },
   plugins: [require("tailwindcss-animate")],
