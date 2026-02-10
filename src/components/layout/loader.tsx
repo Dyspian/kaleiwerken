@@ -16,7 +16,7 @@ export const Loader = () => {
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
-    // Cycle through words
+    // Cycle through words - slowed down slightly for better readability
     const interval = setInterval(() => {
       setIndex((prev) => {
         if (prev === words.length - 1) {
@@ -25,14 +25,14 @@ export const Loader = () => {
         }
         return prev + 1;
       });
-    }, 450); // Speed of word change
+    }, 550); // Increased from 450ms
 
-    // Dismiss loader after sequence
+    // Dismiss loader after sequence - extended by 1 second
     const timer = setTimeout(() => {
       setIsVisible(false);
       // Optional: Store in session storage to only show once
       // sessionStorage.setItem("hasSeenLoader", "true");
-    }, 2800);
+    }, 3800); // Increased from 2800ms
 
     return () => {
       clearInterval(interval);
@@ -65,7 +65,7 @@ export const Loader = () => {
                         className="text-brand-bronze opacity-50"
                         initial={{ pathLength: 0, opacity: 0 }}
                         animate={{ pathLength: 1, opacity: 0.5 }}
-                        transition={{ duration: 2, ease: "easeInOut" }}
+                        transition={{ duration: 3, ease: "easeInOut" }}
                     />
                 </svg>
             </div>
@@ -78,7 +78,7 @@ export const Loader = () => {
                         initial={{ y: 50, opacity: 0, filter: "blur(10px)" }}
                         animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
                         exit={{ y: -50, opacity: 0, filter: "blur(10px)" }}
-                        transition={{ duration: 0.4, ease: "easeOut" }}
+                        transition={{ duration: 0.5, ease: "easeOut" }}
                         className="font-serif text-4xl md:text-5xl italic tracking-tight"
                     >
                         {words[index]}
@@ -92,7 +92,7 @@ export const Loader = () => {
                     className="absolute top-0 left-0 h-full bg-brand-bronze"
                     initial={{ width: "0%" }}
                     animate={{ width: "100%" }}
-                    transition={{ duration: 2.5, ease: "easeInOut" }}
+                    transition={{ duration: 3.5, ease: "easeInOut" }}
                 />
             </div>
             
