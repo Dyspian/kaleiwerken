@@ -1,44 +1,53 @@
 "use client";
 import { useState } from "react";
 import { MoveHorizontal } from "lucide-react";
+import { motion } from "framer-motion";
 
 export const BeforeAfter = () => {
   const [sliderPosition, setSliderPosition] = useState(50);
 
-  const handleDrag = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
-      // Simplistic implementation for MVP
-      // In a real scenario, calculate based on rect
-  };
-
   return (
-    <section className="py-20 bg-white">
-      <div className="container mx-auto px-4 text-center">
-        <h2 className="text-3xl font-bold mb-2">Het verschil in detail</h2>
-        <p className="text-brand-dark/60 mb-12">Sleep om de transformatie te zien</p>
+    <section className="py-32 bg-brand-white">
+      <div className="container mx-auto px-6 md:px-12 text-center">
+        <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="mb-16"
+        >
+            <span className="uppercase text-xs tracking-[0.3em] text-brand-bronze font-medium mb-4 block">Transformatie</span>
+            <h2 className="font-serif text-4xl md:text-6xl text-brand-dark mb-4">Het verschil in detail</h2>
+            <p className="text-brand-dark/40 italic font-serif">Sleep om het resultaat te onthullen</p>
+        </motion.div>
         
-        <div className="relative w-full max-w-4xl mx-auto aspect-[16/9] bg-gray-100 rounded-lg overflow-hidden shadow-xl border border-brand-dark/5 group cursor-ew-resize">
-            {/* After Image (Full width background) */}
-            <div className="absolute inset-0 bg-brand-gold/20 flex items-center justify-center">
-                <span className="text-4xl font-bold text-brand-dark/20">NA (Prachtig wit)</span>
+        <div className="relative w-full max-w-6xl mx-auto aspect-[16/9] md:aspect-[21/9] bg-brand-stone overflow-hidden shadow-2xl border border-brand-dark/5 group cursor-ew-resize select-none">
+            
+            {/* After Image (Full width background) - Placeholder styling for now */}
+            <div className="absolute inset-0 bg-brand-stone flex items-center justify-center">
+                <div className="absolute inset-0 bg-[url('/after-placeholder.jpg')] bg-cover bg-center opacity-80 mix-blend-multiply grayscale-[20%]"></div>
+                 {/* Fallback text if no image */}
+                <span className="text-6xl md:text-9xl font-serif font-bold text-brand-dark/10 relative z-10">NA</span>
             </div>
 
             {/* Before Image (Clipped) */}
             <div 
-                className="absolute inset-0 bg-gray-300 flex items-center justify-center border-r-2 border-white"
+                className="absolute inset-0 bg-brand-dark flex items-center justify-center border-r border-white/20"
                 style={{ width: `${sliderPosition}%`, overflow: 'hidden' }}
             >
-                <div className="w-full h-full flex items-center justify-center" style={{ width: '100vw' }}> {/* Hack to keep content centered relative to parent if it was an image */}
-                    <span className="text-4xl font-bold text-gray-500">VOOR (Oud)</span>
+                <div className="absolute inset-0 bg-[url('/before-placeholder.jpg')] bg-cover bg-center opacity-60 mix-blend-overlay grayscale"></div>
+                <div className="w-full h-full flex items-center justify-center relative z-10" style={{ width: '100vw' }}> 
+                    <span className="text-6xl md:text-9xl font-serif font-bold text-brand-white/10">VOOR</span>
                 </div>
             </div>
 
             {/* Slider Handle */}
             <div 
-                className="absolute top-0 bottom-0 w-1 bg-white cursor-ew-resize flex items-center justify-center z-10 shadow-lg"
+                className="absolute top-0 bottom-0 w-[1px] bg-white cursor-ew-resize flex items-center justify-center z-10 shadow-[0_0_30px_rgba(0,0,0,0.2)]"
                 style={{ left: `${sliderPosition}%` }}
             >
-                <div className="w-8 h-8 bg-brand-gold rounded-full flex items-center justify-center shadow-md">
-                    <MoveHorizontal className="w-4 h-4 text-white" />
+                <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-xl border border-brand-dark/5 transition-transform duration-200 hover:scale-110">
+                    <MoveHorizontal className="w-4 h-4 text-brand-dark" />
                 </div>
             </div>
             

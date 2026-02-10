@@ -1,63 +1,51 @@
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
-import { ScrollProgress } from "@/components/layout/scroll-progress";
 import { Hero } from "@/components/home/hero";
 import { SocialProof } from "@/components/home/social-proof";
 import { Features } from "@/components/home/features";
 import { BeforeAfter } from "@/components/home/before-after";
+import { Process } from "@/components/home/process";
 import { QuoteWizard } from "@/components/quote/quote-wizard";
 import { Toaster } from "@/components/ui/sonner";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-brand-light text-brand-dark font-sans selection:bg-brand-gold/30">
-      <ScrollProgress />
+    <main className="min-h-screen bg-brand-light text-brand-dark font-sans selection:bg-brand-bronze/30">
       <Header />
       
       <Hero />
       <SocialProof />
       
-      <div className="space-y-0">
+      <div className="bg-brand-stone">
         <BeforeAfter />
         <Features />
-        
-        {/* Process Section - Simplified inline */}
-        <section className="py-20 bg-white">
-            <div className="container mx-auto px-4">
-                <div className="text-center mb-12">
-                    <h2 className="text-3xl font-bold mb-4">Onze werkwijze</h2>
-                    <p className="text-gray-500">Transparant van begin tot eind.</p>
-                </div>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-                    {[
-                        { step: "01", title: "Opmeting" },
-                        { step: "02", title: "Advies" },
-                        { step: "03", title: "Uitvoering" },
-                        { step: "04", title: "Oplevering" }
-                    ].map((s) => (
-                        <div key={s.step} className="text-center group">
-                            <span className="text-6xl font-black text-brand-light group-hover:text-brand-gold/20 transition-colors block mb-2">{s.step}</span>
-                            <h3 className="font-bold text-lg">{s.title}</h3>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </section>
+        <Process />
 
-        {/* Quote Section */}
-        <section id="offerte" className="py-24 bg-brand-dark relative overflow-hidden">
-             {/* Decorative circle */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-brand-gold/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
+        {/* Quote Section - Full Screen Impact */}
+        <section id="offerte" className="py-32 bg-brand-white relative overflow-hidden">
+             {/* Decorative Background */}
+            <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-brand-bronze/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
             
-            <div className="container mx-auto px-4 relative z-10">
-                <div className="grid lg:grid-cols-2 gap-12 items-center">
-                    <div className="text-brand-light">
-                        <h2 className="text-3xl md:text-4xl font-bold mb-6">Klaar voor een nieuwe uitstraling?</h2>
-                        <p className="text-lg opacity-80 mb-8 max-w-md">Start hier uw aanvraag. Het duurt slechts 2 minuten en is volledig vrijblijvend.</p>
+            <div className="container mx-auto px-6 md:px-12 relative z-10">
+                <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-start">
+                    <div className="lg:sticky lg:top-32">
+                        <span className="uppercase text-xs tracking-[0.3em] text-brand-bronze font-medium mb-6 block">Contact</span>
+                        <h2 className="font-serif text-5xl md:text-7xl font-medium mb-8 leading-[0.9] text-brand-dark">
+                            Klaar voor een <span className="italic text-brand-bronze">nieuwe</span> uitstraling?
+                        </h2>
+                        <p className="text-xl text-brand-dark/60 mb-12 max-w-md font-light leading-relaxed">
+                            Start hier uw aanvraag. Het duurt slechts 2 minuten en is volledig vrijblijvend.
+                        </p>
                         
-                        <div className="hidden lg:block space-y-4 opacity-60">
-                            <div className="h-px bg-brand-light/20 w-full"></div>
-                            <p className="text-sm">Of bel ons direct: +32 470 12 34 56</p>
+                        <div className="hidden lg:block space-y-6 pt-12 border-t border-brand-dark/5">
+                            <div>
+                                <h4 className="uppercase text-[10px] tracking-widest text-brand-dark/40 mb-2">Direct contact</h4>
+                                <p className="font-serif text-2xl text-brand-dark">+32 470 12 34 56</p>
+                            </div>
+                            <div>
+                                <h4 className="uppercase text-[10px] tracking-widest text-brand-dark/40 mb-2">Email</h4>
+                                <p className="font-serif text-2xl text-brand-dark">info@vanroey.be</p>
+                            </div>
                         </div>
                     </div>
                     
