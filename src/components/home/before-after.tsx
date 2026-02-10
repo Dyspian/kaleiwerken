@@ -23,22 +23,32 @@ export const BeforeAfter = () => {
         
         <div className="relative w-full max-w-6xl mx-auto aspect-[16/9] md:aspect-[21/9] bg-brand-stone overflow-hidden shadow-2xl border border-brand-dark/5 group cursor-ew-resize select-none">
             
-            {/* After Image (Full width background) - Placeholder styling for now */}
-            <div className="absolute inset-0 bg-brand-stone flex items-center justify-center">
-                <div className="absolute inset-0 bg-[url('/after-placeholder.jpg')] bg-cover bg-center opacity-80 mix-blend-multiply grayscale-[20%]"></div>
-                 {/* Fallback text if no image */}
+            {/* After Image (Full width background) */}
+            <div className="absolute inset-0 bg-brand-stone flex items-center justify-center overflow-hidden">
+                {/* CSS Pattern for "After" - Clean, textured look */}
+                <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#8C7B6C_1px,transparent_1px)] [background-size:16px_16px]"></div>
+                <div className="absolute inset-0 bg-gradient-to-tr from-brand-white/80 to-transparent"></div>
+                
                 <span className="text-6xl md:text-9xl font-serif font-bold text-brand-dark/10 relative z-10">NA</span>
+                <p className="absolute bottom-8 right-8 text-brand-dark/20 font-mono text-xs uppercase tracking-widest">Afgewerkt Resultaat</p>
             </div>
 
             {/* Before Image (Clipped) */}
             <div 
-                className="absolute inset-0 bg-brand-dark flex items-center justify-center border-r border-white/20"
-                style={{ width: `${sliderPosition}%`, overflow: 'hidden' }}
+                className="absolute inset-0 bg-brand-dark flex items-center justify-center border-r border-white/20 overflow-hidden"
+                style={{ width: `${sliderPosition}%` }}
             >
-                <div className="absolute inset-0 bg-[url('/before-placeholder.jpg')] bg-cover bg-center opacity-60 mix-blend-overlay grayscale"></div>
-                <div className="w-full h-full flex items-center justify-center relative z-10" style={{ width: '100vw' }}> 
-                    <span className="text-6xl md:text-9xl font-serif font-bold text-brand-white/10">VOOR</span>
+                {/* CSS Pattern for "Before" - Darker, rougher look */}
+                <div className="absolute inset-0 opacity-10 bg-[linear-gradient(45deg,#000_25%,transparent_25%,transparent_75%,#000_75%,#000),linear-gradient(45deg,#000_25%,transparent_25%,transparent_75%,#000_75%,#000)] [background-size:20px_20px] [background-position:0_0,10px_10px]"></div>
+                
+                {/* We need a fixed width container inside the clipped container to keep content centered relative to the full view, 
+                    but simpler here is just centering text in the clipped view or using a fixed width child */}
+                <div className="absolute inset-0 w-full h-full" style={{ width: '100vw' }}> 
+                    <div className="w-full h-full flex items-center justify-center">
+                        <span className="text-6xl md:text-9xl font-serif font-bold text-brand-white/10">VOOR</span>
+                    </div>
                 </div>
+                 <p className="absolute bottom-8 left-8 text-white/20 font-mono text-xs uppercase tracking-widest">Oorspronkelijke Staat</p>
             </div>
 
             {/* Slider Handle */}
