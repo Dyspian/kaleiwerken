@@ -76,7 +76,7 @@ export const Hero = () => {
                     <div className="absolute inset-0 bg-brand-dark/5 overflow-hidden shadow-2xl z-10 border border-white/50 clip-image-slant group">
                         <Image
                             src="/KALEIwerken-Vincent-Van-Roey-1.jpg"
-                            alt="Authentieke kaleiwerken"
+                            alt="Realisatie Kaleiwerken Van Roey"
                             fill
                             className="object-cover transition-transform duration-1000 group-hover:scale-105"
                             sizes="(max-width: 768px) 100vw, 50vw"
