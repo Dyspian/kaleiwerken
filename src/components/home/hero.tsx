@@ -74,13 +74,8 @@ export const Hero = () => {
                     className="col-span-1 lg:col-span-5 relative h-[500px] lg:h-[700px] w-full"
                 >
                     <div className="absolute inset-0 bg-brand-dark/5 overflow-hidden shadow-2xl z-10 border border-white/50 clip-image-slant group">
-                        {/* 
-                            NOTE: I've replaced the local image with a placeholder URL because I cannot access your local files.
-                            Please add 'KALEIwerken-Vincent-Van-Roey-1.jpg' to your public/ folder and then uncomment the line below.
-                        */}
                         <Image
-                            src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1000&auto=format&fit=crop"
-                            // src="/KALEIwerken-Vincent-Van-Roey-1.jpg" 
+                            src="/KALEIwerken-Vincent-Van-Roey-1.jpg"
                             alt="Authentieke kaleiwerken"
                             fill
                             className="object-cover transition-transform duration-1000 group-hover:scale-105"
