@@ -16,7 +16,7 @@ export const Loader = () => {
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
-    // Cycle through words - slowed down slightly for better readability
+    // Cycle through words - significantly slowed down for readability
     const interval = setInterval(() => {
       setIndex((prev) => {
         if (prev === words.length - 1) {
@@ -25,14 +25,13 @@ export const Loader = () => {
         }
         return prev + 1;
       });
-    }, 550); // Increased from 450ms
+    }, 800); // Increased to 0.8s per word
 
-    // Dismiss loader after sequence - extended by 1 second
+    // Dismiss loader after sequence
+    // 4 transitions * 800ms = 3200ms + 1200ms hold time = 4400ms
     const timer = setTimeout(() => {
       setIsVisible(false);
-      // Optional: Store in session storage to only show once
-      // sessionStorage.setItem("hasSeenLoader", "true");
-    }, 3800); // Increased from 2800ms
+    }, 4400); 
 
     return () => {
       clearInterval(interval);
@@ -65,7 +64,7 @@ export const Loader = () => {
                         className="text-brand-bronze opacity-50"
                         initial={{ pathLength: 0, opacity: 0 }}
                         animate={{ pathLength: 1, opacity: 0.5 }}
-                        transition={{ duration: 3, ease: "easeInOut" }}
+                        transition={{ duration: 3.5, ease: "easeInOut" }}
                     />
                 </svg>
             </div>
@@ -75,10 +74,10 @@ export const Loader = () => {
                 <AnimatePresence mode="wait">
                     <motion.span
                         key={index}
-                        initial={{ y: 50, opacity: 0, filter: "blur(10px)" }}
+                        initial={{ y: 40, opacity: 0, filter: "blur(8px)" }}
                         animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
-                        exit={{ y: -50, opacity: 0, filter: "blur(10px)" }}
-                        transition={{ duration: 0.5, ease: "easeOut" }}
+                        exit={{ y: -40, opacity: 0, filter: "blur(8px)" }}
+                        transition={{ duration: 0.6, ease: "easeOut" }}
                         className="font-serif text-4xl md:text-5xl italic tracking-tight"
                     >
                         {words[index]}
@@ -92,7 +91,7 @@ export const Loader = () => {
                     className="absolute top-0 left-0 h-full bg-brand-bronze"
                     initial={{ width: "0%" }}
                     animate={{ width: "100%" }}
-                    transition={{ duration: 3.5, ease: "easeInOut" }}
+                    transition={{ duration: 4.2, ease: "easeInOut" }}
                 />
             </div>
             
