@@ -85,7 +85,7 @@ export const Hero = () => {
                         <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
                             <Button 
                                 size="lg" 
-                                className="bg-brand-bronze text-white hover:bg-brand-dark rounded-none px-8 py-8 text-sm uppercase tracking-widest transition-all duration-500 w-full sm:w-auto"
+                                className="bg-brand-white text-brand-dark hover:translate-y-[-4px] hover:shadow-[8px_8px_0px_0px_rgba(26,25,23,0.1)] border border-brand-dark/10 rounded-none px-8 py-8 text-sm uppercase tracking-widest font-bold transition-all duration-500 w-full sm:w-auto shadow-[4px_4px_0px_0px_#8C7B6C] active:translate-y-[2px] active:shadow-none"
                                 asChild
                             >
                                 <Link href="/offerte">

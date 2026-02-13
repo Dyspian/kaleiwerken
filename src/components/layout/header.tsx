@@ -75,7 +75,7 @@ export const Header = () => {
               <Button 
                 key={link.href} 
                 asChild 
-                className="rounded-none px-8 py-6 uppercase text-xs tracking-widest font-medium transition-all duration-300 hover:scale-105 bg-brand-bronze text-white hover:bg-brand-dark"
+                className="rounded-none px-8 py-6 uppercase text-xs tracking-widest font-bold transition-all duration-300 hover:translate-y-[-2px] hover:shadow-[4px_4px_0px_0px_rgba(26,25,23,0.1)] bg-brand-white text-brand-dark border border-brand-dark/10 shadow-[2px_2px_0px_0px_#8C7B6C] active:translate-y-[1px] active:shadow-none"
               >
                 <Link href={link.href}>{link.label}</Link>
               </Button>
