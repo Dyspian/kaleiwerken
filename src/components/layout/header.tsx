@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
@@ -39,13 +39,13 @@ export const Header = () => {
         animate={hidden ? "hidden" : "visible"}
         transition={{ duration: 0.35, ease: "easeInOut" }}
         className={cn(
-            "fixed top-0 left-0 right-0 z-50 transition-colors duration-500 mix-blend-difference text-brand-white",
-            scrolled ? "mix-blend-normal text-brand-dark" : ""
+            "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
+            scrolled ? "text-brand-dark" : "text-brand-white"
         )}
     >
-        {/* Dynamic Background for Scrolled State */}
+        {/* Dynamic Background */}
         <div className={cn(
-            "absolute inset-0 bg-brand-stone/80 backdrop-blur-md border-b border-brand-dark/5 transition-opacity duration-500",
+            "absolute inset-0 bg-brand-stone/95 backdrop-blur-md border-b border-brand-dark/5 transition-opacity duration-500",
             scrolled ? "opacity-100" : "opacity-0"
         )} />
 
@@ -75,12 +75,7 @@ export const Header = () => {
               <Button 
                 key={link.href} 
                 asChild 
-                className={cn(
-                    "rounded-none px-8 py-6 uppercase text-xs tracking-widest font-medium transition-all duration-300 hover:scale-105",
-                    scrolled 
-                        ? "bg-brand-dark text-white hover:bg-brand-bronze" 
-                        : "bg-brand-white text-brand-dark hover:bg-brand-white/90"
-                )}
+                className="rounded-none px-8 py-6 uppercase text-xs tracking-widest font-medium transition-all duration-300 hover:scale-105 bg-brand-bronze text-white hover:bg-brand-dark"
               >
                 <Link href={link.href}>{link.label}</Link>
               </Button>

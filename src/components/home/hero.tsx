@@ -85,7 +85,7 @@ export const Hero = () => {
                         <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
                             <Button 
                                 size="lg" 
-                                className="bg-brand-white text-brand-dark hover:bg-brand-bronze hover:text-white rounded-none px-8 py-8 text-sm uppercase tracking-widest transition-all duration-500 w-full sm:w-auto"
+                                className="bg-brand-bronze text-white hover:bg-brand-dark rounded-none px-8 py-8 text-sm uppercase tracking-widest transition-all duration-500 w-full sm:w-auto"
                                 asChild
                             >
                                 <Link href="/offerte">
