@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { SmoothScroll } from "@/components/layout/smooth-scroll";
 import { Loader } from "@/components/layout/loader";
+import { ScrollProgress } from "@/components/layout/scroll-progress";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,6 +37,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} antialiased`}
       >
         <div className="noise-overlay" />
+        <ScrollProgress />
         <Loader />
         <SmoothScroll>
             {children}

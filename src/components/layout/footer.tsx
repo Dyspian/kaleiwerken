@@ -1,13 +1,13 @@
 import { siteContent } from "@/content/site";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
+import { MadeWithElmony } from "@/components/made-with-elmony";
 
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-brand-dark text-brand-stone pt-32 pb-12 border-t border-white/5 overflow-hidden relative">
-        {/* Giant Logo Watermark */}
+    <footer className="bg-brand-dark text-brand-stone pt-32 pb-8 border-t border-white/5 overflow-hidden relative">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[40vw] font-serif text-white/[0.02] pointer-events-none select-none whitespace-nowrap">
             Van Roey
         </div>
@@ -51,12 +51,16 @@ export const Footer = () => {
           </div>
         </div>
         
-        <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-brand-stone/40 uppercase tracking-wider">
-          <div>&copy; {currentYear} {siteContent.general.brandName}.</div>
-          <div className="flex gap-8">
-            <Link href="/privacy" className="hover:text-brand-stone transition-colors">Privacy Policy</Link>
-            <Link href="/terms" className="hover:text-brand-stone transition-colors">Terms of Service</Link>
+        <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-6 text-xs text-brand-stone/40 uppercase tracking-wider">
+          <div className="flex flex-col md:flex-row items-center gap-4">
+            <span>&copy; {currentYear} {siteContent.general.brandName}.</span>
+            <div className="hidden md:block w-4 h-[1px] bg-white/10" />
+            <div className="flex gap-8">
+                <Link href="/privacy" className="hover:text-brand-stone transition-colors">Privacy</Link>
+                <Link href="/terms" className="hover:text-brand-stone transition-colors">Terms</Link>
+            </div>
           </div>
+          <MadeWithElmony />
         </div>
       </div>
     </footer>

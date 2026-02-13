@@ -41,10 +41,10 @@ export default {
   				foreground: 'hsl(var(--destructive-foreground))'
   			},
             brand: {
-                dark: '#1A1917', // Warm Charcoal/Mortar
-                stone: '#E6E4DD', // Limestone/Clay background
-                white: '#F7F6F2', // Off-white for cards
-                bronze: '#8C7B6C', // Muted Bronze/Earth tone (less yellow than gold)
+                dark: '#1A1917', 
+                stone: '#E6E4DD', 
+                white: '#F7F6F2', 
+                bronze: '#8C7B6C', 
                 bronzeLight: '#B8A89A',
                 accent: '#D4C5B0', 
             },

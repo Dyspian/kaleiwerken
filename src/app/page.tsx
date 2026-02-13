@@ -10,7 +10,7 @@ import { Toaster } from "@/components/ui/sonner";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-brand-light text-brand-dark font-sans selection:bg-brand-bronze/30">
+    <main className="min-h-screen bg-brand-white text-brand-dark font-sans selection:bg-brand-bronze/30">
       <Header />
       
       <Hero />
@@ -21,9 +21,7 @@ export default function Home() {
         <Features />
         <Process />
 
-        {/* Quote Section - Full Screen Impact */}
         <section id="offerte" className="py-32 bg-brand-white relative overflow-hidden">
-             {/* Decorative Background */}
             <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-brand-bronze/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
             
             <div className="container mx-auto px-6 md:px-12 relative z-10">
@@ -58,7 +56,7 @@ export default function Home() {
       </div>
 
       <Footer />
-      <Toaster />
+      <Toaster position="top-center" richColors />
     </main>
   );
 }
