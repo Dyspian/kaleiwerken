@@ -72,13 +72,66 @@ export const Header = () => {
         <nav className="hidden md:flex items-center gap-12">
           {navLinks.map((link) =>
             link.primary ? (
-              <Button 
-                key={link.href} 
-                asChild 
-                className="rounded-none px-8 py-6 uppercase text-xs tracking-widest font-bold transition-all duration-300 hover:translate-y-[-2px] hover:shadow-[4px_4px_0px_0px_rgba(26,25,23,0.1)] bg-brand-white text-brand-dark border border-brand-dark/10 shadow-[2px_2px_0px_0px_#8C7B6C] active:translate-y-[1px] active:shadow-none"
+              <Link
+                key={link.href}
+                href={link.href}
+                className="
+                  relative inline-flex items-center justify-center
+                  px-8 py-4 rounded-xl
+                  font-semibold tracking-wide
+                  text-[#F5F2EA]
+                  bg-[#0B0D10]
+                  border border-[#C8B07A]/35
+                  shadow-[0_10px_30px_rgba(0,0,0,0.35)]
+                  transition-all duration-200
+                  hover:-translate-y-[1px] hover:shadow-[0_14px_38px_rgba(0,0,0,0.45)]
+                  active:translate-y-0 active:shadow-[0_8px_22px_rgba(0,0,0,0.35)]
+                  focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C8B07A]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0D10]
+                  overflow-hidden
+                  uppercase text-[10px] tracking-[0.2em]
+                "
               >
-                <Link href={link.href}>{link.label}</Link>
-              </Button>
+                {/* Kalei texture overlay */}
+                <span
+                  aria-hidden="true"
+                  className="
+                    pointer-events-none absolute inset-0
+                    opacity-[0.22]
+                    [background:
+                      radial-gradient(1200px_400px_at_30%_20%,rgba(200,176,122,0.18),transparent_55%),
+                      radial-gradient(900px_280px_at_70%_80%,rgba(245,242,234,0.10),transparent_60%),
+                      repeating-linear-gradient(135deg,rgba(245,242,234,0.06)_0px,rgba(245,242,234,0.06)_2px,transparent_2px,transparent_7px)
+                    ]
+                  "
+                />
+
+                {/* Brick bevel edges */}
+                <span
+                  aria-hidden="true"
+                  className="
+                    pointer-events-none absolute inset-0
+                    rounded-xl
+                    [box-shadow:
+                      inset_0_1px_0_rgba(245,242,234,0.10),
+                      inset_0_-10px_18px_rgba(0,0,0,0.35),
+                      inset_10px_0_18px_rgba(0,0,0,0.18),
+                      inset_-10px_0_18px_rgba(0,0,0,0.18)
+                    ]
+                  "
+                />
+
+                {/* Subtle gold hairline highlight */}
+                <span
+                  aria-hidden="true"
+                  className="
+                    pointer-events-none absolute left-3 right-3 top-2 h-px
+                    bg-gradient-to-r from-transparent via-[#C8B07A]/50 to-transparent
+                    opacity-70
+                  "
+                />
+
+                <span className="relative z-10">{link.label}</span>
+              </Link>
             ) : (
               <Link
                 key={link.href}

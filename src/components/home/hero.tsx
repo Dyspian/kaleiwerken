@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef } from "react";
-import { Button } from "@/components/ui/button";
 import { siteContent } from "@/content/site";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
@@ -82,28 +81,77 @@ export const Hero = () => {
                             {siteContent.hero.subtitle}
                         </p>
 
-                        <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-                            <Button 
-                                size="lg" 
-                                className="bg-brand-white text-brand-dark hover:translate-y-[-4px] hover:shadow-[8px_8px_0px_0px_rgba(26,25,23,0.1)] border border-brand-dark/10 rounded-none px-8 py-8 text-sm uppercase tracking-widest font-bold transition-all duration-500 w-full sm:w-auto shadow-[4px_4px_0px_0px_#8C7B6C] active:translate-y-[2px] active:shadow-none"
-                                asChild
+                        <div className="flex flex-col sm:flex-row gap-6 w-full md:w-auto">
+                            <Link 
+                                href="/offerte"
+                                className="
+                                    relative inline-flex items-center justify-center
+                                    px-10 py-5 rounded-xl
+                                    font-bold tracking-[0.15em]
+                                    text-[#F5F2EA]
+                                    bg-[#0B0D10]
+                                    border border-[#C8B07A]/35
+                                    shadow-[0_10px_30px_rgba(0,0,0,0.35)]
+                                    transition-all duration-300
+                                    hover:-translate-y-[2px] hover:shadow-[0_14px_45px_rgba(0,0,0,0.55)]
+                                    active:translate-y-0 active:shadow-[0_8px_22px_rgba(0,0,0,0.35)]
+                                    focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C8B07A]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0D10]
+                                    overflow-hidden
+                                    uppercase text-xs
+                                    group
+                                "
                             >
-                                <Link href="/offerte">
+                                {/* Kalei texture overlay */}
+                                <span
+                                    aria-hidden="true"
+                                    className="
+                                        pointer-events-none absolute inset-0
+                                        opacity-[0.22]
+                                        [background:
+                                            radial-gradient(1200px_400px_at_30%_20%,rgba(200,176,122,0.18),transparent_55%),
+                                            radial-gradient(900px_280px_at_70%_80%,rgba(245,242,234,0.10),transparent_60%),
+                                            repeating-linear-gradient(135deg,rgba(245,242,234,0.06)_0px,rgba(245,242,234,0.06)_2px,transparent_2px,transparent_7px)
+                                        ]
+                                    "
+                                />
+
+                                {/* Brick bevel edges */}
+                                <span
+                                    aria-hidden="true"
+                                    className="
+                                        pointer-events-none absolute inset-0
+                                        rounded-xl
+                                        [box-shadow:
+                                            inset_0_1px_0_rgba(245,242,234,0.10),
+                                            inset_0_-10px_18px_rgba(0,0,0,0.35),
+                                            inset_10px_0_18px_rgba(0,0,0,0.18),
+                                            inset_-10px_0_18px_rgba(0,0,0,0.18)
+                                        ]
+                                    "
+                                />
+
+                                {/* Subtle gold hairline highlight */}
+                                <span
+                                    aria-hidden="true"
+                                    className="
+                                        pointer-events-none absolute left-3 right-3 top-2 h-px
+                                        bg-gradient-to-r from-transparent via-[#C8B07A]/50 to-transparent
+                                        opacity-70
+                                    "
+                                />
+
+                                <span className="relative z-10 flex items-center gap-2">
                                     {siteContent.hero.ctaPrimary}
-                                    <ArrowUpRight className="ml-2 w-5 h-5" />
-                                </Link>
-                            </Button>
+                                    <ArrowUpRight className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                                </span>
+                            </Link>
                             
-                            <Button 
-                                variant="outline"
-                                size="lg"
-                                className="border-brand-white/30 text-brand-white hover:bg-brand-white hover:text-brand-dark rounded-none px-8 py-8 text-sm uppercase tracking-widest transition-all duration-500 w-full sm:w-auto bg-transparent backdrop-blur-sm"
-                                asChild
+                            <Link 
+                                href="/projecten"
+                                className="inline-flex items-center justify-center px-10 py-5 rounded-none border border-brand-white/30 text-brand-white hover:bg-brand-white hover:text-brand-dark transition-all duration-500 text-xs font-bold uppercase tracking-[0.2em] backdrop-blur-sm"
                             >
-                                <Link href="/projecten">
-                                    {siteContent.hero.ctaSecondary}
-                                </Link>
-                            </Button>
+                                {siteContent.hero.ctaSecondary}
+                            </Link>
                         </div>
                     </div>
                 </motion.div>
