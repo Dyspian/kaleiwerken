@@ -120,16 +120,6 @@ export const Header = () => {
                   "
                 />
 
-                {/* Subtle gold hairline highlight */}
-                <span
-                  aria-hidden="true"
-                  className="
-                    pointer-events-none absolute left-3 right-3 top-2 h-px
-                    bg-gradient-to-r from-transparent via-[#C8B07A]/50 to-transparent
-                    opacity-70
-                  "
-                />
-
                 <span className="relative z-10">{link.label}</span>
               </Link>
             ) : (
