@@ -101,7 +101,7 @@ export const Hero = () => {
                                     group
                                 "
                             >
-                                {/* Kalei texture overlay */}
+                                {/* Kalei texture overlay - Removed repeating linear gradient (lines) */}
                                 <span
                                     aria-hidden="true"
                                     className="
@@ -109,20 +109,18 @@ export const Hero = () => {
                                         opacity-[0.22]
                                         [background:
                                             radial-gradient(1200px_400px_at_30%_20%,rgba(200,176,122,0.18),transparent_55%),
-                                            radial-gradient(900px_280px_at_70%_80%,rgba(245,242,234,0.10),transparent_60%),
-                                            repeating-linear-gradient(135deg,rgba(245,242,234,0.06)_0px,rgba(245,242,234,0.06)_2px,transparent_2px,transparent_7px)
+                                            radial-gradient(900px_280px_at_70%_80%,rgba(245,242,234,0.10),transparent_60%)
                                         ]
                                     "
                                 />
 
-                                {/* Brick bevel edges */}
+                                {/* Brick bevel edges - Removed top highlight line */}
                                 <span
                                     aria-hidden="true"
                                     className="
                                         pointer-events-none absolute inset-0
                                         rounded-xl
                                         [box-shadow:
-                                            inset_0_1px_0_rgba(245,242,234,0.10),
                                             inset_0_-10px_18px_rgba(0,0,0,0.35),
                                             inset_10px_0_18px_rgba(0,0,0,0.18),
                                             inset_-10px_0_18px_rgba(0,0,0,0.18)
