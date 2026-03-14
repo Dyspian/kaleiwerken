@@ -2,75 +2,137 @@
 
 import { useAuth } from '@/components/auth/auth-provider';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { LayoutDashboard, FolderKanban, LogOut, User } from 'lucide-react';
-import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { AdminSidebar } from '@/components/admin/admin-sidebar';
+import { supabase } from '@/integrations/supabase/client';
+import { FolderKanban, MessageSquare, TrendingUp, Clock } from 'lucide-react';
+import { format } from 'date-fns';
+import { nl } from 'date-fns/locale';
 
 export default function AdminDashboard() {
-  const { user, loading, signOut } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const router = useRouter();
+  const [stats, setStats] = useState({ projects: 0, leads: 0, recentLeads: [] as any[] });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!loading && !user) {
+    if (!authLoading && !user) {
       router.push('/login');
+    } else if (user) {
+      fetchStats();
     }
-  }, [user, loading, router]);
+  }, [user, authLoading, router]);
 
-  if (loading || !user) return null;
+  const fetchStats = async () => {
+    setLoading(true);
+    const [projectsRes, leadsRes, recentLeadsRes] = await Promise.all([
+      supabase.from('projects').select('id', { count: 'exact', head: true }),
+      supabase.from('leads').select('id', { count: 'exact', head: true }),
+      supabase.from('leads').select('*').order('created_at', { ascending: false }).limit(3)
+    ]);
+
+    setStats({
+      projects: projectsRes.count || 0,
+      leads: leadsRes.count || 0,
+      recentLeads: recentLeadsRes.data || []
+    });
+    setLoading(false);
+  };
+
+  if (authLoading || !user) return null;
 
   return (
     <div className="min-h-screen bg-brand-stone flex">
-      {/* Sidebar */}
-      <aside className="w-64 bg-brand-dark text-brand-stone p-8 flex flex-col">
-        <div className="mb-12">
-          <h2 className="font-serif text-xl italic">Van Roey Admin</h2>
-        </div>
-        
-        <nav className="flex-1 space-y-4">
-          <Link href="/admin" className="flex items-center gap-3 text-brand-bronze">
-            <LayoutDashboard size={18} /> Overzicht
-          </Link>
-          <Link href="/admin/projects" className="flex items-center gap-3 hover:text-brand-bronze transition-colors">
-            <FolderKanban size={18} /> Projecten
-          </Link>
-        </nav>
+      <AdminSidebar />
 
-        <div className="pt-8 border-t border-white/10">
-          <div className="flex items-center gap-3 mb-6 text-sm opacity-60">
-            <User size={16} /> {user.email}
-          </div>
-          <Button 
-            variant="ghost" 
-            onClick={() => signOut()} 
-            className="w-full justify-start p-0 hover:bg-transparent hover:text-brand-bronze text-brand-stone/60"
-          >
-            <LogOut size={18} className="mr-3" /> Uitloggen
-          </Button>
-        </div>
-      </aside>
-
-      {/* Main Content */}
       <main className="flex-1 p-12">
         <header className="mb-12">
-          <h1 className="font-serif text-4xl">Welkom terug</h1>
-          <p className="text-brand-dark/60">Beheer hier de inhoud van uw website.</p>
+          <h1 className="font-serif text-4xl mb-2">Dashboard</h1>
+          <p className="text-brand-dark/60">Welkom terug. Hier is een overzicht van uw website.</p>
         </header>
 
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-3 gap-8 mb-12">
           <div className="bg-white p-8 border border-brand-dark/5 shadow-sm">
-            <h3 className="font-serif text-xl mb-4">Projecten</h3>
-            <p className="text-sm text-brand-dark/60 mb-6">Voeg nieuwe realisaties toe of bewerk bestaande projecten.</p>
-            <Button asChild className="bg-brand-dark text-white rounded-none">
-              <Link href="/admin/projects">Beheer Projecten</Link>
-            </Button>
+            <div className="flex items-center gap-4 mb-4">
+                <div className="w-12 h-12 bg-brand-stone flex items-center justify-center text-brand-bronze">
+                    <FolderKanban size={24} />
+                </div>
+                <div>
+                    <span className="text-[10px] uppercase tracking-widest text-brand-dark/40 block">Projecten</span>
+                    <span className="text-3xl font-serif">{stats.projects}</span>
+                </div>
+            </div>
           </div>
-          
-          <div className="bg-white p-8 border border-brand-dark/5 shadow-sm opacity-50">
-            <h3 className="font-serif text-xl mb-4">Aanvragen</h3>
-            <p className="text-sm text-brand-dark/60 mb-6">Binnenkort: Bekijk hier alle binnengekomen offerte-aanvragen.</p>
-            <Button disabled className="bg-brand-dark text-white rounded-none">Bekijk Aanvragen</Button>
+
+          <div className="bg-white p-8 border border-brand-dark/5 shadow-sm">
+            <div className="flex items-center gap-4 mb-4">
+                <div className="w-12 h-12 bg-brand-stone flex items-center justify-center text-brand-bronze">
+                    <MessageSquare size={24} />
+                </div>
+                <div>
+                    <span className="text-[10px] uppercase tracking-widest text-brand-dark/40 block">Aanvragen</span>
+                    <span className="text-3xl font-serif">{stats.leads}</span>
+                </div>
+            </div>
           </div>
+
+          <div className="bg-white p-8 border border-brand-dark/5 shadow-sm">
+            <div className="flex items-center gap-4 mb-4">
+                <div className="w-12 h-12 bg-brand-stone flex items-center justify-center text-brand-bronze">
+                    <TrendingUp size={24} />
+                </div>
+                <div>
+                    <span className="text-[10px] uppercase tracking-widest text-brand-dark/40 block">Status</span>
+                    <span className="text-sm font-medium text-green-600">Online</span>
+                </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-12">
+            <div className="bg-white p-8 border border-brand-dark/5 shadow-sm">
+                <h3 className="font-serif text-xl mb-8 flex items-center gap-2">
+                    <Clock size={20} className="text-brand-bronze" /> Recente Aanvragen
+                </h3>
+                
+                <div className="space-y-6">
+                    {stats.recentLeads.length === 0 ? (
+                        <p className="text-sm text-brand-dark/40 italic">Nog geen aanvragen ontvangen.</p>
+                    ) : (
+                        stats.recentLeads.map((lead) => (
+                            <div key={lead.id} className="flex justify-between items-center border-b border-brand-dark/5 pb-4 last:border-0">
+                                <div>
+                                    <p className="font-medium">{lead.name}</p>
+                                    <p className="text-xs text-brand-dark/40">{lead.email}</p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-[10px] font-mono text-brand-dark/40">
+                                        {format(new Date(lead.created_at), "d MMM", { locale: nl })}
+                                    </p>
+                                    <span className="text-[10px] uppercase tracking-widest text-brand-bronze">Nieuw</span>
+                                </div>
+                            </div>
+                        ))
+                    )}
+                </div>
+            </div>
+
+            <div className="bg-brand-dark text-brand-stone p-8 flex flex-col justify-between">
+                <div>
+                    <h3 className="font-serif text-2xl mb-4">Snelkoppelingen</h3>
+                    <p className="text-brand-stone/40 text-sm mb-8">Beheer direct uw belangrijkste onderdelen.</p>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                    <button onClick={() => router.push('/admin/projects/new')} className="border border-white/10 p-4 text-left hover:bg-white/5 transition-colors">
+                        <span className="text-[10px] uppercase tracking-widest block mb-2">Project</span>
+                        <span className="font-serif text-lg">Toevoegen</span>
+                    </button>
+                    <button onClick={() => router.push('/admin/leads')} className="border border-white/10 p-4 text-left hover:bg-white/5 transition-colors">
+                        <span className="text-[10px] uppercase tracking-widest block mb-2">Aanvragen</span>
+                        <span className="font-serif text-lg">Bekijken</span>
+                    </button>
+                </div>
+            </div>
         </div>
       </main>
     </div>

@@ -3,11 +3,12 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/components/auth/auth-provider";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Mail, Phone, MapPin, Calendar } from "lucide-react";
-import Link from "next/link";
+import { Loader2, Mail, Phone, MapPin, Calendar, CheckCircle2, Circle } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
+import { AdminSidebar } from "@/components/admin/admin-sidebar";
+import { cn } from "@/lib/utils";
 
 export default function AdminLeadsPage() {
   const { user, loading: authLoading } = useAuth();
@@ -35,6 +36,21 @@ export default function AdminLeadsPage() {
     setLoading(false);
   };
 
+  const toggleStatus = async (id: string, currentStatus: string) => {
+    const newStatus = currentStatus === 'nieuw' ? 'gecontacteerd' : 'nieuw';
+    const { error } = await supabase
+      .from("leads")
+      .update({ status: newStatus })
+      .eq("id", id);
+
+    if (error) {
+      toast.error("Fout bij bijwerken status");
+    } else {
+      setLeads(leads.map(l => l.id === id ? { ...l, status: newStatus } : l));
+      toast.success(`Status bijgewerkt naar ${newStatus}`);
+    }
+  };
+
   if (authLoading || loading) {
     return (
       <div className="min-h-screen bg-brand-stone flex items-center justify-center">
@@ -45,22 +61,7 @@ export default function AdminLeadsPage() {
 
   return (
     <div className="min-h-screen bg-brand-stone flex">
-      <aside className="w-64 bg-brand-dark text-brand-stone p-8 flex flex-col">
-        <div className="mb-12">
-          <h2 className="font-serif text-xl italic">Van Roey Admin</h2>
-        </div>
-        <nav className="flex-1 space-y-4">
-          <Link href="/admin" className="flex items-center gap-3 hover:text-brand-bronze transition-colors">
-            Overzicht
-          </Link>
-          <Link href="/admin/projects" className="flex items-center gap-3 hover:text-brand-bronze transition-colors">
-            Projecten
-          </Link>
-          <Link href="/admin/leads" className="flex items-center gap-3 text-brand-bronze">
-            Aanvragen
-          </Link>
-        </nav>
-      </aside>
+      <AdminSidebar />
 
       <main className="flex-1 p-12">
         <header className="mb-12">
@@ -75,13 +76,30 @@ export default function AdminLeadsPage() {
             </div>
           ) : (
             leads.map((lead) => (
-              <div key={lead.id} className="bg-white p-8 border border-brand-dark/5 shadow-sm">
+              <div key={lead.id} className={cn(
+                "bg-white p-8 border border-brand-dark/5 shadow-sm transition-opacity",
+                lead.status === 'gecontacteerd' ? 'opacity-60' : 'opacity-100'
+              )}>
                 <div className="flex justify-between items-start mb-6">
                   <div>
-                    <h3 className="font-serif text-2xl mb-1">{lead.name}</h3>
+                    <div className="flex items-center gap-3 mb-1">
+                        <h3 className="font-serif text-2xl">{lead.name}</h3>
+                        <button 
+                            onClick={() => toggleStatus(lead.id, lead.status)}
+                            className={cn(
+                                "flex items-center gap-1 text-[10px] uppercase tracking-widest px-2 py-1 border transition-colors",
+                                lead.status === 'nieuw' 
+                                    ? "border-brand-bronze text-brand-bronze hover:bg-brand-bronze hover:text-white" 
+                                    : "border-green-600 text-green-600 hover:bg-green-600 hover:text-white"
+                            )}
+                        >
+                            {lead.status === 'nieuw' ? <Circle size={10} /> : <CheckCircle2 size={10} />}
+                            {lead.status}
+                        </button>
+                    </div>
                     <div className="flex gap-4 text-sm text-brand-dark/40">
-                        <span className="flex items-center gap-1"><Mail size={14} /> {lead.email}</span>
-                        <span className="flex items-center gap-1"><Phone size={14} /> {lead.phone}</span>
+                        <a href={`mailto:${lead.email}`} className="flex items-center gap-1 hover:text-brand-bronze transition-colors"><Mail size={14} /> {lead.email}</a>
+                        <a href={`tel:${lead.phone}`} className="flex items-center gap-1 hover:text-brand-bronze transition-colors"><Phone size={14} /> {lead.phone}</a>
                         <span className="flex items-center gap-1"><MapPin size={14} /> {lead.postal_code}</span>
                     </div>
                   </div>

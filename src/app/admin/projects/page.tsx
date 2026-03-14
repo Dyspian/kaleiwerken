@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Plus, Edit, Trash2, ExternalLink, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
+import { AdminSidebar } from "@/components/admin/admin-sidebar";
 
 export default function AdminProjectsPage() {
   const { user, loading: authLoading } = useAuth();
@@ -57,20 +58,7 @@ export default function AdminProjectsPage() {
 
   return (
     <div className="min-h-screen bg-brand-stone flex">
-      {/* Sidebar */}
-      <aside className="w-64 bg-brand-dark text-brand-stone p-8 flex flex-col">
-        <div className="mb-12">
-          <h2 className="font-serif text-xl italic">Van Roey Admin</h2>
-        </div>
-        <nav className="flex-1 space-y-4">
-          <Link href="/admin" className="flex items-center gap-3 hover:text-brand-bronze transition-colors">
-            Overzicht
-          </Link>
-          <Link href="/admin/projects" className="flex items-center gap-3 text-brand-bronze">
-            Projecten
-          </Link>
-        </nav>
-      </aside>
+      <AdminSidebar />
 
       <main className="flex-1 p-12">
         <div className="flex justify-between items-end mb-12">
