@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Loader2, Save, Upload, X, Image as ImageIcon } from "lucide-react";
+import { Loader2, Save, X, Plus } from "lucide-react";
 import Link from "next/link";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -16,12 +16,12 @@ import { useRouter } from "next/navigation";
 
 const projectSchema = z.object({
   title: z.string().min(2, "Titel is verplicht"),
-  subtitle: z.string().optional(),
-  description: z.string().optional(),
-  location: z.string().optional(),
-  year: z.string().optional(),
-  category: z.string().optional(),
-  image_url: z.string().optional(),
+  subtitle: z.string().nullable().optional(),
+  description: z.string().nullable().optional(),
+  location: z.string().nullable().optional(),
+  year: z.string().nullable().optional(),
+  category: z.string().nullable().optional(),
+  images: z.array(z.string()),
 });
 
 type ProjectFormValues = z.infer<typeof projectSchema>;
@@ -34,65 +34,65 @@ interface ProjectFormProps {
 export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(initialData?.image_url || null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<ProjectFormValues>({
     resolver: zodResolver(projectSchema),
-    defaultValues: initialData || {
-      title: "",
-      subtitle: "",
-      description: "",
-      location: "",
-      year: new Date().getFullYear().toString(),
-      category: "Kaleiwerken",
-      image_url: "",
+    defaultValues: {
+      title: initialData?.title || "",
+      subtitle: initialData?.subtitle || "",
+      description: initialData?.description || "",
+      location: initialData?.location || "",
+      year: initialData?.year || new Date().getFullYear().toString(),
+      category: initialData?.category || "Kaleiwerken",
+      images: initialData?.images || [],
     }
   });
 
-  const currentImageUrl = watch("image_url");
+  const currentImages = watch("images") || [];
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    // Validatie
-    if (!file.type.startsWith('image/')) {
-      toast.error("Selecteer a.u.b. een afbeelding");
-      return;
-    }
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
 
     setUploading(true);
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
-    const filePath = `projects/${fileName}`;
+    const newImages = [...currentImages];
 
-    try {
-      const { error: uploadError, data } = await supabase.storage
-        .from('portfolio-images')
-        .upload(filePath, file);
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (!file.type.startsWith('image/')) continue;
 
-      if (uploadError) throw uploadError;
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+      const filePath = `projects/${fileName}`;
 
-      const { data: { publicUrl } } = supabase.storage
-        .from('portfolio-images')
-        .getPublicUrl(filePath);
+      try {
+        const { error: uploadError } = await supabase.storage
+          .from('portfolio-images')
+          .upload(filePath, file);
 
-      setValue("image_url", publicUrl);
-      setPreviewUrl(publicUrl);
-      toast.success("Afbeelding geüpload");
-    } catch (error: any) {
-      toast.error("Upload mislukt: " + error.message);
-    } finally {
-      setUploading(false);
+        if (uploadError) throw uploadError;
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('portfolio-images')
+          .getPublicUrl(filePath);
+
+        newImages.push(publicUrl);
+      } catch (error: any) {
+        toast.error(`Upload mislukt voor ${file.name}: ` + error.message);
+      }
     }
+
+    setValue("images", newImages);
+    toast.success("Afbeeldingen geüpload");
+    setUploading(false);
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  const removeImage = () => {
-    setValue("image_url", "");
-    setPreviewUrl(null);
-    if (fileInputRef.current) fileInputRef.current.value = "";
+  const removeImage = (index: number) => {
+    const newImages = currentImages.filter((_, i) => i !== index);
+    setValue("images", newImages);
   };
 
   const onSubmit = async (data: ProjectFormValues) => {
@@ -108,6 +108,7 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
     const projectData = {
       ...data,
       user_id: user.id,
+      image_url: data.images.length > 0 ? data.images[0] : null,
     };
 
     try {
@@ -138,7 +139,7 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 max-w-3xl">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 max-w-4xl">
       <div className="grid md:grid-cols-2 gap-8">
         <div className="space-y-2">
           <Label>Titel</Label>
@@ -163,43 +164,50 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
       </div>
 
       <div className="space-y-4">
-        <Label>Project Afbeelding</Label>
-        <div className="flex flex-col gap-4">
-          {previewUrl ? (
-            <div className="relative aspect-video w-full max-w-md bg-brand-stone overflow-hidden border border-brand-dark/5">
-              <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
+        <Label>Project Galerij (Eerste foto is de hoofdfoto)</Label>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {currentImages.map((url, index) => (
+            <div key={index} className="relative aspect-square bg-brand-stone overflow-hidden border border-brand-dark/5 group">
+              <img src={url} alt={`Preview ${index}`} className="w-full h-full object-cover" />
               <button 
                 type="button" 
-                onClick={removeImage}
-                className="absolute top-2 right-2 p-1 bg-brand-dark text-white hover:bg-brand-bronze transition-colors"
+                onClick={() => removeImage(index)}
+                className="absolute top-2 right-2 p-1 bg-brand-dark text-white hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100"
               >
-                <X size={16} />
+                <X size={14} />
               </button>
-            </div>
-          ) : (
-            <div 
-              onClick={() => fileInputRef.current?.click()}
-              className="aspect-video w-full max-w-md border-2 border-dashed border-brand-dark/10 flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-brand-bronze hover:bg-brand-stone/30 transition-all"
-            >
-              {uploading ? (
-                <Loader2 className="animate-spin text-brand-bronze" size={32} />
-              ) : (
-                <>
-                  <ImageIcon className="text-brand-dark/20" size={48} />
-                  <span className="text-xs uppercase tracking-widest text-brand-dark/40">Klik om te uploaden</span>
-                </>
+              {index === 0 && (
+                <div className="absolute bottom-0 left-0 right-0 bg-brand-bronze text-white text-[8px] uppercase tracking-widest py-1 text-center">
+                  Hoofdfoto
+                </div>
               )}
             </div>
-          )}
-          <input 
-            type="file" 
-            ref={fileInputRef}
-            onChange={handleFileUpload}
-            className="hidden" 
-            accept="image/*"
-          />
-          <input type="hidden" {...register("image_url")} />
+          ))}
+          
+          <button 
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
+            className="aspect-square border-2 border-dashed border-brand-dark/10 flex flex-col items-center justify-center gap-2 hover:border-brand-bronze hover:bg-brand-stone/30 transition-all disabled:opacity-50"
+          >
+            {uploading ? (
+              <Loader2 className="animate-spin text-brand-bronze" size={24} />
+            ) : (
+              <>
+                <Plus className="text-brand-dark/20" size={32} />
+                <span className="text-[10px] uppercase tracking-widest text-brand-dark/40">Foto toevoegen</span>
+              </>
+            )}
+          </button>
         </div>
+        <input 
+          type="file" 
+          ref={fileInputRef}
+          onChange={handleFileUpload}
+          className="hidden" 
+          accept="image/*"
+          multiple
+        />
       </div>
 
       <div className="space-y-2">
