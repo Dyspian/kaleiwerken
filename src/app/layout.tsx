@@ -4,6 +4,7 @@ import "./globals.css";
 import { SmoothScroll } from "@/components/layout/smooth-scroll";
 import { Loader } from "@/components/layout/loader";
 import { ScrollProgress } from "@/components/layout/scroll-progress";
+import { AuthProvider } from "@/components/auth/auth-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,12 +37,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} antialiased`}
       >
-        <div className="noise-overlay" />
-        <ScrollProgress />
-        <Loader />
-        <SmoothScroll>
-            {children}
-        </SmoothScroll>
+        <AuthProvider>
+          <div className="noise-overlay" />
+          <ScrollProgress />
+          <Loader />
+          <SmoothScroll>
+              {children}
+          </SmoothScroll>
+        </AuthProvider>
       </body>
     </html>
   );
