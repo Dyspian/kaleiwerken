@@ -26,11 +26,12 @@ export const Hero = () => {
                 style={{ y, scale }}
                 className="absolute inset-0 z-0"
             >
-                <div className="absolute inset-0 bg-brand-dark/40 z-10 mix-blend-multiply" />
-                <div className="absolute inset-0 bg-gradient-to-t from-brand-dark/80 via-transparent to-transparent z-10" />
+                {/* Subtle Black Overlay */}
+                <div className="absolute inset-0 bg-black/40 z-10" />
+                
                 <Image
-                    src="/KALEIwerken-Vincent-Van-Roey-1.jpg"
-                    alt="Authentieke kaleiwerken detail"
+                    src="https://sjfosmcpbekkokmedwil.supabase.co/storage/v1/object/public/hero/hero.jpeg"
+                    alt="Authentieke kaleiwerken"
                     fill
                     className="object-cover object-center"
                     priority
@@ -101,7 +102,6 @@ export const Hero = () => {
                                     group
                                 "
                             >
-                                {/* Kalei texture overlay - Removed repeating linear gradient (lines) */}
                                 <span
                                     aria-hidden="true"
                                     className="
@@ -114,7 +114,6 @@ export const Hero = () => {
                                     "
                                 />
 
-                                {/* Brick bevel edges - Removed top highlight line */}
                                 <span
                                     aria-hidden="true"
                                     className="
