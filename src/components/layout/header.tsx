@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -29,7 +28,7 @@ export const Header = () => {
     { href: "/offerte", label: "Offerte", primary: true },
   ];
 
-  const logoUrl = "https://sjfosmcpbekkokmedwil.supabase.co/storage/v1/object/sign/logo/logo.jpeg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV85ZjFlYzljYS0wYTI5LTRhZDYtYWY5My0yYWFhZjJmZmNiNzEiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJsb2dvL2xvZ28uanBlZyIsImlhdCI6MTc3MzUwODQ5MiwiZXhwIjoyMDg4ODY4NDkyfQ.dO-m7b8PYebCDIsHA2fSGeY5be0kA43sXEl6wdz76nA";
+  const logoUrl = "https://sjfosmcpbekkokmedwil.supabase.co/storage/v1/object/sign/logo/logo.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV85ZjFlYzljYS0wYTI5LTRhZDYtYWY5My0yYWFhZjJmZmNiNzEiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJsb2dvL2xvZ28ucG5nIiwiaWF0IjoxNzczNTA4ODM3LCJleHAiOjIwODg4Njg4Mzd9._JsyJFoJNsHg_-6zXibQmbbFoZoXAComlXyobGwVb4c";
 
   return (
     <>
@@ -54,24 +53,12 @@ export const Header = () => {
       <div className="container mx-auto px-6 h-20 md:h-24 flex justify-between items-center relative z-10">
         
         {/* Logo */}
-        <Link href="/" className="group flex items-center gap-3">
-          <div className={cn(
-            "relative w-12 h-12 flex items-center justify-center border transition-colors duration-500 overflow-hidden bg-white",
-            scrolled ? "border-brand-dark/20 group-hover:border-brand-bronze" : "border-brand-white/40 group-hover:border-brand-white"
-          )}>
-             <img 
-                src={logoUrl} 
-                alt="Van Roey Logo" 
-                className="w-full h-full object-cover"
-             />
-          </div>
-          <div className="flex flex-col uppercase tracking-[0.2em] leading-none">
-            <span className="text-sm font-medium">Van Roey</span>
-            <span className={cn(
-                "text-[10px] transition-colors mt-1",
-                scrolled ? "text-brand-dark/50 group-hover:text-brand-bronze" : "text-brand-white/60 group-hover:text-brand-white"
-            )}>Kaleiwerken</span>
-          </div>
+        <Link href="/" className="group flex items-center">
+          <img 
+            src={logoUrl} 
+            alt="Van Roey Logo" 
+            className="h-12 md:h-16 w-auto object-contain transition-transform duration-500 group-hover:scale-105"
+          />
         </Link>
 
         {/* Desktop Nav */}
