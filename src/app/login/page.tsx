@@ -29,6 +29,8 @@ export default function LoginPage() {
         
         <Auth
           supabaseClient={supabase}
+          view="sign_in"
+          showLinks={false}
           appearance={{ 
             theme: ThemeSupa,
             variables: {
@@ -51,6 +53,10 @@ export default function LoginPage() {
             }
           }}
         />
+        
+        <p className="mt-8 text-center text-[10px] uppercase tracking-widest text-brand-dark/30">
+          Toegang alleen voor geautoriseerde gebruikers
+        </p>
       </div>
     </div>
   );
