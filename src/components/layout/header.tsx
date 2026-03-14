@@ -39,26 +39,23 @@ export const Header = () => {
         }}
         animate={hidden ? "hidden" : "visible"}
         transition={{ duration: 0.35, ease: "easeInOut" }}
-        className={cn(
-            "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
-            scrolled ? "text-brand-dark" : "text-brand-white"
-        )}
+        className="fixed top-0 left-0 right-0 z-50 text-brand-dark"
     >
-        {/* Dynamic Background */}
+        {/* Permanent Background for visibility */}
         <div className={cn(
-            "absolute inset-0 bg-brand-stone/95 backdrop-blur-md border-b border-brand-dark/5 transition-opacity duration-500",
-            scrolled ? "opacity-100" : "opacity-0"
+            "absolute inset-0 bg-brand-stone/95 backdrop-blur-md border-b border-brand-dark/5 transition-shadow duration-500",
+            scrolled ? "shadow-sm" : "shadow-none"
         )} />
 
       <div className="container mx-auto px-6 h-20 md:h-24 flex justify-between items-center relative z-10">
         
-        {/* Logo with Overlay Technique */}
+        {/* Centered Logo with Overlay Technique */}
         <Link href="/" className="group relative w-32 md:w-48 h-full flex items-center">
-          <div className="absolute top-0 left-0 h-[140%] md:h-[160%] w-auto flex items-center pointer-events-none">
+          <div className="absolute top-1/2 -translate-y-1/2 left-0 h-[140%] md:h-[160%] w-auto flex items-center pointer-events-none">
             <img 
                 src={logoUrl} 
                 alt="Van Roey Logo" 
-                className="h-full w-auto object-contain transition-transform duration-500 group-hover:scale-105 origin-top-left pointer-events-auto"
+                className="h-full w-auto object-contain transition-transform duration-500 group-hover:scale-105 origin-left pointer-events-auto"
             />
           </div>
         </Link>
@@ -120,10 +117,7 @@ export const Header = () => {
                 className="relative text-xs uppercase tracking-widest hover:opacity-70 transition-opacity group py-2"
               >
                 {link.label}
-                <span className={cn(
-                    "absolute bottom-0 left-0 w-0 h-[1px] transition-all duration-300 ease-out group-hover:w-full",
-                    scrolled ? "bg-brand-dark" : "bg-brand-white"
-                )}></span>
+                <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-brand-dark transition-all duration-300 ease-out group-hover:w-full"></span>
               </Link>
             )
           )}
