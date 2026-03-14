@@ -52,13 +52,15 @@ export const Header = () => {
 
       <div className="container mx-auto px-6 h-20 md:h-24 flex justify-between items-center relative z-10">
         
-        {/* Logo */}
-        <Link href="/" className="group flex items-center">
-          <img 
-            src={logoUrl} 
-            alt="Van Roey Logo" 
-            className="h-12 md:h-16 w-auto object-contain transition-transform duration-500 group-hover:scale-105"
-          />
+        {/* Logo with Overlay Technique */}
+        <Link href="/" className="group relative w-32 md:w-48 h-full flex items-center">
+          <div className="absolute top-0 left-0 h-[140%] md:h-[160%] w-auto flex items-center pointer-events-none">
+            <img 
+                src={logoUrl} 
+                alt="Van Roey Logo" 
+                className="h-full w-auto object-contain transition-transform duration-500 group-hover:scale-105 origin-top-left pointer-events-auto"
+            />
+          </div>
         </Link>
 
         {/* Desktop Nav */}
