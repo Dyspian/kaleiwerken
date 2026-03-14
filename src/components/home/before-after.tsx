@@ -24,8 +24,8 @@ export const BeforeAfter = () => {
             <p className="text-brand-dark/40 italic font-serif">Sleep om het resultaat te onthullen</p>
         </motion.div>
         
-        {/* Changed aspect ratio to 16/9 to show more of the image height (zoom out effect) */}
-        <div className="relative w-full max-w-5xl mx-auto aspect-video bg-brand-stone overflow-hidden shadow-2xl border border-brand-dark/5 group cursor-ew-resize select-none">
+        {/* Changed aspect ratio to 16/10 to show more height (zoom out effect) */}
+        <div className="relative w-full max-w-5xl mx-auto aspect-[16/10] bg-brand-stone overflow-hidden shadow-2xl border border-brand-dark/5 group cursor-ew-resize select-none">
             
             {/* After Image (Base layer) */}
             <div className="absolute inset-0">
@@ -43,12 +43,13 @@ export const BeforeAfter = () => {
                 className="absolute inset-0 overflow-hidden z-10 border-r border-white/30"
                 style={{ width: `${sliderPosition}%` }}
             >
-                {/* This inner div must be the full width of the parent container to keep images aligned */}
+                {/* The image inside the clipped div must be the same size as the container to align */}
                 <div className="absolute inset-0 w-[calc(100vw-48px)] max-w-[1024px] h-full"> 
                     <img 
                       src={beforeImage} 
                       alt="Voor kaleiwerken" 
                       className="w-full h-full object-cover"
+                      style={{ width: '1024px', maxWidth: 'none' }}
                     />
                     <div className="absolute inset-0 bg-black/15"></div>
                 </div>
