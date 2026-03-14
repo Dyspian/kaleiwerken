@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, ChevronLeft, Loader2, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
 
 const formSchema = z.object({
   projectType: z.enum(["gevel", "binnen", "totaal", "renovatie"]),
@@ -48,13 +49,28 @@ export const QuoteWizard = () => {
 
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
-    // Simulate API call
-    console.log("Submitting:", data);
-    setTimeout(() => {
-      setIsSubmitting(false);
+    
+    const { error } = await supabase
+      .from("leads")
+      .insert({
+        project_type: data.projectType,
+        surface_area: data.surfaceArea,
+        surface_type: data.surfaceType,
+        timing: data.timing,
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        postal_code: data.postalCode,
+      });
+
+    if (error) {
+      toast.error("Er is iets misgegaan bij het verzenden.");
+      console.error(error);
+    } else {
       setIsSuccess(true);
       toast.success("Aanvraag succesvol verstuurd");
-    }, 1500);
+    }
+    setIsSubmitting(false);
   };
 
   const nextStep = () => setStep(s => Math.min(s + 1, 3));
@@ -84,7 +100,6 @@ export const QuoteWizard = () => {
 
   return (
     <div className="w-full h-full bg-white p-8 md:p-12 lg:p-16 shadow-2xl border border-brand-dark/5 relative flex flex-col">
-      {/* Progress Bar */}
       <div className="absolute top-0 left-0 w-full h-[2px] bg-brand-stone">
         <motion.div 
             className="h-full bg-brand-bronze"

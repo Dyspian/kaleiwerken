@@ -1,4 +1,4 @@
-import { ProjectForm } from "../../../../../components/admin/project-form";
+import { ProjectForm } from "@/components/admin/project-form";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
