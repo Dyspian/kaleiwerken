@@ -29,6 +29,8 @@ export const Header = () => {
     { href: "/offerte", label: "Offerte", primary: true },
   ];
 
+  const logoUrl = "https://sjfosmcpbekkokmedwil.supabase.co/storage/v1/object/sign/logo/logo.jpeg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV85ZjFlYzljYS0wYTI5LTRhZDYtYWY5My0yYWFhZjJmZmNiNzEiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJsb2dvL2xvZ28uanBlZyIsImlhdCI6MTc3MzUwODQ5MiwiZXhwIjoyMDg4ODY4NDkyfQ.dO-m7b8PYebCDIsHA2fSGeY5be0kA43sXEl6wdz76nA";
+
   return (
     <>
     <motion.header 
@@ -54,10 +56,14 @@ export const Header = () => {
         {/* Logo */}
         <Link href="/" className="group flex items-center gap-3">
           <div className={cn(
-            "relative w-10 h-10 flex items-center justify-center border transition-colors duration-500 overflow-hidden",
+            "relative w-12 h-12 flex items-center justify-center border transition-colors duration-500 overflow-hidden bg-white",
             scrolled ? "border-brand-dark/20 group-hover:border-brand-bronze" : "border-brand-white/40 group-hover:border-brand-white"
           )}>
-             <span className="font-serif text-2xl font-bold italic relative z-10 leading-none pb-1">V</span>
+             <img 
+                src={logoUrl} 
+                alt="Van Roey Logo" 
+                className="w-full h-full object-cover"
+             />
           </div>
           <div className="flex flex-col uppercase tracking-[0.2em] leading-none">
             <span className="text-sm font-medium">Van Roey</span>
@@ -91,7 +97,6 @@ export const Header = () => {
                   uppercase text-[10px] tracking-[0.2em]
                 "
               >
-                {/* Kalei texture overlay - Removed repeating linear gradient (lines) */}
                 <span
                   aria-hidden="true"
                   className="
@@ -104,7 +109,6 @@ export const Header = () => {
                   "
                 />
 
-                {/* Brick bevel edges - Removed top highlight line */}
                 <span
                   aria-hidden="true"
                   className="
@@ -156,7 +160,6 @@ export const Header = () => {
             transition={{ duration: 0.4 }}
             className="fixed inset-0 z-[60] bg-brand-dark text-brand-stone flex flex-col"
           >
-            {/* Texture */}
             <div className="absolute inset-0 bg-texture opacity-5 pointer-events-none" />
 
             <div className="container mx-auto px-6 h-24 flex justify-between items-center border-b border-brand-white/10">
