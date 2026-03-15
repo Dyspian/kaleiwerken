@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, ChevronLeft, Loader2, ArrowRight } from "lucide-react";
+import { Check, ChevronLeft, Loader2, ArrowRight, Home, Building, Wrench, Paintbrush } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -25,7 +25,7 @@ const formSchema = z.object({
   postalCode: z.string().min(4, "Ongeldige postcode"),
 });
 
-type FormValues = z.infer<typeof formSchema>;
+export type FormValues = z.infer<typeof formSchema>;
 
 const steps = [
   { id: 1, title: "Project" },
@@ -33,12 +33,23 @@ const steps = [
   { id: 3, title: "Contact" },
 ];
 
-export const QuoteWizard = () => {
+const projectTypeIcons = {
+  gevel: Home,
+  binnen: Building,
+  totaal: Paintbrush,
+  renovatie: Wrench,
+};
+
+interface QuoteWizardProps {
+  onFormChange?: (data: FormValues, currentStep: number) => void;
+}
+
+export const QuoteWizard = ({ onFormChange }: QuoteWizardProps) => {
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const { register, handleSubmit, formState: { errors }, watch, setValue } = useForm<FormValues>({
+  const { register, handleSubmit, formState: { errors }, watch, setValue, getValues } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       projectType: "gevel",
@@ -46,6 +57,14 @@ export const QuoteWizard = () => {
       timing: "1-3_maanden",
     }
   });
+
+  const formValues = watch();
+
+  useEffect(() => {
+    if (onFormChange) {
+      onFormChange(formValues, step);
+    }
+  }, [formValues, step, onFormChange]);
 
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
@@ -73,7 +92,33 @@ export const QuoteWizard = () => {
     setIsSubmitting(false);
   };
 
-  const nextStep = () => setStep(s => Math.min(s + 1, 3));
+  const nextStep = () => {
+    // Basic validation before moving to next step
+    let isValid = true;
+    if (step === 1) {
+      if (!getValues('projectType')) {
+        toast.error("Selecteer een projecttype.");
+        isValid = false;
+      }
+    } else if (step === 2) {
+      if (!getValues('surfaceArea') || errors.surfaceArea) {
+        toast.error("Vul de oppervlakte correct in.");
+        isValid = false;
+      }
+      if (!getValues('surfaceType')) {
+        toast.error("Selecteer een ondergrondtype.");
+        isValid = false;
+      }
+      if (!getValues('timing')) {
+        toast.error("Selecteer een timing.");
+        isValid = false;
+      }
+    }
+
+    if (isValid) {
+      setStep(s => Math.min(s + 1, 3));
+    }
+  };
   const prevStep = () => setStep(s => Math.max(s - 1, 1));
 
   if (isSuccess) {
@@ -127,25 +172,30 @@ export const QuoteWizard = () => {
             >
               <h3 className="text-brand-dark/50 font-light text-lg mb-8">Wat voor type project betreft het?</h3>
               <div className="grid grid-cols-2 gap-6">
-                {['gevel', 'binnen', 'totaal', 'renovatie'].map((type) => (
-                    <label key={type} className={cn(
-                        "cursor-pointer border p-8 hover:border-brand-bronze transition-all group relative overflow-hidden aspect-square flex flex-col justify-between",
-                        watch('projectType') === type ? 'border-brand-bronze bg-brand-stone/30' : 'border-brand-dark/10 bg-transparent'
-                    )}>
-                        <input 
-                            type="radio" 
-                            value={type} 
-                            {...register('projectType')} 
-                            className="sr-only"
-                        />
-                        <div className="w-2 h-2 rounded-full bg-brand-bronze opacity-0 group-hover:opacity-100 transition-opacity self-end mb-auto" />
-                        
-                        <div>
-                            <div className="relative z-10 capitalize font-serif text-2xl mb-2 group-hover:translate-x-1 transition-transform">{type}</div>
-                            <div className="relative z-10 text-[10px] text-brand-dark/40 uppercase tracking-wider group-hover:text-brand-bronze transition-colors">Selecteer</div>
-                        </div>
-                    </label>
-                ))}
+                {['gevel', 'binnen', 'totaal', 'renovatie'].map((type) => {
+                    const Icon = projectTypeIcons[type as keyof typeof projectTypeIcons];
+                    return (
+                        <label key={type} className={cn(
+                            "cursor-pointer border p-8 hover:border-brand-bronze transition-all group relative overflow-hidden aspect-square flex flex-col justify-between",
+                            watch('projectType') === type ? 'border-brand-bronze bg-brand-stone/30' : 'border-brand-dark/10 bg-transparent'
+                        )}>
+                            <input 
+                                type="radio" 
+                                value={type} 
+                                {...register('projectType')} 
+                                className="sr-only"
+                            />
+                            <div className="w-10 h-10 rounded-full bg-brand-stone/50 flex items-center justify-center mb-auto border border-brand-dark/10 group-hover:border-brand-bronze group-hover:bg-brand-bronze/10 transition-all duration-500">
+                                <Icon className="w-5 h-5 text-brand-dark/60 group-hover:text-brand-bronze transition-colors" />
+                            </div>
+                            
+                            <div>
+                                <div className="relative z-10 capitalize font-serif text-2xl mb-2 group-hover:translate-x-1 transition-transform">{type}</div>
+                                <div className="relative z-10 text-[10px] text-brand-dark/40 uppercase tracking-wider group-hover:text-brand-bronze transition-colors">Selecteer</div>
+                            </div>
+                        </label>
+                    );
+                })}
               </div>
             </motion.div>
           )}
