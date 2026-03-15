@@ -4,7 +4,7 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { QuoteWizard, FormValues } from "@/components/quote/quote-wizard";
 import { Check, Home, Building, Wrench, Paintbrush, Ruler, Layers, Clock, User, Mail, Phone, MapPin } from "lucide-react";
-import { useState } from "react";
+import { useState, useCallback } from "react"; // Import useCallback
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -55,10 +55,11 @@ export default function OffertePage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<FormValues | null>(null);
 
-  const handleFormChange = (data: FormValues, step: number) => {
+  // Memoize handleFormChange using useCallback
+  const handleFormChange = useCallback((data: FormValues, step: number) => {
     setFormData(data);
     setCurrentStep(step);
-  };
+  }, []); // Dependencies are empty because setFormData and setCurrentStep are stable
 
   const currentContent = statusMessages[currentStep as keyof typeof statusMessages];
   const ProjectIcon = formData?.projectType ? projectTypeIcons[formData.projectType as keyof typeof projectTypeIcons] : null;
