@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, FolderKanban, LogOut, User, MessageSquare } from "lucide-react";
+import { LayoutDashboard, FolderKanban, LogOut, User, MessageSquare, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/auth/auth-provider";
 import { cn } from "@/lib/utils";
@@ -43,6 +43,16 @@ export const AdminSidebar = () => {
             </Link>
           );
         })}
+        
+        <div className="pt-4 mt-4 border-t border-white/5">
+            <Link 
+                href="/" 
+                target="_blank"
+                className="flex items-center gap-3 px-4 py-3 text-brand-stone/40 hover:text-brand-stone transition-colors text-xs uppercase tracking-widest"
+            >
+                <ExternalLink size={14} /> Bekijk Website
+            </Link>
+        </div>
       </nav>
 
       <div className="pt-8 border-t border-white/10">

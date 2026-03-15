@@ -4,14 +4,31 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 
 export const revalidate = 0;
 
-export default async function ProjectenPage() {
-  const { data: projects } = await supabase
+export default async function ProjectenPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ category?: string }>;
+}) {
+  const { category } = await searchParams;
+
+  let query = supabase
     .from("projects")
     .select("*")
     .order("created_at", { ascending: false });
+
+  if (category && category !== "alle") {
+    query = query.eq("category", category);
+  }
+
+  const { data: projects } = await query;
+
+  // Haal unieke categorieën op voor de filters
+  const { data: allProjects } = await supabase.from("projects").select("category");
+  const categories = ["alle", ...Array.from(new Set(allProjects?.map(p => p.category).filter(Boolean)))];
 
   return (
     <main className="min-h-screen bg-brand-stone text-brand-dark font-sans selection:bg-brand-bronze/30">
@@ -26,15 +43,35 @@ export default async function ProjectenPage() {
                 </h1>
             </div>
             
-            <p className="text-xl md:text-2xl text-brand-dark/60 max-w-sm font-light leading-relaxed mt-12 md:mt-0 text-right md:text-left self-end">
-                Een selectie van projecten waar vakmanschap en esthetiek samenkomen.
-            </p>
+            <div className="mt-12 md:mt-0">
+                <p className="text-xl text-brand-dark/60 max-w-sm font-light leading-relaxed mb-8">
+                    Een selectie van projecten waar vakmanschap en esthetiek samenkomen.
+                </p>
+                
+                {/* Category Filters */}
+                <div className="flex flex-wrap gap-3">
+                    {categories.map((cat) => (
+                        <Link
+                            key={cat}
+                            href={cat === "alle" ? "/projecten" : `/projecten?category=${cat}`}
+                            className={cn(
+                                "px-4 py-2 text-[10px] uppercase tracking-widest border transition-all duration-300",
+                                (category === cat || (!category && cat === "alle"))
+                                    ? "bg-brand-dark text-white border-brand-dark"
+                                    : "border-brand-dark/10 text-brand-dark/40 hover:border-brand-bronze hover:text-brand-bronze"
+                            )}
+                        >
+                            {cat}
+                        </Link>
+                    ))}
+                </div>
+            </div>
         </div>
 
         <div className="grid md:grid-cols-2 gap-x-12 gap-y-24">
             {!projects || projects.length === 0 ? (
                 <div className="col-span-2 py-24 text-center">
-                    <p className="text-brand-dark/40 italic">Binnenkort verschijnen hier onze eerste realisaties.</p>
+                    <p className="text-brand-dark/40 italic">Geen projecten gevonden in deze categorie.</p>
                 </div>
             ) : (
                 projects.map((project) => (
