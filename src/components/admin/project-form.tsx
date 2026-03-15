@@ -23,6 +23,7 @@ const projectSchema = z.object({
   year: z.string().nullable().optional(),
   category: z.string().nullable().optional(),
   images: z.array(z.string()),
+  image_url: z.string().nullable().optional(), // De geselecteerde hero image
 });
 
 type ProjectFormValues = z.infer<typeof projectSchema>;
@@ -48,10 +49,12 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
       year: initialData?.year || new Date().getFullYear().toString(),
       category: initialData?.category || "Kaleiwerken",
       images: initialData?.images || [],
+      image_url: initialData?.image_url || null,
     }
   });
 
   const currentImages = watch("images") || [];
+  const heroImage = watch("image_url");
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -93,6 +96,10 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
         }
 
         setValue("images", newImages);
+        // Als er nog geen hero image is, stel de eerste nieuwe in als hero
+        if (!heroImage && newImages.length > 0) {
+            setValue("image_url", newImages[0]);
+        }
         toast.success(`${files.length} afbeelding(en) geüpload`);
     } catch (error: any) {
         toast.error("Fout bij uploaden: " + error.message);
@@ -103,21 +110,19 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
   };
 
   const removeImage = (index: number) => {
+    const removedUrl = currentImages[index];
     const newImages = currentImages.filter((_, i) => i !== index);
     setValue("images", newImages);
+    
+    // Als de hero image verwijderd wordt, kies een nieuwe of zet op null
+    if (heroImage === removedUrl) {
+        setValue("image_url", newImages.length > 0 ? newImages[0] : null);
+    }
   };
 
-  const moveImage = (index: number, direction: 'left' | 'right') => {
-    const newImages = [...currentImages];
-    const newIndex = direction === 'left' ? index - 1 : index + 1;
-    
-    if (newIndex < 0 || newIndex >= newImages.length) return;
-    
-    const temp = newImages[index];
-    newImages[index] = newImages[newIndex];
-    newImages[newIndex] = temp;
-    
-    setValue("images", newImages);
+  const setAsHero = (url: string) => {
+    setValue("image_url", url);
+    toast.success("Ingesteld als banner foto");
   };
 
   const onSubmit = async (data: ProjectFormValues) => {
@@ -133,7 +138,8 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
     const projectData = {
       ...data,
       user_id: user.id,
-      image_url: data.images.length > 0 ? data.images[0] : null,
+      // Zorg dat er altijd een image_url is als er images zijn
+      image_url: data.image_url || (data.images.length > 0 ? data.images[0] : null),
     };
 
     try {
@@ -206,7 +212,7 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
         <div className="flex justify-between items-end">
             <div>
                 <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40 block mb-1">Project Galerij</Label>
-                <p className="text-xs text-brand-dark/40">De eerste foto wordt gebruikt als omslagfoto.</p>
+                <p className="text-xs text-brand-dark/40">Klik op een foto om deze als banner (hero) in te stellen.</p>
             </div>
             <Button 
                 type="button"
@@ -222,10 +228,14 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {currentImages.map((url, index) => (
-            <div key={index} className={cn(
-                "relative aspect-[4/5] bg-brand-stone overflow-hidden border group transition-all",
-                index === 0 ? "border-brand-bronze ring-1 ring-brand-bronze" : "border-brand-dark/5"
-            )}>
+            <div 
+                key={index} 
+                className={cn(
+                    "relative aspect-[4/5] bg-brand-stone overflow-hidden border group transition-all cursor-pointer",
+                    heroImage === url ? "border-brand-bronze ring-2 ring-brand-bronze" : "border-brand-dark/5"
+                )}
+                onClick={() => setAsHero(url)}
+            >
               <img src={url} alt={`Preview ${index}`} className="w-full h-full object-cover" />
               
               {/* Overlay Controls */}
@@ -233,36 +243,24 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
                 <div className="flex justify-end">
                     <button 
                         type="button" 
-                        onClick={() => removeImage(index)}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            removeImage(index);
+                        }}
                         className="p-1.5 bg-red-600 text-white hover:bg-red-700 transition-colors"
                     >
                         <X size={14} />
                     </button>
                 </div>
                 
-                <div className="flex justify-between gap-1">
-                    <button 
-                        type="button" 
-                        disabled={index === 0}
-                        onClick={() => moveImage(index, 'left')}
-                        className="flex-1 p-1.5 bg-white/20 backdrop-blur-md text-white hover:bg-white/40 transition-colors disabled:opacity-20"
-                    >
-                        <ChevronLeft size={14} className="mx-auto" />
-                    </button>
-                    <button 
-                        type="button" 
-                        disabled={index === currentImages.length - 1}
-                        onClick={() => moveImage(index, 'right')}
-                        className="flex-1 p-1.5 bg-white/20 backdrop-blur-md text-white hover:bg-white/40 transition-colors disabled:opacity-20"
-                    >
-                        <ChevronRight size={14} className="mx-auto" />
-                    </button>
+                <div className="text-center text-[8px] uppercase tracking-widest text-white bg-brand-dark/60 py-1">
+                    {heroImage === url ? "Huidige Banner" : "Stel in als banner"}
                 </div>
               </div>
 
-              {index === 0 && (
+              {heroImage === url && (
                 <div className="absolute top-2 left-2 bg-brand-bronze text-white text-[8px] uppercase tracking-widest px-2 py-1 flex items-center gap-1">
-                  <ImageIcon size={10} /> Hoofdfoto
+                  <ImageIcon size={10} /> Banner Foto
                 </div>
               )}
             </div>
