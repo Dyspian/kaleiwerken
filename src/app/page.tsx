@@ -5,7 +5,6 @@ import { SocialProof } from "@/components/home/social-proof";
 import { Features } from "@/components/home/features";
 import { BeforeAfter } from "@/components/home/before-after";
 import { Process } from "@/components/home/process";
-import { ColorVisualizer } from "@/components/home/color-visualizer";
 import { QuoteWizard } from "@/components/quote/quote-wizard";
 import { Toaster } from "@/components/ui/sonner";
 import { Loader } from "@/components/layout/loader";
@@ -68,7 +67,6 @@ export default function Home() {
       <div className="bg-brand-stone">
         <BeforeAfter />
         <Features />
-        <ColorVisualizer />
         <Process />
 
         <section id="offerte" className="py-32 bg-brand-white relative overflow-hidden">
