@@ -6,6 +6,7 @@ import { Features } from "@/components/home/features";
 import { BeforeAfter } from "@/components/home/before-after";
 import { Process } from "@/components/home/process";
 import { ColorVisualizer } from "@/components/home/color-visualizer";
+import { Anatomy } from "@/components/home/anatomy";
 import { QuoteWizard } from "@/components/quote/quote-wizard";
 import { Toaster } from "@/components/ui/sonner";
 import { Loader } from "@/components/layout/loader";
@@ -22,6 +23,7 @@ export default function Home() {
       <div className="bg-brand-stone">
         <BeforeAfter />
         <Features />
+        <Anatomy />
         <ColorVisualizer />
         <Process />
 
