@@ -6,14 +6,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Loader2, Save, X, Plus, ChevronLeft, ChevronRight, Image as ImageIcon, Info } from "lucide-react";
+import { Loader2, Save, X, Plus, Image as ImageIcon, Info } from "lucide-react";
 import Link from "next/link";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import dynamic from "next/dynamic";
+import 'react-quill/dist/quill.snow.css'; // Import Quill styles
+
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 const projectSchema = z.object({
   title: z.string().min(2, "Titel is verplicht"),
@@ -24,7 +27,6 @@ const projectSchema = z.object({
   category: z.string().nullable().optional(),
   images: z.array(z.string()),
   image_url: z.string().nullable().optional(),
-  // Specifications stored in the stats jsonb column
   technique: z.string().optional(),
   finishing: z.string().optional(),
   pigment: z.string().optional(),
@@ -44,7 +46,6 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
-  // Extract stats if they exist
   const stats = initialData?.stats || {};
 
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<ProjectFormValues>({
@@ -67,6 +68,7 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
 
   const currentImages = watch("images") || [];
   const heroImage = watch("image_url");
+  const description = watch("description");
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -145,7 +147,6 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
       return;
     }
 
-    // Prepare stats object
     const stats = {
       technique: data.technique,
       finishing: data.finishing,
@@ -226,13 +227,17 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
                 <Input {...register("subtitle")} className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze" placeholder="Korte beschrijving voor de lijst" />
             </div>
             <div className="space-y-2">
-                <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Uitgebreide beschrijving</Label>
-                <Textarea {...register("description")} className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze min-h-[150px] leading-relaxed" placeholder="Vertel meer over de gebruikte technieken en materialen..." />
+                <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40 mb-2 block">Uitgebreide beschrijving</Label>
+                <ReactQuill 
+                    theme="snow" 
+                    value={description || ''} 
+                    onChange={(content) => setValue("description", content === "<p><br></p>" ? "" : content)} 
+                    className="bg-white rounded-none border-brand-dark/10"
+                />
             </div>
         </div>
       </div>
 
-      {/* Specifications Section */}
       <div className="space-y-8 pt-8 border-t border-brand-dark/5">
         <div className="flex items-center gap-2 mb-4">
             <Info size={16} className="text-brand-bronze" />
