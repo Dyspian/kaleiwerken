@@ -73,7 +73,7 @@ export const Loader = () => {
             </div>
             
             <div className="flex justify-between w-full max-w-[200px] mt-2 text-[10px] uppercase tracking-widest text-white/30 font-mono">
-                <span>Est. 1998</span>
+                <span>Est. 2015</span>
                 <span>Antwerpen</span>
             </div>
           </div>

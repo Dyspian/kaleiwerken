@@ -51,7 +51,7 @@ export const Hero = () => {
                 >
                     <div className="flex items-center gap-3 mb-6 opacity-80">
                         <span className="h-[1px] w-8 bg-brand-white/60"></span>
-                        <span className="uppercase text-xs tracking-[0.25em] font-medium">Sinds 1998</span>
+                        <span className="uppercase text-xs tracking-[0.25em] font-medium">Sinds 2015</span>
                     </div>
 
                     <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl xl:text-9xl leading-[0.9] md:leading-[0.9] tracking-tight mb-8">
