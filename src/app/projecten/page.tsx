@@ -3,8 +3,9 @@ import { Footer } from "@/components/layout/footer";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import Image from "next/image";
 
-export const revalidate = 0; // Altijd verse data
+export const revalidate = 0;
 
 export default async function ProjectenPage() {
   const { data: projects } = await supabase
@@ -44,10 +45,13 @@ export default async function ProjectenPage() {
                     >
                         <div className="relative aspect-[3/4] overflow-hidden mb-6 bg-brand-dark/5">
                             {project.image_url ? (
-                                <img 
+                                <Image 
                                     src={project.image_url} 
                                     alt={project.title}
-                                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                                    fill
+                                    className="object-cover transition-transform duration-1000 group-hover:scale-105"
+                                    sizes="(max-width: 768px) 100vw, 50vw"
+                                    unoptimized={project.image_url.includes('supabase.co')}
                                 />
                             ) : (
                                 <div className="absolute inset-0 bg-brand-bronze/10 flex items-center justify-center">

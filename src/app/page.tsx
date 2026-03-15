@@ -7,10 +7,12 @@ import { BeforeAfter } from "@/components/home/before-after";
 import { Process } from "@/components/home/process";
 import { QuoteWizard } from "@/components/quote/quote-wizard";
 import { Toaster } from "@/components/ui/sonner";
+import { Loader } from "@/components/layout/loader";
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-brand-white text-brand-dark font-sans selection:bg-brand-bronze/30">
+      <Loader />
       <Header />
       
       <Hero />

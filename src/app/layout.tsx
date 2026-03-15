@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { SmoothScroll } from "@/components/layout/smooth-scroll";
-import { Loader } from "@/components/layout/loader";
 import { ScrollProgress } from "@/components/layout/scroll-progress";
 import { AuthProvider } from "@/components/auth/auth-provider";
 
@@ -40,7 +39,6 @@ export default function RootLayout({
         <AuthProvider>
           <div className="noise-overlay" />
           <ScrollProgress />
-          <Loader />
           <SmoothScroll>
               {children}
           </SmoothScroll>

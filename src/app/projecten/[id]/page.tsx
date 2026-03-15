@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowLeft, Calendar, MapPin } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { notFound } from "next/navigation";
+import Image from "next/image";
 
 export const revalidate = 0;
 
@@ -29,7 +30,14 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
       <section className="h-[70vh] relative flex items-end pb-24 px-6 md:px-12 bg-brand-dark overflow-hidden">
         <div className="absolute inset-0 bg-brand-dark/40 z-10" />
         {images.length > 0 ? (
-            <img src={images[0]} alt={project.title} className="absolute inset-0 w-full h-full object-cover opacity-70" />
+            <Image 
+                src={images[0]} 
+                alt={project.title} 
+                fill 
+                className="object-cover opacity-70" 
+                priority
+                unoptimized={images[0].includes('supabase.co')}
+            />
         ) : (
             <div className="absolute inset-0 bg-gradient-to-br from-brand-dark to-brand-bronze/20 opacity-50"></div>
         )}
@@ -78,11 +86,14 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
         {images.length > 1 && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {images.slice(1).map((url: string, idx: number) => (
-                    <div key={idx} className="aspect-[4/3] overflow-hidden bg-brand-dark/5 border border-brand-dark/5">
-                        <img 
+                    <div key={idx} className="relative aspect-[4/3] overflow-hidden bg-brand-dark/5 border border-brand-dark/5">
+                        <Image 
                             src={url} 
                             alt={`${project.title} detail ${idx + 1}`} 
-                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-1000"
+                            fill
+                            className="object-cover hover:scale-105 transition-transform duration-1000"
+                            sizes="(max-width: 768px) 100vw, 50vw"
+                            unoptimized={url.includes('supabase.co')}
                         />
                     </div>
                 ))}
