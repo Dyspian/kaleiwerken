@@ -29,6 +29,11 @@ export const metadata: Metadata = {
   },
   description: "Specialist in authentieke kaleiwerken met een hoogwaardige afwerking. Al 10 jaar ervaring in gevelrenovatie voor binnen en buiten in Antwerpen en omstreken.",
   keywords: ["kaleiwerken", "gevelrenovatie", "kalei", "Antwerpen", "gevelreiniging", "authentieke kalei", "Van Roey"],
+  icons: {
+    icon: "https://sjfosmcpbekkokmedwil.supabase.co/storage/v1/object/public/favicon/favicon.png",
+    shortcut: "https://sjfosmcpbekkokmedwil.supabase.co/storage/v1/object/public/favicon/favicon.png",
+    apple: "https://sjfosmcpbekkokmedwil.supabase.co/storage/v1/object/public/favicon/favicon.png",
+  },
   authors: [{ name: "Van Roey Kaleiwerken" }],
   creator: "Van Roey",
   openGraph: {
