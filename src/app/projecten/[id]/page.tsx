@@ -8,7 +8,7 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Metadata } from "next";
 
-export const revalidate = 0;
+export const revalidate = 3600; // Revalidate data every hour
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
@@ -62,7 +62,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                     fill 
                     className="object-cover" 
                     priority
-                    unoptimized={heroImage.includes('supabase.co')}
+                    // unoptimized={heroImage.includes('supabase.co')} // Removed unoptimized prop
                 />
             ) : (
                 <div className="absolute inset-0 bg-brand-dark"></div>
@@ -224,7 +224,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                                 alt={`Project detail ${idx + 1}`} 
                                 fill 
                                 className="object-cover transition-transform duration-1000 group-hover:scale-105"
-                                unoptimized={url.includes('supabase.co')}
+                                // unoptimized={url.includes('supabase.co')} // Removed unoptimized prop
                             />
                             <div className="absolute inset-0 bg-brand-dark/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
                         </div>

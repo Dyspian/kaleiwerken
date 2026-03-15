@@ -36,7 +36,7 @@ export const Hero = () => {
                     className="object-cover object-center"
                     priority
                     quality={90}
-                    unoptimized
+                    // unoptimized // Removed unoptimized prop
                 />
             </motion.div>
 
