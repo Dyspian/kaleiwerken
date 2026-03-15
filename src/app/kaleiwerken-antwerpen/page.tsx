@@ -61,7 +61,7 @@ export default function KaleiwerkenAntwerpenPage() {
                     alt="Kaleiwerken Antwerpen" 
                     fill 
                     className="object-cover"
-                    // unoptimized // Removed unoptimized prop
+                    unoptimized
                 />
             </div>
         </div>

@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
-export const revalidate = 3600; // Revalidate data every hour
+export const revalidate = 0;
 
 export default async function ProjectenPage({
   searchParams,
@@ -83,7 +83,7 @@ export default async function ProjectenPage({
                                     fill
                                     className="object-cover transition-transform duration-1000 group-hover:scale-105"
                                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                    // unoptimized={project.image_url.includes('supabase.co')} // Removed unoptimized prop
+                                    unoptimized={project.image_url.includes('supabase.co')}
                                 />
                             ) : (
                                 <div className="absolute inset-0 flex items-center justify-center">
