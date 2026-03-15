@@ -9,10 +9,56 @@ import { ColorVisualizer } from "@/components/home/color-visualizer";
 import { QuoteWizard } from "@/components/quote/quote-wizard";
 import { Toaster } from "@/components/ui/sonner";
 import { Loader } from "@/components/layout/loader";
+import Script from "next/script";
 
 export default function Home() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Van Roey Kaleiwerken",
+    "image": "https://vanroey-kalei.be/og-image.jpg",
+    "@id": "https://vanroey-kalei.be",
+    "url": "https://vanroey-kalei.be",
+    "telephone": "+32470123456",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Kaleiweg 12",
+      "addressLocality": "Antwerpen",
+      "postalCode": "2000",
+      "addressCountry": "BE"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 51.2194,
+      "longitude": 4.4025
+    },
+    "openingHoursSpecification": {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+      ],
+      "opens": "08:00",
+      "closes": "18:00"
+    },
+    "sameAs": [
+      "https://www.facebook.com/vanroeykalei",
+      "https://www.instagram.com/vanroeykalei"
+    ],
+    "priceRange": "$$",
+    "description": "Specialist in authentieke kaleiwerken en gevelrenovatie in Antwerpen."
+  };
+
   return (
     <main className="min-h-screen bg-brand-white text-brand-dark font-sans selection:bg-brand-bronze/30">
+      <Script
+        id="structured-data"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Loader />
       <Header />
       

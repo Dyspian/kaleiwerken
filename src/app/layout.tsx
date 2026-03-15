@@ -22,8 +22,48 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Van Roey Kaleiwerken | Premium Gevelrenovatie",
-  description: "Specialist in authentieke kaleiwerken met een hoogwaardige afwerking.",
+  metadataBase: new URL("https://vanroey-kalei.be"),
+  title: {
+    default: "Van Roey Kaleiwerken | Specialist in Authentieke Gevelrenovatie",
+    template: "%s | Van Roey Kaleiwerken"
+  },
+  description: "Specialist in authentieke kaleiwerken met een hoogwaardige afwerking. Al 10 jaar ervaring in gevelrenovatie voor binnen en buiten in Antwerpen en omstreken.",
+  keywords: ["kaleiwerken", "gevelrenovatie", "kalei", "Antwerpen", "gevelreiniging", "authentieke kalei", "Van Roey"],
+  authors: [{ name: "Van Roey Kaleiwerken" }],
+  creator: "Van Roey",
+  openGraph: {
+    type: "website",
+    locale: "nl_BE",
+    url: "https://vanroey-kalei.be",
+    siteName: "Van Roey Kaleiwerken",
+    title: "Van Roey Kaleiwerken | Premium Gevelrenovatie",
+    description: "Ontdek de kunst van authentieke kaleiwerken. Specialist in duurzame gevelrenovatie met handgemengde pigmenten.",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Van Roey Kaleiwerken Realisatie",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Van Roey Kaleiwerken | Premium Gevelrenovatie",
+    description: "Specialist in authentieke kaleiwerken met een hoogwaardige afwerking.",
+    images: ["/og-image.jpg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
 };
 
 export default function RootLayout({

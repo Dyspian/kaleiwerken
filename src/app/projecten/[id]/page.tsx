@@ -6,8 +6,24 @@ import { supabase } from "@/integrations/supabase/client";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { Metadata } from "next";
 
 export const revalidate = 0;
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  const { data: project } = await supabase.from("projects").select("*").eq("id", id).single();
+
+  if (!project) return { title: "Project niet gevonden" };
+
+  return {
+    title: `${project.title} | Realisaties`,
+    description: project.subtitle || `Bekijk onze realisatie van ${project.title} in ${project.location}. Authentieke kaleiwerken door Van Roey.`,
+    openGraph: {
+      images: project.image_url ? [project.image_url] : [],
+    },
+  };
+}
 
 export default async function ProjectPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
