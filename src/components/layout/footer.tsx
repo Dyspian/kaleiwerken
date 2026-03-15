@@ -1,7 +1,7 @@
 import { siteContent } from "@/content/site";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { MadeWithElmony } from "@/components/made-with-elmony";
+import { MadeByImpresslink } from "@/components/made-by-impresslink";
 
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -60,7 +60,7 @@ export const Footer = () => {
                 <Link href="/terms" className="hover:text-brand-stone transition-colors">Terms</Link>
             </div>
           </div>
-          <MadeWithElmony />
+          <MadeByImpresslink />
         </div>
       </div>
     </footer>
