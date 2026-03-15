@@ -17,7 +17,7 @@ export const Footer = () => {
           <div className="md:col-span-5 lg:col-span-4">
             <h3 className="text-2xl font-serif font-bold italic mb-8">Van Roey Kaleiwerken</h3>
             <p className="text-brand-stone/60 text-lg leading-relaxed max-w-sm font-light">
-              Specialist in authentieke gevelrenovatie en kaleiwerken met een hoogwaardige afwerking.
+              Al 10 jaar specialist in authentieke gevelrenovatie en kaleiwerken met een hoogwaardige afwerking.
             </p>
           </div>
           
@@ -35,6 +35,7 @@ export const Footer = () => {
               <h4 className="text-xs uppercase tracking-[0.2em] text-brand-bronze mb-8">Menu</h4>
               <ul className="space-y-4 text-sm font-light text-brand-stone/80">
                 <li><Link href="/" className="hover:text-white transition-colors flex items-center gap-2 group">Home <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" /></Link></li>
+                <li><Link href="/over-ons" className="hover:text-white transition-colors flex items-center gap-2 group">Over Ons <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" /></Link></li>
                 <li><Link href="/projecten" className="hover:text-white transition-colors flex items-center gap-2 group">Realisaties <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" /></Link></li>
                 <li><Link href="/offerte" className="hover:text-white transition-colors flex items-center gap-2 group">Offerte aanvragen <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" /></Link></li>
               </ul>
@@ -45,7 +46,6 @@ export const Footer = () => {
                <ul className="space-y-4 text-sm font-light text-brand-stone/80">
                  <li><a href="#" className="hover:text-white transition-colors">Instagram</a></li>
                  <li><a href="#" className="hover:text-white transition-colors">Facebook</a></li>
-                 <li><a href="#" className="hover:text-white transition-colors">LinkedIn</a></li>
                </ul>
             </div>
           </div>

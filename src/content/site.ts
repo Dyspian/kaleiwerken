@@ -8,38 +8,49 @@ export const siteContent = {
   },
   hero: {
     title: "Kaleiwerken met een premium afwerking.",
-    subtitle: "Duurzaam, ademend en tijdloos — uitgevoerd door Vincent Van Roey.",
+    subtitle: "Al 10 jaar specialist in authentieke kaleiwerken voor binnen en buiten. Een vast team van twee vakmensen voor een persoonlijke aanpak.",
     ctaPrimary: "Vraag offerte aan",
     ctaSecondary: "Bekijk realisaties",
   },
+  about: {
+    title: "Vakmanschap & Passie",
+    subtitle: "10 jaar ervaring, één vast team.",
+    description: "Wij werken met een vast team van twee vakmensen. Hierdoor kunnen we elk project persoonlijk opvolgen en garanderen we een zorgvuldige en kwalitatieve uitvoering van begin tot einde. Onze passie ligt in het herstellen van de authentieke uitstraling van uw woning.",
+    features: [
+      "10 jaar gespecialiseerde ervaring",
+      "Vast team van 2 vakmensen",
+      "Eigen pigmentmenging",
+      "Binnen- en buitenprojecten"
+    ]
+  },
   socialProof: {
     items: [
-      "Vrijblijvende offerte",
-      "Vakkundige plaatsing",
-      "Duidelijke planning",
-      "Netjes afgewerkt",
-      "Actief in heel Vlaanderen",
+      "10 jaar ervaring",
+      "Vast team van 2",
+      "Eigen pigmenten",
+      "Binnen & Buiten",
+      "Incl. herstellingen",
     ],
   },
   benefits: [
     {
-      title: "Beschermt de gevel",
-      desc: "Een duurzame laag die beschermt tegen weer en wind.",
+      title: "Ademende bescherming",
+      desc: "Kalei geeft een authentieke look en laat muren ademen, wat vochtproblemen voorkomt.",
     },
     {
-      title: "Tijdloze uitstraling",
-      desc: "De authentieke structuur geeft karakter aan elke woning.",
+      title: "Minerale pigmenten",
+      desc: "Wij mengen onze kleuren zelf met minerale pigmenten voor een unieke, natuurlijke uitstraling.",
     },
     {
-      title: "Ademend materiaal",
-      desc: "Natuurlijke kalk laat muren ademen en voorkomt vochtproblemen.",
+      title: "Hydrofuge afwerking",
+      desc: "Optionele waterafstotende behandeling voor extra bescherming tegen vocht en vuil.",
     },
   ],
   process: [
-    { step: 1, title: "Opmeting", desc: "We komen langs voor advies." },
-    { step: 2, title: "Advies & Kleur", desc: "Samen kiezen we de perfecte look." },
-    { step: 3, title: "Uitvoering", desc: "Vakkundige plaatsing met oog voor detail." },
-    { step: 4, title: "Oplevering", desc: "We vertrekken pas als u tevreden bent." },
+    { step: 1, title: "Advies & Kleur", desc: "Samen kiezen we de juiste kalei en mengen we pigmenten op maat." },
+    { step: 2, title: "Voorbereiding", desc: "Grondige reiniging en herstel van voegen of beschadigde stenen." },
+    { step: 3, title: "Uitvoering", desc: "Vakkundige plaatsing door ons vast team van twee specialisten." },
+    { step: 4, title: "Bescherming", desc: "Oplevering met optionele hydrofuge voor een jarenlang resultaat." },
   ],
   faq: [
     {

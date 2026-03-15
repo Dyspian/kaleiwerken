@@ -24,6 +24,7 @@ export const Header = () => {
 
   const navLinks = [
     { href: "/", label: "Home" },
+    { href: "/over-ons", label: "Over Ons" },
     { href: "/projecten", label: "Realisaties" },
     { href: "/offerte", label: "Offerte", primary: true },
   ];
@@ -41,7 +42,6 @@ export const Header = () => {
         transition={{ duration: 0.35, ease: "easeInOut" }}
         className="fixed top-0 left-0 right-0 z-50 text-brand-dark"
     >
-        {/* Permanent Background for visibility */}
         <div className={cn(
             "absolute inset-0 bg-brand-stone/95 backdrop-blur-md border-b border-brand-dark/5 transition-shadow duration-500",
             scrolled ? "shadow-sm" : "shadow-none"
@@ -49,7 +49,6 @@ export const Header = () => {
 
       <div className="container mx-auto px-6 h-20 md:h-24 flex justify-between items-center relative z-10">
         
-        {/* Centered Logo with Overlay Technique */}
         <Link href="/" className="group relative w-32 md:w-48 h-full flex items-center">
           <div className="absolute top-1/2 -translate-y-1/2 left-0 h-[140%] md:h-[160%] w-auto flex items-center pointer-events-none">
             <img 
@@ -60,8 +59,7 @@ export const Header = () => {
           </div>
         </Link>
 
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-12">
+        <nav className="hidden md:flex items-center gap-10">
           {navLinks.map((link) =>
             link.primary ? (
               <Link
@@ -94,27 +92,13 @@ export const Header = () => {
                     ]
                   "
                 />
-
-                <span
-                  aria-hidden="true"
-                  className="
-                    pointer-events-none absolute inset-0
-                    rounded-xl
-                    [box-shadow:
-                      inset_0_-10px_18px_rgba(0,0,0,0.35),
-                      inset_10px_0_18px_rgba(0,0,0,0.18),
-                      inset_-10px_0_18px_rgba(0,0,0,0.18)
-                    ]
-                  "
-                />
-
                 <span className="relative z-10">{link.label}</span>
               </Link>
             ) : (
               <Link
                 key={link.href}
                 href={link.href}
-                className="relative text-xs uppercase tracking-widest hover:opacity-70 transition-opacity group py-2"
+                className="relative text-[10px] uppercase tracking-[0.2em] hover:opacity-70 transition-opacity group py-2"
               >
                 {link.label}
                 <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-brand-dark transition-all duration-300 ease-out group-hover:w-full"></span>
@@ -123,7 +107,6 @@ export const Header = () => {
           )}
         </nav>
 
-        {/* Mobile Toggle */}
         <button 
             className="md:hidden p-2 hover:opacity-70 transition-opacity" 
             onClick={() => setIsOpen(true)}
@@ -133,7 +116,6 @@ export const Header = () => {
       </div>
     </motion.header>
     
-    {/* Full Screen Mobile Menu Overlay */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -143,8 +125,6 @@ export const Header = () => {
             transition={{ duration: 0.4 }}
             className="fixed inset-0 z-[60] bg-brand-dark text-brand-stone flex flex-col"
           >
-            <div className="absolute inset-0 bg-texture opacity-5 pointer-events-none" />
-
             <div className="container mx-auto px-6 h-24 flex justify-between items-center border-b border-brand-white/10">
                 <span className="text-sm uppercase tracking-widest font-medium">Menu</span>
                 <button
@@ -176,25 +156,6 @@ export const Header = () => {
               </motion.div>
             ))}
             </nav>
-            
-            <motion.div 
-                initial={{ opacity: 0 }} 
-                animate={{ opacity: 1 }} 
-                transition={{ delay: 0.5 }}
-                className="p-8 border-t border-brand-white/10 grid grid-cols-2 gap-8"
-            >
-                <div>
-                    <h4 className="text-xs uppercase tracking-widest text-brand-white/40 mb-4">Contact</h4>
-                    <p className="font-serif text-lg leading-tight">info@vanroey.be<br/>+32 470 12 34 56</p>
-                </div>
-                <div>
-                    <h4 className="text-xs uppercase tracking-widest text-brand-white/40 mb-4">Socials</h4>
-                    <div className="flex gap-4 text-sm font-medium">
-                        <a href="#" className="hover:text-brand-bronze transition-colors">Instagram</a>
-                        <a href="#" className="hover:text-brand-bronze transition-colors">LinkedIn</a>
-                    </div>
-                </div>
-            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
