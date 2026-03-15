@@ -48,7 +48,7 @@ export default function Home() {
       "https://www.instagram.com/vanroeykalei"
     ],
     "priceRange": "$$",
-    "description": "Specialist in authentieke kaleiwerken en gevelrenovatie in Antwerpen."
+    "description": "Specialist in authentieke kaleiwerken en gevelrenovatie in Antwerpen en omstreken. Hoogwaardige afwerkingen voor een duurzaam resultaat."
   };
 
   return (

@@ -24,11 +24,11 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   metadataBase: new URL("https://vanroey-kalei.be"),
   title: {
-    default: "Van Roey Kaleiwerken | Specialist in Authentieke Gevelrenovatie",
+    default: "Van Roey Kaleiwerken | Kaleiwerken & Gevelrenovatie Antwerpen | Specialist",
     template: "%s | Van Roey Kaleiwerken"
   },
-  description: "Specialist in authentieke kaleiwerken met een hoogwaardige afwerking. Al 10 jaar ervaring in gevelrenovatie voor binnen en buiten in Antwerpen en omstreken.",
-  keywords: ["kaleiwerken", "gevelrenovatie", "kalei", "Antwerpen", "gevelreiniging", "authentieke kalei", "Van Roey"],
+  description: "Van Roey Kaleiwerken is uw specialist in authentieke kaleiwerken en duurzame gevelrenovatie in Antwerpen en omstreken. Met 10 jaar ervaring bieden wij hoogwaardige afwerkingen voor zowel binnen- als buitenprojecten. Vraag een vrijblijvende offerte aan!",
+  keywords: ["kaleiwerken", "gevelrenovatie", "kalei", "Antwerpen", "gevelreiniging", "authentieke kalei", "Van Roey", "gevels kaleien", "gevelspecialist", "gevelbekleding"],
   icons: {
     icon: "https://sjfosmcpbekkokmedwil.supabase.co/storage/v1/object/public/favicon/favicon.png",
     shortcut: "https://sjfosmcpbekkokmedwil.supabase.co/storage/v1/object/public/favicon/favicon.png",
@@ -41,8 +41,8 @@ export const metadata: Metadata = {
     locale: "nl_BE",
     url: "https://vanroey-kalei.be",
     siteName: "Van Roey Kaleiwerken",
-    title: "Van Roey Kaleiwerken | Premium Gevelrenovatie",
-    description: "Ontdek de kunst van authentieke kaleiwerken. Specialist in duurzame gevelrenovatie met handgemengde pigmenten.",
+    title: "Van Roey Kaleiwerken | Kaleiwerken & Gevelrenovatie Antwerpen | Specialist",
+    description: "Ontdek de kunst van authentieke kaleiwerken en duurzame gevelrenovatie in Antwerpen. Specialist in hoogwaardige afwerkingen met handgemengde pigmenten.",
     images: [
       {
         url: "/og-image.jpg",
@@ -54,8 +54,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Van Roey Kaleiwerken | Premium Gevelrenovatie",
-    description: "Specialist in authentieke kaleiwerken met een hoogwaardige afwerking.",
+    title: "Van Roey Kaleiwerken | Kaleiwerken & Gevelrenovatie Antwerpen | Specialist",
+    description: "Specialist in authentieke kaleiwerken en gevelrenovatie met een hoogwaardige afwerking in Antwerpen.",
     images: ["/og-image.jpg"],
   },
   robots: {
