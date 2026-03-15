@@ -21,7 +21,7 @@ const statusMessages = {
     subtitle: "Vul het formulier in voor een vrijblijvende offerte. Wij analyseren uw aanvraag en nemen binnen 48u contact op.",
     image: "https://sjfosmcpbekkokmedwil.supabase.co/storage/v1/object/public/offerte/offerte-step1.jpeg",
     points: [
-      "Meer dan 25 jaar ervaring in gevelrenovatie",
+      "Meer dan 10 jaar ervaring in kaleiwerken", // Aangepaste tekst
       "Gebruik van hoogwaardige, natuurlijke materialen",
       "Persoonlijke begeleiding van A tot Z",
       "Eén aanspreekpunt tijdens de werken"
