@@ -59,35 +59,51 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
     setUploading(true);
     const newImages = [...currentImages];
 
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      if (!file.type.startsWith('image/')) continue;
+    try {
+        // Bepaal de mapnaam (project-1, project-2, etc.)
+        let folderName = "";
+        if (isEditing && initialData?.id) {
+            // Gebruik bestaande ID of zoek mapnaam op
+            folderName = `project-${initialData.id.substring(0, 8)}`;
+        } else {
+            const { count } = await supabase.from('projects').select('*', { count: 'exact', head: true });
+            folderName = `project-${(count || 0) + 1}`;
+        }
 
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
-      const filePath = `projects/${fileName}`;
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            if (!file.type.startsWith('image/')) continue;
 
-      try {
-        const { error: uploadError } = await supabase.storage
-          .from('portfolio-images')
-          .upload(filePath, file);
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+            const filePath = `projects/${folderName}/${fileName}`;
 
-        if (uploadError) throw uploadError;
+            // 1. Upload het bestand
+            const { error: uploadError } = await supabase.storage
+                .from('portfolio-images')
+                .upload(filePath, file);
 
-        const { data: { publicUrl } } = supabase.storage
-          .from('portfolio-images')
-          .getPublicUrl(filePath);
+            if (uploadError) throw uploadError;
 
-        newImages.push(publicUrl);
-      } catch (error: any) {
-        toast.error(`Upload mislukt voor ${file.name}: ` + error.message);
-      }
+            // 2. Genereer een Signed URL met 10 jaar vervaltijd (315.360.000 seconden)
+            const { data: signedData, error: signedError } = await supabase.storage
+                .from('portfolio-images')
+                .createSignedUrl(filePath, 315360000);
+
+            if (signedError) throw signedError;
+
+            newImages.push(signedData.signedUrl);
+        }
+
+        setValue("images", newImages);
+        toast.success("Afbeeldingen succesvol geüpload");
+    } catch (error: any) {
+        console.error(error);
+        toast.error("Fout bij uploaden: " + error.message);
+    } finally {
+        setUploading(false);
+        if (fileInputRef.current) fileInputRef.current.value = "";
     }
-
-    setValue("images", newImages);
-    toast.success("Afbeeldingen geüpload");
-    setUploading(false);
-    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const removeImage = (index: number) => {
