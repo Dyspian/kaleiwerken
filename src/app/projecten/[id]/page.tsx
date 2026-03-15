@@ -40,6 +40,13 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
 
   const images = project.images || (project.image_url ? [project.image_url] : []);
   const heroImage = project.image_url || (images.length > 0 ? images[0] : null);
+  
+  // Extract dynamic stats or use defaults
+  const stats = project.stats || {};
+  const technique = stats.technique || "Kalei op maat";
+  const finishing = stats.finishing || "Hydrofuge";
+  const pigment = stats.pigment || "Mineraal";
+  const team = stats.team || "Vast team (2)";
 
   return (
     <main className="min-h-screen bg-brand-stone text-brand-dark font-sans selection:bg-brand-bronze/30">
@@ -155,19 +162,19 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                             <ul className="space-y-6">
                                 <li className="flex justify-between items-end border-b border-white/10 pb-2">
                                     <span className="text-xs text-white/40 uppercase tracking-widest">Techniek</span>
-                                    <span className="font-serif text-lg">Kalei op maat</span>
+                                    <span className="font-serif text-lg">{technique}</span>
                                 </li>
                                 <li className="flex justify-between items-end border-b border-white/10 pb-2">
                                     <span className="text-xs text-white/40 uppercase tracking-widest">Afwerking</span>
-                                    <span className="font-serif text-lg">Hydrofuge</span>
+                                    <span className="font-serif text-lg">{finishing}</span>
                                 </li>
                                 <li className="flex justify-between items-end border-b border-white/10 pb-2">
                                     <span className="text-xs text-white/40 uppercase tracking-widest">Pigment</span>
-                                    <span className="font-serif text-lg">Mineraal</span>
+                                    <span className="font-serif text-lg">{pigment}</span>
                                 </li>
                                 <li className="flex justify-between items-end border-b border-white/10 pb-2">
                                     <span className="text-xs text-white/40 uppercase tracking-widest">Team</span>
-                                    <span className="font-serif text-lg">Vast team (2)</span>
+                                    <span className="font-serif text-lg">{team}</span>
                                 </li>
                             </ul>
                         </div>
@@ -199,10 +206,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
 
             <div className="grid grid-cols-12 gap-4 md:gap-8">
                 {images.map((url: string, idx: number) => {
-                    // Create a sophisticated editorial grid pattern
                     const isFull = idx % 7 === 0;
                     const isLarge = idx % 7 === 1 || idx % 7 === 4;
-                    const isSmall = !isFull && !isLarge;
                     
                     return (
                         <div 

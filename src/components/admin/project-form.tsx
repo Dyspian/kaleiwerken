@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Loader2, Save, X, Plus, ChevronLeft, ChevronRight, Image as ImageIcon } from "lucide-react";
+import { Loader2, Save, X, Plus, ChevronLeft, ChevronRight, Image as ImageIcon, Info } from "lucide-react";
 import Link from "next/link";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -23,7 +23,12 @@ const projectSchema = z.object({
   year: z.string().nullable().optional(),
   category: z.string().nullable().optional(),
   images: z.array(z.string()),
-  image_url: z.string().nullable().optional(), // De geselecteerde hero image
+  image_url: z.string().nullable().optional(),
+  // Specifications stored in the stats jsonb column
+  technique: z.string().optional(),
+  finishing: z.string().optional(),
+  pigment: z.string().optional(),
+  team: z.string().optional(),
 });
 
 type ProjectFormValues = z.infer<typeof projectSchema>;
@@ -39,6 +44,9 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
+  // Extract stats if they exist
+  const stats = initialData?.stats || {};
+
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<ProjectFormValues>({
     resolver: zodResolver(projectSchema),
     defaultValues: {
@@ -50,6 +58,10 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
       category: initialData?.category || "Kaleiwerken",
       images: initialData?.images || [],
       image_url: initialData?.image_url || null,
+      technique: stats.technique || "Kalei op maat",
+      finishing: stats.finishing || "Hydrofuge",
+      pigment: stats.pigment || "Mineraal",
+      team: stats.team || "Vast team (2)",
     }
   });
 
@@ -96,7 +108,6 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
         }
 
         setValue("images", newImages);
-        // Als er nog geen hero image is, stel de eerste nieuwe in als hero
         if (!heroImage && newImages.length > 0) {
             setValue("image_url", newImages[0]);
         }
@@ -114,7 +125,6 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
     const newImages = currentImages.filter((_, i) => i !== index);
     setValue("images", newImages);
     
-    // Als de hero image verwijderd wordt, kies een nieuwe of zet op null
     if (heroImage === removedUrl) {
         setValue("image_url", newImages.length > 0 ? newImages[0] : null);
     }
@@ -135,11 +145,25 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
       return;
     }
 
+    // Prepare stats object
+    const stats = {
+      technique: data.technique,
+      finishing: data.finishing,
+      pigment: data.pigment,
+      team: data.team,
+    };
+
     const projectData = {
-      ...data,
-      user_id: user.id,
-      // Zorg dat er altijd een image_url is als er images zijn
+      title: data.title,
+      subtitle: data.subtitle,
+      description: data.description,
+      location: data.location,
+      year: data.year,
+      category: data.category,
+      images: data.images,
       image_url: data.image_url || (data.images.length > 0 ? data.images[0] : null),
+      user_id: user.id,
+      stats: stats,
     };
 
     try {
@@ -208,6 +232,33 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
         </div>
       </div>
 
+      {/* Specifications Section */}
+      <div className="space-y-8 pt-8 border-t border-brand-dark/5">
+        <div className="flex items-center gap-2 mb-4">
+            <Info size={16} className="text-brand-bronze" />
+            <h3 className="font-serif text-xl">Specificaties</h3>
+        </div>
+        
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="space-y-2">
+                <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Techniek</Label>
+                <Input {...register("technique")} className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze" placeholder="Bijv. Kalei op maat" />
+            </div>
+            <div className="space-y-2">
+                <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Afwerking</Label>
+                <Input {...register("finishing")} className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze" placeholder="Bijv. Hydrofuge" />
+            </div>
+            <div className="space-y-2">
+                <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Pigment</Label>
+                <Input {...register("pigment")} className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze" placeholder="Bijv. Mineraal" />
+            </div>
+            <div className="space-y-2">
+                <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Team</Label>
+                <Input {...register("team")} className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze" placeholder="Bijv. Vast team (2)" />
+            </div>
+        </div>
+      </div>
+
       <div className="space-y-6 pt-8 border-t border-brand-dark/5">
         <div className="flex justify-between items-end">
             <div>
@@ -238,7 +289,6 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
             >
               <img src={url} alt={`Preview ${index}`} className="w-full h-full object-cover" />
               
-              {/* Overlay Controls */}
               <div className="absolute inset-0 bg-brand-dark/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-between p-2">
                 <div className="flex justify-end">
                     <button 
