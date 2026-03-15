@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -59,20 +59,12 @@ export const QuoteWizard = ({ onFormChange }: QuoteWizardProps) => {
   });
 
   const formValues = watch();
-  const serializedFormValues = JSON.stringify(formValues); // Serialize for comparison
-  const prevSerializedFormValues = useRef(serializedFormValues);
-  const prevStepRef = useRef(step);
 
   useEffect(() => {
     if (onFormChange) {
-      // Only call onFormChange if serialized form values or step have actually changed
-      if (serializedFormValues !== prevSerializedFormValues.current || step !== prevStepRef.current) {
-        onFormChange(formValues, step);
-        prevSerializedFormValues.current = serializedFormValues;
-        prevStepRef.current = step;
-      }
+      onFormChange(formValues, step);
     }
-  }, [serializedFormValues, step, onFormChange, formValues]);
+  }, [formValues, step, onFormChange]);
 
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
