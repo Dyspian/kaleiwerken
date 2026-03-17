@@ -7,6 +7,8 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Metadata } from "next";
+import { getDictionary } from "@/lib/get-dictionary";
+import { Locale } from "@/lib/i18n-config";
 
 export const revalidate = 0;
 
@@ -25,8 +27,9 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   };
 }
 
-export default async function ProjectPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
+export default async function ProjectPage({ params }: { params: Promise<{ id: string; locale: Locale }> }) {
+  const { id, locale } = await params;
+  const dict = await getDictionary(locale) as any;
   
   const { data: project } = await supabase
     .from("projects")
@@ -41,7 +44,6 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
   const images = project.images || (project.image_url ? [project.image_url] : []);
   const heroImage = project.image_url || (images.length > 0 ? images[0] : null);
   
-  // Extract dynamic stats or use defaults
   const stats = project.stats || {};
   const technique = stats.technique || "Kalei op maat";
   const finishing = stats.finishing || "Hydrofuge";
@@ -50,9 +52,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
 
   return (
     <main className="min-h-screen bg-brand-stone text-brand-dark font-sans selection:bg-brand-bronze/30">
-      <Header />
+      <Header dict={dict} />
       
-      {/* Immersive Hero Section */}
       <section className="relative h-screen flex flex-col overflow-hidden">
         <div className="absolute inset-0 z-0">
             {heroImage ? (
@@ -72,42 +73,42 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
 
         <div className="relative z-20 container mx-auto px-6 md:px-12 flex-1 flex flex-col justify-end pb-24">
             <div className="max-w-4xl">
-                <Link href="/projecten" className="inline-flex items-center gap-2 text-white/60 hover:text-white mb-12 transition-colors uppercase text-[10px] tracking-[0.4em] group">
-                    <ArrowLeft className="w-3 h-3 group-hover:-translate-x-1 transition-transform" /> Terug naar portfolio
+                <Link href={`/${locale}/projecten`} className="inline-flex items-center gap-2 text-white/60 hover:text-white mb-12 transition-colors uppercase text-[10px] tracking-[0.4em] group">
+                    <ArrowLeft className="w-3 h-3 group-hover:-translate-x-1 transition-transform" /> {dict.projects.back}
                 </Link>
                 
-                <span className="text-brand-bronze font-mono text-xs uppercase tracking-[0.3em] mb-6 block">Project Realisatie</span>
+                <span className="text-brand-bronze font-mono text-xs uppercase tracking-[0.3em] mb-6 block">{dict.projects.realization}</span>
                 <h1 className="font-serif text-6xl md:text-8xl lg:text-9xl text-white leading-[0.85] mb-12 tracking-tighter">
                     {project.title}
                 </h1>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-12 pt-12 border-t border-white/20">
                     <div>
-                        <span className="text-white/40 text-[10px] uppercase tracking-widest block mb-2">Locatie</span>
+                        <span className="text-white/40 text-[10px] uppercase tracking-widest block mb-2">{dict.projects.location}</span>
                         <div className="flex items-center gap-2 text-white">
                             <MapPin size={14} className="text-brand-bronze" />
                             <span className="font-serif text-xl">{project.location || 'België'}</span>
                         </div>
                     </div>
                     <div>
-                        <span className="text-white/40 text-[10px] uppercase tracking-widest block mb-2">Jaar</span>
+                        <span className="text-white/40 text-[10px] uppercase tracking-widest block mb-2">{dict.projects.year}</span>
                         <div className="flex items-center gap-2 text-white">
                             <Calendar size={14} className="text-brand-bronze" />
                             <span className="font-serif text-xl">{project.year}</span>
                         </div>
                     </div>
                     <div>
-                        <span className="text-white/40 text-[10px] uppercase tracking-widest block mb-2">Expertise</span>
+                        <span className="text-white/40 text-[10px] uppercase tracking-widest block mb-2">{dict.projects.expertise}</span>
                         <div className="flex items-center gap-2 text-white">
                             <Paintbrush size={14} className="text-brand-bronze" />
                             <span className="font-serif text-xl">{project.category}</span>
                         </div>
                     </div>
                     <div className="hidden md:block">
-                        <span className="text-white/40 text-[10px] uppercase tracking-widest block mb-2">Status</span>
+                        <span className="text-white/40 text-[10px] uppercase tracking-widest block mb-2">{dict.projects.status}</span>
                         <div className="flex items-center gap-2 text-white">
                             <ShieldCheck size={14} className="text-brand-bronze" />
-                            <span className="font-serif text-xl">Opgeleverd</span>
+                            <span className="font-serif text-xl">{dict.projects.completed}</span>
                         </div>
                     </div>
                 </div>
@@ -115,11 +116,9 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
         </div>
       </section>
 
-      {/* Editorial Content Section */}
       <section className="py-32 bg-brand-stone relative">
         <div className="container mx-auto px-6 md:px-12">
             <div className="grid lg:grid-cols-12 gap-24 items-start">
-                {/* Left: Detailed Text */}
                 <div className="lg:col-span-7 space-y-16">
                     <div className="space-y-8">
                         <h2 className="font-serif text-4xl md:text-6xl leading-tight text-brand-dark">
@@ -131,49 +130,47 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                         </p>
                     </div>
 
-                    {/* Technical Specs / Highlights */}
                     <div className="grid sm:grid-cols-2 gap-12 pt-16 border-t border-brand-dark/10">
                         <div className="space-y-4">
                             <div className="flex items-center gap-3 text-brand-bronze">
                                 <Info size={20} />
-                                <h4 className="uppercase text-xs tracking-widest font-bold">De Uitdaging</h4>
+                                <h4 className="uppercase text-xs tracking-widest font-bold">{dict.projects.challenge}</h4>
                             </div>
                             <p className="text-brand-dark/60 text-sm leading-relaxed">
-                                Elk project begint met een grondige analyse van de ondergrond. Bij dit project lag de focus op het herstellen van de authentieke textuur terwijl we een moderne, duurzame bescherming boden.
+                                {dict.projects.challengeDesc}
                             </p>
                         </div>
                         <div className="space-y-4">
                             <div className="flex items-center gap-3 text-brand-bronze">
                                 <ShieldCheck size={20} />
-                                <h4 className="uppercase text-xs tracking-widest font-bold">Het Resultaat</h4>
+                                <h4 className="uppercase text-xs tracking-widest font-bold">{dict.projects.result}</h4>
                             </div>
                             <p className="text-brand-dark/60 text-sm leading-relaxed">
-                                Door gebruik te maken van onze zelfgemengde minerale pigmenten hebben we een kleurdiepte bereikt die mee verandert met de lichtinval gedurende de dag.
+                                {dict.projects.resultDesc}
                             </p>
                         </div>
                     </div>
                 </div>
 
-                {/* Right: Sticky Info Box */}
                 <div className="lg:col-span-5 lg:sticky lg:top-32">
                     <div className="bg-brand-dark text-brand-stone p-12 space-y-12">
                         <div>
-                            <span className="text-brand-bronze text-[10px] uppercase tracking-[0.3em] block mb-6">Specificaties</span>
+                            <span className="text-brand-bronze text-[10px] uppercase tracking-[0.3em] block mb-6">{dict.projects.specs}</span>
                             <ul className="space-y-6">
                                 <li className="flex justify-between items-end border-b border-white/10 pb-2">
-                                    <span className="text-xs text-white/40 uppercase tracking-widest">Techniek</span>
+                                    <span className="text-xs text-white/40 uppercase tracking-widest">{dict.projects.technique}</span>
                                     <span className="font-serif text-lg">{technique}</span>
                                 </li>
                                 <li className="flex justify-between items-end border-b border-white/10 pb-2">
-                                    <span className="text-xs text-white/40 uppercase tracking-widest">Afwerking</span>
+                                    <span className="text-xs text-white/40 uppercase tracking-widest">{dict.projects.finishing}</span>
                                     <span className="font-serif text-lg">{finishing}</span>
                                 </li>
                                 <li className="flex justify-between items-end border-b border-white/10 pb-2">
-                                    <span className="text-xs text-white/40 uppercase tracking-widest">Pigment</span>
+                                    <span className="text-xs text-white/40 uppercase tracking-widest">{dict.projects.pigment}</span>
                                     <span className="font-serif text-lg">{pigment}</span>
                                 </li>
                                 <li className="flex justify-between items-end border-b border-white/10 pb-2">
-                                    <span className="text-xs text-white/40 uppercase tracking-widest">Team</span>
+                                    <span className="text-xs text-white/40 uppercase tracking-widest">{dict.projects.team}</span>
                                     <span className="font-serif text-lg">{team}</span>
                                 </li>
                             </ul>
@@ -184,10 +181,10 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                                 "Dit project is een perfect voorbeeld van hoe kalei een woning niet alleen beschermt, maar ook een volledig nieuwe ziel geeft."
                             </p>
                             <Link 
-                                href="/offerte" 
+                                href={`/${locale}/offerte`} 
                                 className="w-full inline-flex items-center justify-center gap-3 bg-brand-bronze text-white py-5 uppercase text-[10px] tracking-[0.3em] hover:bg-white hover:text-brand-dark transition-all duration-500 group"
                             >
-                                Start uw project <ChevronRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                                {dict.projects.startProject} <ChevronRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                             </Link>
                         </div>
                     </div>
@@ -196,12 +193,11 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
         </div>
       </section>
 
-      {/* Dynamic Gallery Grid */}
       <section className="py-32 bg-brand-white">
         <div className="container mx-auto px-6 md:px-12">
             <div className="mb-24 text-center">
-                <span className="uppercase text-[10px] tracking-[0.4em] text-brand-bronze font-semibold mb-4 block">Galerij</span>
-                <h2 className="font-serif text-4xl md:text-6xl text-brand-dark">Details in beeld</h2>
+                <span className="uppercase text-[10px] tracking-[0.4em] text-brand-bronze font-semibold mb-4 block">{dict.projects.gallery}</span>
+                <h2 className="font-serif text-4xl md:text-6xl text-brand-dark">{dict.projects.galleryTitle}</h2>
             </div>
 
             <div className="grid grid-cols-12 gap-4 md:gap-8">
@@ -234,27 +230,28 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
         </div>
       </section>
 
-      {/* Next Project Navigation */}
       <section className="py-32 bg-brand-dark text-brand-stone overflow-hidden relative">
         <div className="absolute inset-0 opacity-10">
             <div className="absolute top-0 left-0 w-full h-full bg-[url('https://grainy-gradients.vercel.app/noise.svg')] pointer-events-none" />
         </div>
         
         <div className="container mx-auto px-6 text-center relative z-10">
-            <span className="uppercase text-[10px] tracking-[0.4em] text-brand-bronze font-semibold mb-8 block">Volgend Project</span>
-            <Link href="/projecten" className="group inline-block">
+            <span className="uppercase text-[10px] tracking-[0.4em] text-brand-bronze font-semibold mb-8 block">{dict.projects.next}</span>
+            <Link href={`/${locale}/projecten`} className="group inline-block">
                 <h2 className="font-serif text-5xl md:text-8xl lg:text-9xl mb-12 group-hover:italic transition-all duration-700">
-                    Ontdek meer <br/> <span className="text-brand-bronze">realisaties.</span>
+                    {dict.projects.discover.split(' ').map((word: string, i: number) => (
+                        word.toLowerCase() === 'realisaties.' ? <span key={i} className="text-brand-bronze"> {word}</span> : <span key={i}> {word}</span>
+                    ))}
                 </h2>
                 <div className="inline-flex items-center gap-4 text-brand-bronze border-b border-brand-bronze pb-2 group-hover:gap-8 transition-all duration-500">
-                    <span className="uppercase text-xs tracking-widest">Bekijk portfolio</span>
+                    <span className="uppercase text-xs tracking-widest">{dict.projects.back}</span>
                     <ChevronRight size={20} />
                 </div>
             </Link>
         </div>
       </section>
 
-      <Footer />
+      <Footer dict={dict} />
     </main>
   );
 }

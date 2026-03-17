@@ -58,6 +58,7 @@
     ]
   },
   "about": {
+    "tag": "Unsere Geschichte",
     "title": "10 Jahre Handwerkskunst.",
     "subtitle": "Handwerk & Leidenschaft",
     "description": "Wir arbeiten mit einem festen Team von zwei Handwerkern. Dies ermöglicht es uns, jedes Projekt persönlich zu begleiten und eine sorgfältige und qualitativ hochwertige Ausführung von Anfang bis Ende zu garantieren. Unsere Leidenschaft liegt darin, das authentische Erscheinungsbild Ihres Hauses wiederherzustellen, sowohl in Belgien als auch im Ausland.",
@@ -66,7 +67,13 @@
       "Festes Team von 2 Handwerkern",
       "Eigene Pigmentmischung",
       "Projekte in Belgien & Ausland"
-    ]
+    ],
+    "personal": "Persönliche Betreuung",
+    "personalDesc": "Da wir mit einem festen Team von zwei Personen arbeiten, haben Sie immer denselben Ansprechpartner. Vom ersten Aufmaß bis zum letzten Pinselstrich.",
+    "pigments": "Eigene Pigmente",
+    "pigmentsDesc": "Keine Standardfarben aus dem Topf. Wir mischen unser Kalei selbst mit mineralischen Pigmenten für ein Ergebnis, das perfekt zum Lichteinfall Ihres Hauses passt.",
+    "protection": "Dauerhafter Schutz",
+    "protectionDesc": "Eine Fassade muss nicht nur schön sein, sondern ook geschützt. Unsere Hydrophobierung sorgt dafür, dass Ihr Kalei jahrelang Wind und Wetter trotzt."
   },
   "process": {
     "title": "Transparent von Anfang bis Ende.",
@@ -120,6 +127,7 @@
     }
   },
   "projects": {
+    "tag": "Portfolio",
     "title": "Unsere Projekte.",
     "subtitle": "Handwerkskunst im Bild. Entdecken Sie unsere aktuellen Projekte.",
     "all": "Alle",
@@ -134,8 +142,16 @@
     "pigment": "Pigment",
     "team": "Team",
     "gallery": "Galerie",
+    "galleryTitle": "Details im Bild",
     "next": "Nächstes Projekt",
-    "discover": "Entdecken Sie weitere Projekte."
+    "discover": "Entdecken Sie weitere Projekte.",
+    "realization": "Projekt-Realisierung",
+    "completed": "Abgeschlossen",
+    "challenge": "Die Herausforderung",
+    "challengeDesc": "Jedes Projekt beginnt mit einer gründlichen Analyse des Untergrunds. Bei diesem Projekt lag der Fokus auf der Wiederherstellung der authentischen Textur bei gleichzeitigem modernem, dauerhaftem Schutz.",
+    "result": "Das Ergebnis",
+    "resultDesc": "Durch die Verwendung unserer selbstgemischten mineralischen Pigmente haben wir eine Farbtiefe erreicht, die sich mit dem Lichteinfall im Laufe des Tages verändert.",
+    "startProject": "Starten Sie Ihr Projekt"
   },
   "footer": {
     "desc": "Seit 10 Jahren Spezialist für authentische Fassadenrenovierung und Kalei-Arbeiten mit hochwertiger Veredelung.",

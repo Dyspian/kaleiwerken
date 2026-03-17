@@ -58,6 +58,7 @@
     ]
   },
   "about": {
+    "tag": "Our History",
     "title": "10 years of Craftsmanship.",
     "subtitle": "Craftsmanship & Passion",
     "description": "We work with a dedicated team of two craftsmen. This allows us to personally follow up on every project and guarantee a careful and high-quality execution from start to finish. Our passion lies in restoring the authentic appearance of your home, both in Belgium and abroad.",
@@ -66,7 +67,13 @@
       "Dedicated team of 2 craftsmen",
       "Custom pigment mixing",
       "Projects in Belgium & Abroad"
-    ]
+    ],
+    "personal": "Personal Follow-up",
+    "personalDesc": "Because we work with a dedicated team of two, you always have the same point of contact. From the first measurement to the last brushstroke.",
+    "pigments": "Custom Pigments",
+    "pigmentsDesc": "No standard colors from a pot. We mix our kalei ourselves with mineral pigments for a result that perfectly matches the light of your home.",
+    "protection": "Durable Protection",
+    "protectionDesc": "A facade must not only be beautiful, but also protected. Our hydrofuge treatment ensures that your kalei is resistant to weather and wind for years."
   },
   "process": {
     "title": "Transparent from start to finish.",
@@ -120,6 +127,7 @@
     }
   },
   "projects": {
+    "tag": "Portfolio",
     "title": "Our Realizations.",
     "subtitle": "Craftsmanship in focus. Discover our recent projects.",
     "all": "All",
@@ -134,8 +142,16 @@
     "pigment": "Pigment",
     "team": "Team",
     "gallery": "Gallery",
+    "galleryTitle": "Details in focus",
     "next": "Next Project",
-    "discover": "Discover more realizations."
+    "discover": "Discover more realizations.",
+    "realization": "Project Realization",
+    "completed": "Completed",
+    "challenge": "The Challenge",
+    "challengeDesc": "Every project begins with a thorough analysis of the substrate. For this project, the focus was on restoring the authentic texture while providing modern, durable protection.",
+    "result": "The Result",
+    "resultDesc": "By using our self-mixed mineral pigments, we achieved a color depth that changes with the light throughout the day.",
+    "startProject": "Start your project"
   },
   "footer": {
     "desc": "Specialist in authentic facade renovation and kalei works with a high-quality finish for 10 years.",

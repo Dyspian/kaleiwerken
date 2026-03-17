@@ -58,6 +58,7 @@
     ]
   },
   "about": {
+    "tag": "Onze Historiek",
     "title": "10 jaar Vakmanschap.",
     "subtitle": "Vakmanschap & Passie",
     "description": "Wij werken met een vast team van twee vakmensen. Hierdoor kunnen we elk project persoonlijk opvolgen en garanderen we een zorgvuldige en kwalitatieve uitvoering van begin tot einde. Onze passie ligt in het herstellen van de authentieke uitstraling van uw woning, zowel in België als daarbuiten.",
@@ -66,7 +67,13 @@
       "Vast team van 2 vakmensen",
       "Eigen pigmentmenging",
       "Projecten in België & Buitenland"
-    ]
+    ],
+    "personal": "Persoonlijke Opvolging",
+    "personalDesc": "Omdat we met een vast team van twee werken, heeft u altijd hetzelfde aanspreekpunt. Van de eerste opmeting tot de laatste borstelstreek.",
+    "pigments": "Eigen Pigmenten",
+    "pigmentsDesc": "Geen standaardkleuren uit een pot. Wij mengen onze kalei zelf met minerale pigmenten voor een resultaat dat perfect past bij de lichtinval van uw woning.",
+    "protection": "Duurzame Bescherming",
+    "protectionDesc": "Een gevel moet niet alleen mooi zijn, maar ook beschermd. Onze hydrofuge behandeling zorgt ervoor dat uw kalei jarenlang bestand is tegen weer en wind."
   },
   "process": {
     "title": "Transparant van begin tot eind.",
@@ -120,6 +127,7 @@
     }
   },
   "projects": {
+    "tag": "Portfolio",
     "title": "Onze Realisaties.",
     "subtitle": "Vakmanschap in beeld. Ontdek onze recente projecten.",
     "all": "Alle",
@@ -134,8 +142,16 @@
     "pigment": "Pigment",
     "team": "Team",
     "gallery": "Galerij",
+    "galleryTitle": "Details in beeld",
     "next": "Volgend Project",
-    "discover": "Ontdek meer realisaties."
+    "discover": "Ontdek meer realisaties.",
+    "realization": "Project Realisatie",
+    "completed": "Opgeleverd",
+    "challenge": "De Uitdaging",
+    "challengeDesc": "Elk project begint met een grondige analyse van de ondergrond. Bij dit project lag de focus op het herstellen van de authentieke textuur terwijl we een moderne, duurzame bescherming boden.",
+    "result": "Het Resultaat",
+    "resultDesc": "Door gebruik te maken van onze zelfgemengde minerale pigmenten hebben we een kleurdiepte bereikt die mee verandert met de lichtinval gedurende de dag.",
+    "startProject": "Start uw project"
   },
   "footer": {
     "desc": "Al 10 jaar specialist in authentieke gevelrenovatie en kaleiwerken met een hoogwaardige afwerking.",

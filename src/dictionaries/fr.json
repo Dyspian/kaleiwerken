@@ -58,6 +58,7 @@
     ]
   },
   "about": {
+    "tag": "Notre Histoire",
     "title": "10 ans de Savoir-faire.",
     "subtitle": "Artisanat & Passion",
     "description": "Nous travaillons avec une équipe fixe de deux artisans. Cela nous permet de suivre personnellement chaque projet et de garantir une exécution soignée et de qualité du début à la fin. Notre passion est de restaurer l'aspect authentique de votre maison, en Belgique comme à l'étranger.",
@@ -66,7 +67,13 @@
       "Équipe fixe de 2 artisans",
       "Mélange de pigments propre",
       "Projets en Belgique et à l'étranger"
-    ]
+    ],
+    "personal": "Suivi Personnalisé",
+    "personalDesc": "Comme nous travaillons avec une équipe fixe de deux personnes, vous avez toujours le même interlocuteur. De la première mesure au dernier coup de pinceau.",
+    "pigments": "Pigments Propres",
+    "pigmentsDesc": "Pas de couleurs standard en pot. Nous mélangeons notre kalei nous-mêmes avec des pigments minéraux pour un résultat qui s'adapte parfaitement à la lumière de votre maison.",
+    "protection": "Protection Durable",
+    "protectionDesc": "Une façade doit être belle, mais aussi protégée. Notre traitement hydrofuge garantit que votre kalei résiste aux intempéries pendant des années."
   },
   "process": {
     "title": "Transparent du début à la fin.",
@@ -120,6 +127,7 @@
     }
   },
   "projects": {
+    "tag": "Portfolio",
     "title": "Nos Réalisations.",
     "subtitle": "Le savoir-faire en images. Découvrez nos projets récents.",
     "all": "Tous",
@@ -134,8 +142,16 @@
     "pigment": "Pigment",
     "team": "Équipe",
     "gallery": "Galerie",
+    "galleryTitle": "Détails en images",
     "next": "Projet suivant",
-    "discover": "Découvrez plus de réalisations."
+    "discover": "Découvrez plus de réalisations.",
+    "realization": "Réalisation du Projet",
+    "completed": "Terminé",
+    "challenge": "Le Défi",
+    "challengeDesc": "Chaque projet commence par une analyse approfondie du support. Pour ce projet, l'accent a été mis sur la restauration de la texture authentique tout en offrant une protection moderne et durable.",
+    "result": "Le Résultat",
+    "resultDesc": "En utilisant nos pigments minéraux mélangés par nos soins, nous avons obtenu une profondeur de couleur qui change avec la lumière tout au long de la journée.",
+    "startProject": "Démarrer votre projet"
   },
   "footer": {
     "desc": "Spécialiste de la rénovation de façade authentique et des travaux de kalei avec une finition de haute qualité depuis 10 ans.",

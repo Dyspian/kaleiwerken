@@ -5,15 +5,21 @@ import { ArrowUpRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { getDictionary } from "@/lib/get-dictionary";
+import { Locale } from "@/lib/i18n-config";
 
 export const revalidate = 0;
 
 export default async function ProjectenPage({
+  params,
   searchParams,
 }: {
+  params: Promise<{ locale: Locale }>;
   searchParams: Promise<{ category?: string }>;
 }) {
+  const { locale } = await params;
   const { category } = await searchParams;
+  const dict = await getDictionary(locale) as any;
 
   let query = supabase
     .from("projects")
@@ -31,17 +37,19 @@ export default async function ProjectenPage({
 
   return (
     <main className="min-h-screen bg-brand-stone text-brand-dark font-sans selection:bg-brand-bronze/30">
-      <Header />
+      <Header dict={dict} />
       
       <section className="pt-32 md:pt-40 pb-20 px-6 md:px-12 container mx-auto">
         <div className="flex flex-col md:flex-row md:items-end justify-between border-b border-brand-dark/10 pb-8 mb-12">
             <div className="max-w-xl">
-                <span className="uppercase text-[10px] tracking-[0.4em] text-brand-bronze font-semibold mb-4 block">Portfolio</span>
+                <span className="uppercase text-[10px] tracking-[0.4em] text-brand-bronze font-semibold mb-4 block">{dict.projects.tag}</span>
                 <h1 className="font-serif text-4xl md:text-6xl leading-tight text-brand-dark mb-4">
-                    Onze <span className="italic text-brand-bronze">Realisaties.</span>
+                    {dict.projects.title.split(' ').map((word: string, i: number) => (
+                        word.toLowerCase() === 'realisaties.' ? <span key={i} className="italic text-brand-bronze"> {word}</span> : <span key={i}> {word}</span>
+                    ))}
                 </h1>
                 <p className="text-sm text-brand-dark/60 font-light leading-relaxed">
-                    Vakmanschap in beeld. Ontdek onze recente projecten.
+                    {dict.projects.subtitle}
                 </p>
             </div>
             
@@ -49,7 +57,7 @@ export default async function ProjectenPage({
                 {categories.map((cat) => (
                     <Link
                         key={cat}
-                        href={cat === "alle" ? "/projecten" : `/projecten?category=${cat}`}
+                        href={cat === "alle" ? `/${locale}/projecten` : `/${locale}/projecten?category=${cat}`}
                         className={cn(
                             "px-4 py-1.5 text-[9px] uppercase tracking-[0.2em] border transition-all duration-500",
                             (category === cat || (!category && cat === "alle"))
@@ -57,7 +65,7 @@ export default async function ProjectenPage({
                                 : "border-brand-dark/10 text-brand-dark/40 hover:border-brand-bronze hover:text-brand-bronze"
                         )}
                     >
-                        {cat}
+                        {cat === "alle" ? dict.projects.all : cat}
                     </Link>
                 ))}
             </div>
@@ -72,7 +80,7 @@ export default async function ProjectenPage({
                 projects.map((project) => (
                     <Link 
                         key={project.id} 
-                        href={`/projecten/${project.id}`} 
+                        href={`/${locale}/projecten/${project.id}`} 
                         className="group block"
                     >
                         <div className="relative aspect-[4/5] overflow-hidden mb-4 bg-brand-dark/5 border border-brand-dark/5">
@@ -109,7 +117,7 @@ export default async function ProjectenPage({
         </div>
       </section>
 
-      <Footer />
+      <Footer dict={dict} />
     </main>
   );
 }
