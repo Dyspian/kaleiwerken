@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Mail, Phone, MapPin, Calendar, CheckCircle2, Circle, Trash2, Edit } from "lucide-react";
+import { Mail, Phone, MapPin, Calendar, CheckCircle2, Circle, Trash2, Edit, MessageSquare } from "lucide-react";
 import { format } from "date-fns";
 import { nl } from "date-fns/locale";
 import { cn } from "@/lib/utils";
@@ -13,11 +13,12 @@ interface LeadCardProps {
   lead: Lead;
   onEdit: (lead: Lead) => void;
   onDelete: (id: string) => void;
+  onGenerateMessage: (lead: Lead) => void;
   isSelected: boolean;
   onSelect: (id: string, checked: boolean) => void;
 }
 
-export const LeadCard = ({ lead, onEdit, onDelete, isSelected, onSelect }: LeadCardProps) => {
+export const LeadCard = ({ lead, onEdit, onDelete, onGenerateMessage, isSelected, onSelect }: LeadCardProps) => {
   return (
     <div key={lead.id} className={cn(
       "bg-white p-8 border border-brand-dark/5 shadow-sm transition-all hover:shadow-md flex items-start gap-4",
@@ -59,6 +60,15 @@ export const LeadCard = ({ lead, onEdit, onDelete, isSelected, onSelect }: LeadC
           </div>
 
           <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              size="icon" 
+              onClick={() => onGenerateMessage(lead)} 
+              className="rounded-none border-brand-dark/10 hover:bg-brand-stone text-brand-bronze"
+              title="Genereer bericht"
+            >
+              <MessageSquare size={16} />
+            </Button>
             <Button variant="outline" size="icon" onClick={() => onEdit(lead)} className="rounded-none border-brand-dark/10 hover:bg-brand-stone">
               <Edit size={16} />
             </Button>

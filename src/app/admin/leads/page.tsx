@@ -9,6 +9,7 @@ import { LeadListControls } from "@/components/admin/leads/LeadListControls";
 import { LeadCard } from "@/components/admin/leads/LeadCard";
 import { LeadPagination } from "@/components/admin/leads/LeadPagination";
 import { EditLeadDialog } from "@/components/admin/leads/EditLeadDialog";
+import { MessageGeneratorDialog } from "@/components/admin/leads/MessageGeneratorDialog";
 
 export default function AdminLeadsPage() {
   const { user, loading: authLoading } = useAuth();
@@ -38,10 +39,18 @@ export default function AdminLeadsPage() {
 
   const [editingLead, setEditingLead] = useState<Lead | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  
+  const [messageLead, setMessageLead] = useState<Lead | null>(null);
+  const [isMessageGeneratorOpen, setIsMessageGeneratorOpen] = useState(false);
 
   const handleEditClick = (lead: Lead) => {
     setEditingLead({ ...lead });
     setIsEditDialogOpen(true);
+  };
+
+  const handleGenerateMessageClick = (lead: Lead) => {
+    setMessageLead(lead);
+    setIsMessageGeneratorOpen(true);
   };
 
   const handleSaveEdit = async () => {
@@ -105,6 +114,7 @@ export default function AdminLeadsPage() {
                 lead={lead}
                 onEdit={handleEditClick}
                 onDelete={deleteLead}
+                onGenerateMessage={handleGenerateMessageClick}
                 isSelected={selectedLeads.has(lead.id)}
                 onSelect={handleSelectLead}
               />
@@ -124,6 +134,12 @@ export default function AdminLeadsPage() {
           editingLead={editingLead}
           setEditingLead={(lead: Lead) => setEditingLead(lead)}
           onSave={handleSaveEdit}
+        />
+
+        <MessageGeneratorDialog 
+          isOpen={isMessageGeneratorOpen}
+          onOpenChange={setIsMessageGeneratorOpen}
+          lead={messageLead}
         />
       </main>
     </div>
