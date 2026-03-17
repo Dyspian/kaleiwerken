@@ -21,6 +21,9 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   title: "Van Roey Kaleiwerken",
   description: "Specialist in authentieke kaleiwerken.",
+  icons: {
+    icon: "/favicon.png",
+  },
 };
 
 export default function RootLayout({
