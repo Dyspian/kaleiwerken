@@ -8,25 +8,25 @@ export const siteContent = {
   },
   hero: {
     title: "Kaleiwerken met een premium afwerking.",
-    subtitle: "Al 10 jaar specialist in authentieke kaleiwerken voor binnen en buiten. Een vast team van twee vakmensen voor een persoonlijke aanpak.",
+    subtitle: "Al 10 jaar specialist in authentieke kaleiwerken voor binnen en buiten. Actief in heel België en internationaal. Een vast team van twee vakmensen voor een persoonlijke aanpak.",
     ctaPrimary: "Vraag offerte aan",
     ctaSecondary: "Bekijk realisaties",
   },
   about: {
     title: "Vakmanschap & Passie",
     subtitle: "10 jaar ervaring, één vast team.",
-    description: "Wij werken met een vast team van twee vakmensen. Hierdoor kunnen we elk project persoonlijk opvolgen en garanderen we een zorgvuldige en kwalitatieve uitvoering van begin tot einde. Onze passie ligt in het herstellen van de authentieke uitstraling van uw woning.",
+    description: "Wij werken met een vast team van twee vakmensen. Hierdoor kunnen we elk project persoonlijk opvolgen en garanderen we een zorgvuldige en kwalitatieve uitvoering van begin tot einde. Onze passie ligt in het herstellen van de authentieke uitstraling van uw woning, zowel in België als daarbuiten.",
     features: [
       "10 jaar gespecialiseerde ervaring",
       "Vast team van 2 vakmensen",
       "Eigen pigmentmenging",
-      "Binnen- en buitenprojecten"
+      "Projecten in België & Buitenland"
     ]
   },
   socialProof: {
     items: [
       "10 jaar ervaring",
-      "Vast team van 2",
+      "België & Buitenland",
       "Eigen pigmenten",
       "Binnen & Buiten",
       "Incl. herstellingen",

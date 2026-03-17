@@ -5,12 +5,16 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { LanguageSwitcher } from "./language-switcher";
+import { usePathname } from "next/navigation";
 
 export const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { scrollY } = useScroll();
   const [hidden, setHidden] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
+  const locale = pathname.split("/")[1] || "nl";
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     const previous = scrollY.getPrevious() ?? 0;
@@ -23,10 +27,10 @@ export const Header = () => {
   });
 
   const navLinks = [
-    { href: "/", label: "Home" },
-    { href: "/over-ons", label: "Over Ons" },
-    { href: "/projecten", label: "Realisaties" },
-    { href: "/offerte", label: "Offerte", primary: true },
+    { href: `/${locale}`, label: "Home" },
+    { href: `/${locale}/over-ons`, label: "Over Ons" },
+    { href: `/${locale}/projecten`, label: "Realisaties" },
+    { href: `/${locale}/offerte`, label: "Offerte", primary: true },
   ];
 
   const logoUrl = "https://sjfosmcpbekkokmedwil.supabase.co/storage/v1/object/sign/logo/logo.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV85ZjFlYzljYS0wYTI5LTRhZDYtYWY5My0yYWFhZjJmZmNiNzEiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJsb2dvL2xvZ28ucG5nIiwiaWF0IjoxNzczNTA4ODM3LCJleHAiOjIwODg4Njg4Mzd9._JsyJFoJNsHg_-6zXibQmbbFoZoXAComlXyobGwVb4c";
@@ -49,7 +53,7 @@ export const Header = () => {
 
       <div className="container mx-auto px-6 h-20 md:h-24 flex justify-between items-center relative z-10">
         
-        <Link href="/" className="group relative w-32 md:w-48 h-full flex items-center">
+        <Link href={`/${locale}`} className="group relative w-32 md:w-48 h-full flex items-center">
           <div className="absolute top-1/2 -translate-y-1/2 left-0 h-[140%] md:h-[160%] w-auto flex items-center pointer-events-none">
             <img 
                 src={logoUrl} 
@@ -105,14 +109,18 @@ export const Header = () => {
               </Link>
             )
           )}
+          <LanguageSwitcher />
         </nav>
 
-        <button 
-            className="md:hidden p-2 hover:opacity-70 transition-opacity" 
-            onClick={() => setIsOpen(true)}
-        >
-          <Menu size={24} strokeWidth={1} />
-        </button>
+        <div className="flex items-center gap-4 md:hidden">
+            <LanguageSwitcher />
+            <button 
+                className="p-2 hover:opacity-70 transition-opacity" 
+                onClick={() => setIsOpen(true)}
+            >
+            <Menu size={24} strokeWidth={1} />
+            </button>
+        </div>
       </div>
     </motion.header>
     
