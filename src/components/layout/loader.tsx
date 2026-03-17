@@ -3,7 +3,11 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const words = [
+interface LoaderProps {
+  words?: string[];
+}
+
+const defaultWords = [
   "Inspecteren",
   "Mengen",
   "Strijken", 
@@ -11,7 +15,7 @@ const words = [
   "Van Roey"
 ];
 
-export const Loader = () => {
+export const Loader = ({ words = defaultWords }: LoaderProps) => {
   const [index, setIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
 
@@ -34,7 +38,7 @@ export const Loader = () => {
       clearInterval(interval);
       clearTimeout(timer);
     };
-  }, []);
+  }, [words]);
 
   return (
     <AnimatePresence>

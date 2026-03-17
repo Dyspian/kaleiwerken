@@ -17,6 +17,9 @@
     "projects": "Projects",
     "quote": "Quote"
   },
+  "loader": {
+    "words": ["Inspecting", "Mixing", "Brushing", "Drying", "Van Roey"]
+  },
   "hero": {
     "title1": "Authentic",
     "title2": "Kalei Works.",

@@ -17,6 +17,9 @@
     "projects": "Réalisations",
     "quote": "Devis"
   },
+  "loader": {
+    "words": ["Inspecter", "Mélanger", "Appliquer", "Sècher", "Van Roey"]
+  },
   "hero": {
     "title1": "Travaux de",
     "title2": "Kalei Authentiques.",
@@ -73,7 +76,7 @@
     "pigments": "Pigments Propres",
     "pigmentsDesc": "Pas de couleurs standard en pot. Nous mélangeons notre kalei nous-mêmes avec des pigments minéraux pour un résultat qui s'adapte parfaitement à la lumière de votre maison.",
     "protection": "Protection Durable",
-    "protectionDesc": "Une façade doit être belle, mais aussi protégée. Notre traitement hydrofuge garantit que votre kalei résiste aux intempéries pendant des années."
+    "protectionDesc": "Une façade doit être belle, maar aussi protégée. Notre traitement hydrofuge garantit que votre kalei résiste aux intempéries pendant des années."
   },
   "process": {
     "title": "Transparent du début à la fin.",

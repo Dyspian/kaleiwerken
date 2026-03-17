@@ -17,6 +17,9 @@
     "projects": "Realisaties",
     "quote": "Offerte"
   },
+  "loader": {
+    "words": ["Inspecteren", "Mengen", "Strijken", "Drogen", "Van Roey"]
+  },
   "hero": {
     "title1": "Authentieke",
     "title2": "Kaleiwerken.",

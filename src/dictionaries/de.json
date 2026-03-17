@@ -17,6 +17,9 @@
     "projects": "Projekte",
     "quote": "Angebot"
   },
+  "loader": {
+    "words": ["Inspizieren", "Mischen", "Streichen", "Trocknen", "Van Roey"]
+  },
   "hero": {
     "title1": "Authentische",
     "title2": "Kalei-Arbeiten.",
@@ -91,7 +94,7 @@
     "subtitle": "Starten Sie hier Ihre Anfrage. Es dauert nur 2 Minuten und ist völlig unverbindlich.",
     "step1": "Projekt",
     "step2": "Details",
-    "step3": "Kontakt",
+    "step3": "Contact",
     "question1": "Um welche Art von Projekt handelt es sich?",
     "question2": "Projektdetails",
     "question3": "Wie können wir Sie erreichen?",

@@ -20,6 +20,7 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
   const heroDict = dict?.hero || {};
   const quoteDict = dict?.quote || {};
   const commonDict = dict?.common || {};
+  const loaderWords = dict?.loader?.words || [];
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -68,7 +69,7 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <Loader />
+      <Loader words={loaderWords} />
       <Header dict={dict} />
       
       <Hero dict={heroDict} />
