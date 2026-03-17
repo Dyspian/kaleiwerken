@@ -72,42 +72,44 @@ export const Loader = ({ words = defaultWords }: LoaderProps) => {
                 </AnimatePresence>
             </div>
 
-            {/* Animated Brush & Progress Bar */}
-            <div className="mt-12 w-full max-w-[240px] relative">
-                {/* Progress Bar Container */}
-                <div className="h-[2px] w-full bg-white/5 relative overflow-hidden rounded-full">
+            {/* Animated Brush & Paint Line */}
+            <div className="mt-16 w-full max-w-[280px] relative">
+                {/* Background Track */}
+                <div className="h-[4px] w-full bg-white/5 rounded-full relative overflow-hidden">
+                    {/* The Paint Stroke */}
                     <motion.div 
-                        className="absolute top-0 left-0 h-full bg-gradient-to-r from-brand-bronze/40 to-brand-bronze shadow-[0_0_10px_rgba(140,123,108,0.5)]"
+                        className="absolute top-0 left-0 h-full bg-gradient-to-r from-brand-bronze/20 via-brand-bronze/60 to-brand-bronze rounded-full shadow-[0_0_15px_rgba(140,123,108,0.4)]"
                         initial={{ width: "0%" }}
                         animate={{ width: "100%" }}
                         transition={{ duration: 2.8, ease: "linear" }}
                     />
                 </div>
 
-                {/* Moving Brush Icon */}
+                {/* The Brush - Positioned at the leading edge of the paint stroke */}
                 <motion.div
-                    className="absolute -top-8 left-0 z-20 text-brand-bronze"
-                    initial={{ x: -10, opacity: 0 }}
+                    className="absolute -top-10 left-0 z-20 text-brand-bronze"
+                    initial={{ left: "0%", opacity: 0 }}
                     animate={{ 
-                        x: ["0%", "100%"],
-                        y: [0, -4, 2, -4, 0], // Vertical "brushing" motion
+                        left: "100%",
+                        y: [0, -3, 1, -3, 0], // Brushing motion
                         opacity: [0, 1, 1, 0],
-                        rotate: [10, 30, 10, 30, 10, 30, 10] // Dynamic rotation
+                        rotate: [15, 35, 15, 35, 15, 35, 15] // Dynamic rotation
                     }}
                     transition={{ 
-                        x: { duration: 2.8, ease: "linear" },
-                        y: { repeat: Infinity, duration: 0.6, ease: "easeInOut" },
+                        left: { duration: 2.8, ease: "linear" },
+                        y: { repeat: Infinity, duration: 0.5, ease: "easeInOut" },
                         opacity: { times: [0, 0.1, 0.9, 1], duration: 2.8 },
                         rotate: { repeat: Infinity, duration: 0.4, ease: "easeInOut" }
                     }}
                     style={{ translateX: "-50%" }}
                 >
-                    <Paintbrush size={28} strokeWidth={1.2} />
-                    {/* Subtle paint drip effect */}
+                    <Paintbrush size={32} strokeWidth={1.2} className="drop-shadow-lg" />
+                    
+                    {/* Subtle paint drip from the brush head */}
                     <motion.div 
-                        className="absolute top-full left-1/2 w-[1px] h-2 bg-brand-bronze/40"
-                        animate={{ height: [2, 8, 2], opacity: [0.4, 0.8, 0.4] }}
-                        transition={{ repeat: Infinity, duration: 0.5 }}
+                        className="absolute top-[80%] left-1/2 w-[2px] h-3 bg-brand-bronze/60 rounded-full"
+                        animate={{ height: [3, 10, 3], opacity: [0.4, 0.8, 0.4] }}
+                        transition={{ repeat: Infinity, duration: 0.6 }}
                     />
                 </motion.div>
             </div>
@@ -117,7 +119,7 @@ export const Loader = ({ words = defaultWords }: LoaderProps) => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.5, duration: 1 }}
-                className="flex justify-between w-full max-w-[240px] mt-6 text-[9px] uppercase tracking-[0.3em] text-white/20 font-mono"
+                className="flex justify-between w-full max-w-[280px] mt-8 text-[9px] uppercase tracking-[0.4em] text-white/20 font-mono"
             >
                 <span>Est. 2015</span>
                 <span>Vakmanschap</span>
