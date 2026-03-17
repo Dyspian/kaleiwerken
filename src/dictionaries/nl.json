@@ -1,0 +1,49 @@
+{
+  "common": {
+    "offerte": "Offerte aanvragen",
+    "realisaties": "Realisaties",
+    "overOns": "Over Ons",
+    "home": "Home",
+    "contact": "Contact",
+    "back": "Terug",
+    "more": "Ontdek meer",
+    "loading": "Laden..."
+  },
+  "hero": {
+    "title1": "Authentieke",
+    "title2": "Kaleiwerken.",
+    "subtitle": "Al 10 jaar specialist in authentieke kaleiwerken voor binnen en buiten. Actief in heel België en internationaal. Een vast team van twee vakmensen voor een persoonlijke aanpak.",
+    "ctaPrimary": "Vraag offerte aan",
+    "ctaSecondary": "Bekijk realisaties",
+    "est": "Sinds 2015"
+  },
+  "about": {
+    "title": "10 jaar Vakmanschap.",
+    "subtitle": "Vakmanschap & Passie",
+    "description": "Wij werken met een vast team van twee vakmensen. Hierdoor kunnen we elk project persoonlijk opvolgen en garanderen we een zorgvuldige en kwalitatieve uitvoering van begin tot einde. Onze passie ligt in het herstellen van de authentieke uitstraling van uw woning, zowel in België als daarbuiten.",
+    "features": [
+      "10 jaar gespecialiseerde ervaring",
+      "Vast team van 2 vakmensen",
+      "Eigen pigmentmenging",
+      "Projecten in België & Buitenland"
+    ]
+  },
+  "features": {
+    "title": "De kunst van kalei.",
+    "subtitle": "Een eeuwenoude techniek met moderne voordelen. De perfecte balans tussen esthetiek en functionaliteit.",
+    "items": [
+      {
+        "title": "Ademende bescherming",
+        "desc": "Kalei geeft een authentieke look en laat muren ademen, wat vochtproblemen voorkomt."
+      },
+      {
+        "title": "Minerale pigmenten",
+        "desc": "Wij mengen onze kleuren zelf met minerale pigmenten voor een unieke, natuurlijke uitstraling."
+      },
+      {
+        "title": "Hydrofuge afwerking",
+        "desc": "Optionele waterafstotende behandeling voor extra bescherming tegen vocht en vuil."
+      }
+    ]
+  }
+}

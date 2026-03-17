@@ -1,29 +1,29 @@
 "use client";
 
 import { ShieldCheck, Clock, Wind } from "lucide-react";
-import { siteContent } from "@/content/site";
 import { motion } from "framer-motion";
 
 const icons = [ShieldCheck, Clock, Wind];
 
-export const Features = () => {
+export const Features = ({ dict }: { dict: any }) => {
   return (
     <section className="py-32 bg-brand-stone relative overflow-hidden">
-        {/* Decorative Grid */}
         <div className="absolute inset-0 bg-grid-pattern opacity-[0.03] pointer-events-none" />
 
       <div className="container mx-auto px-6 md:px-12 relative z-10">
         <div className="mb-24 md:flex justify-between items-end border-b border-brand-dark/10 pb-12">
             <h2 className="font-serif text-5xl md:text-7xl text-brand-dark max-w-xl leading-[0.9]">
-                De kunst van <span className="italic text-brand-bronze">kalei.</span>
+                {dict.title.split(' ').map((word: string, i: number) => (
+                    word.toLowerCase() === 'kalei.' ? <span key={i} className="italic text-brand-bronze"> {word}</span> : <span key={i}> {word}</span>
+                ))}
             </h2>
             <p className="text-brand-dark/60 mt-8 md:mt-0 max-w-sm text-sm leading-relaxed text-balance">
-                Een eeuwenoude techniek met moderne voordelen. De perfecte balans tussen esthetiek en functionaliteit.
+                {dict.subtitle}
             </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-12 lg:gap-24">
-          {siteContent.benefits.map((benefit, idx) => {
+          {dict.items.map((benefit: any, idx: number) => {
             const Icon = icons[idx];
             return (
               <motion.div 

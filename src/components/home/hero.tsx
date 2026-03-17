@@ -1,14 +1,17 @@
 "use client";
 
 import { useRef } from "react";
-import { siteContent } from "@/content/site";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
-export const Hero = () => {
+export const Hero = ({ dict }: { dict: any }) => {
     const containerRef = useRef(null);
+    const pathname = usePathname();
+    const locale = pathname.split("/")[1] || "nl";
+
     const { scrollYProgress } = useScroll({
         target: containerRef,
         offset: ["start start", "end start"]
@@ -21,12 +24,10 @@ export const Hero = () => {
     return (
         <section ref={containerRef} className="relative h-screen w-full flex items-center justify-center overflow-hidden">
             
-            {/* Background Parallax Image */}
             <motion.div 
                 style={{ y, scale }}
                 className="absolute inset-0 z-0"
             >
-                {/* Subtle Black Overlay */}
                 <div className="absolute inset-0 bg-black/40 z-10" />
                 
                 <Image
@@ -40,7 +41,6 @@ export const Hero = () => {
                 />
             </motion.div>
 
-            {/* Content Container */}
             <div className="relative z-20 container mx-auto px-6 md:px-12 flex flex-col justify-end h-full pb-24 md:pb-32 text-brand-white">
                 
                 <motion.div 
@@ -51,7 +51,7 @@ export const Hero = () => {
                 >
                     <div className="flex items-center gap-3 mb-6 opacity-80">
                         <span className="h-[1px] w-8 bg-brand-white/60"></span>
-                        <span className="uppercase text-xs tracking-[0.25em] font-medium">Sinds 2015</span>
+                        <span className="uppercase text-xs tracking-[0.25em] font-medium">{dict.est}</span>
                     </div>
 
                     <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl xl:text-9xl leading-[0.9] md:leading-[0.9] tracking-tight mb-8">
@@ -62,7 +62,7 @@ export const Hero = () => {
                                 transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
                                 className="block"
                             >
-                                Authentieke
+                                {dict.title1}
                             </motion.span>
                         </span>
                         <span className="block overflow-hidden">
@@ -72,93 +72,39 @@ export const Hero = () => {
                                 transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
                                 className="block italic text-brand-bronzeLight/90"
                             >
-                                Kaleiwerken.
+                                {dict.title2}
                             </motion.span>
                         </span>
                     </h1>
                     
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-12 border-t border-brand-white/20 pt-8 mt-12">
                         <p className="text-brand-white/80 text-lg md:text-xl font-light leading-relaxed max-w-lg">
-                            {siteContent.hero.subtitle}
+                            {dict.subtitle}
                         </p>
 
                         <div className="flex flex-col sm:flex-row gap-6 w-full md:w-auto">
                             <Link 
-                                href="/offerte"
-                                className="
-                                    relative inline-flex items-center justify-center
-                                    px-10 py-5 rounded-xl
-                                    font-bold tracking-[0.15em]
-                                    text-[#F5F2EA]
-                                    bg-[#0B0D10]
-                                    border border-[#C8B07A]/35
-                                    shadow-[0_10px_30px_rgba(0,0,0,0.35)]
-                                    transition-all duration-300
-                                    hover:-translate-y-[2px] hover:shadow-[0_14px_45px_rgba(0,0,0,0.55)]
-                                    active:translate-y-0 active:shadow-[0_8px_22px_rgba(0,0,0,0.35)]
-                                    focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C8B07A]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0D10]
-                                    overflow-hidden
-                                    uppercase text-xs
-                                    group
-                                "
+                                href={`/${locale}/offerte`}
+                                className="relative inline-flex items-center justify-center px-10 py-5 rounded-xl font-bold tracking-[0.15em] text-[#F5F2EA] bg-[#0B0D10] border border-[#C8B07A]/35 shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition-all duration-300 hover:-translate-y-[2px] hover:shadow-[0_14px_45px_rgba(0,0,0,0.55)] active:translate-y-0 active:shadow-[0_8px_22px_rgba(0,0,0,0.35)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C8B07A]/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0D10] overflow-hidden uppercase text-xs group"
                             >
-                                <span
-                                    aria-hidden="true"
-                                    className="
-                                        pointer-events-none absolute inset-0
-                                        opacity-[0.22]
-                                        [background:
-                                            radial-gradient(1200px_400px_at_30%_20%,rgba(200,176,122,0.18),transparent_55%),
-                                            radial-gradient(900px_280px_at_70%_80%,rgba(245,242,234,0.10),transparent_60%)
-                                        ]
-                                    "
-                                />
-
-                                <span
-                                    aria-hidden="true"
-                                    className="
-                                        pointer-events-none absolute inset-0
-                                        rounded-xl
-                                        [box-shadow:
-                                            inset_0_-10px_18px_rgba(0,0,0,0.35),
-                                            inset_10px_0_18px_rgba(0,0,0,0.18),
-                                            inset_-10px_0_18px_rgba(0,0,0,0.18)
-                                        ]
-                                    "
-                                />
-
+                                <span aria-hidden="true" className="pointer-events-none absolute inset-0 opacity-[0.22] [background:radial-gradient(1200px_400px_at_30%_20%,rgba(200,176,122,0.18),transparent_55%),radial-gradient(900px_280px_at_70%_80%,rgba(245,242,234,0.10),transparent_60%)]" />
+                                <span aria-hidden="true" className="pointer-events-none absolute inset-0 rounded-xl [box-shadow:inset_0_-10px_18px_rgba(0,0,0,0.35),inset_10px_0_18px_rgba(0,0,0,0.18),inset_-10px_0_18px_rgba(0,0,0,0.18)]" />
                                 <span className="relative z-10 flex items-center gap-2">
-                                    {siteContent.hero.ctaPrimary}
+                                    {dict.ctaPrimary}
                                     <ArrowUpRight className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                                 </span>
                             </Link>
                             
                             <Link 
-                                href="/projecten"
+                                href={`/${locale}/projecten`}
                                 className="inline-flex items-center justify-center px-10 py-5 rounded-none border border-brand-white/30 text-brand-white hover:bg-brand-white hover:text-brand-dark transition-all duration-500 text-xs font-bold uppercase tracking-[0.2em] backdrop-blur-sm"
                             >
-                                {siteContent.hero.ctaSecondary}
+                                {dict.ctaSecondary}
                             </Link>
                         </div>
                     </div>
                 </motion.div>
             </div>
-            
-            {/* Scroll Indicator */}
-            <motion.div 
-                style={{ opacity }}
-                className="absolute bottom-8 right-8 md:right-12 hidden md:flex flex-col items-center gap-4 z-20 mix-blend-difference text-white"
-            >
-                <span className="text-[10px] uppercase tracking-widest writing-vertical-rl rotate-180">Scroll</span>
-                <div className="h-16 w-[1px] bg-white/20 overflow-hidden relative">
-                     <motion.div 
-                        animate={{ y: ["-100%", "100%"] }}
-                        transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
-                        className="absolute top-0 w-full h-1/2 bg-white"
-                    />
-                </div>
-            </motion.div>
-
         </section>
     );
 };

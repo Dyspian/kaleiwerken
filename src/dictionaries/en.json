@@ -1,0 +1,49 @@
+{
+  "common": {
+    "offerte": "Request Quote",
+    "realisaties": "Projects",
+    "overOns": "About Us",
+    "home": "Home",
+    "contact": "Contact",
+    "back": "Back",
+    "more": "Discover more",
+    "loading": "Loading..."
+  },
+  "hero": {
+    "title1": "Authentic",
+    "title2": "Kalei Works.",
+    "subtitle": "Specialist in authentic kalei works for interior and exterior for 10 years. Active throughout Belgium and internationally. A dedicated team of two craftsmen for a personal approach.",
+    "ctaPrimary": "Request quote",
+    "ctaSecondary": "View projects",
+    "est": "Since 2015"
+  },
+  "about": {
+    "title": "10 years of Craftsmanship.",
+    "subtitle": "Craftsmanship & Passion",
+    "description": "We work with a dedicated team of two craftsmen. This allows us to personally follow up on every project and guarantee a careful and high-quality execution from start to finish. Our passion lies in restoring the authentic appearance of your home, both in Belgium and abroad.",
+    "features": [
+      "10 years of specialized experience",
+      "Dedicated team of 2 craftsmen",
+      "Custom pigment mixing",
+      "Projects in Belgium & Abroad"
+    ]
+  },
+  "features": {
+    "title": "The art of kalei.",
+    "subtitle": "An ancient technique with modern benefits. The perfect balance between aesthetics and functionality.",
+    "items": [
+      {
+        "title": "Breathable protection",
+        "desc": "Kalei provides an authentic look and allows walls to breathe, preventing moisture problems."
+      },
+      {
+        "title": "Mineral pigments",
+        "desc": "We mix our colors ourselves with mineral pigments for a unique, natural appearance."
+      },
+      {
+        "title": "Hydrofuge finish",
+        "desc": "Optional water-repellent treatment for extra protection against moisture and dirt."
+      }
+    ]
+  }
+}

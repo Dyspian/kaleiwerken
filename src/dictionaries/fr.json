@@ -1,0 +1,49 @@
+{
+  "common": {
+    "offerte": "Demander un devis",
+    "realisaties": "Réalisations",
+    "overOns": "À propos",
+    "home": "Accueil",
+    "contact": "Contact",
+    "back": "Retour",
+    "more": "En savoir plus",
+    "loading": "Chargement..."
+  },
+  "hero": {
+    "title1": "Travaux de",
+    "title2": "Kalei Authentiques.",
+    "subtitle": "Spécialiste des travaux de kalei authentiques pour l'intérieur et l'extérieur depuis 10 ans. Actif dans toute la Belgique et à l'étranger. Une équipe fixe de deux artisans pour une approche personnalisée.",
+    "ctaPrimary": "Demander un devis",
+    "ctaSecondary": "Voir les réalisations",
+    "est": "Depuis 2015"
+  },
+  "about": {
+    "title": "10 ans de Savoir-faire.",
+    "subtitle": "Artisanat & Passion",
+    "description": "Nous travaillons avec une équipe fixe de deux artisans. Cela nous permet de suivre personnellement chaque projet et de garantir une exécution soignée et de qualité du début à la fin. Notre passion est de restaurer l'aspect authentique de votre maison, en Belgique comme à l'étranger.",
+    "features": [
+      "10 ans d'expérience spécialisée",
+      "Équipe fixe de 2 artisans",
+      "Mélange de pigments propre",
+      "Projets en Belgique et à l'étranger"
+    ]
+  },
+  "features": {
+    "title": "L'art du kalei.",
+    "subtitle": "Une technique ancestrale aux avantages modernes. L'équilibre parfait tussen esthétique et fonctionnalité.",
+    "items": [
+      {
+        "title": "Protection respirante",
+        "desc": "Le kalei donne un aspect authentique et laisse respirer les murs, évitant les problèmes d'humidité."
+      },
+      {
+        "title": "Pigments minéraux",
+        "desc": "Nous mélangeons nos couleurs nous-mêmes avec des pigments minéraux pour un aspect unique et naturel."
+      },
+      {
+        "title": "Finition hydrofuge",
+        "desc": "Traitement hydrofuge optionnel pour une protection supplémentaire contre l'humidité et la saleté."
+      }
+    ]
+  }
+}

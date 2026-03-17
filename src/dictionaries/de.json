@@ -1,0 +1,49 @@
+{
+  "common": {
+    "offerte": "Angebot anfordern",
+    "realisaties": "Projekte",
+    "overOns": "Über uns",
+    "home": "Home",
+    "contact": "Kontakt",
+    "back": "Zurück",
+    "more": "Mehr entdecken",
+    "loading": "Laden..."
+  },
+  "hero": {
+    "title1": "Authentische",
+    "title2": "Kalei-Arbeiten.",
+    "subtitle": "Seit 10 Jahren Spezialist für authentische Kalei-Arbeiten im Innen- und Außenbereich. Aktiv in ganz Belgien und international. Ein festes Team von zwei Handwerkern für einen persönlichen Ansatz.",
+    "ctaPrimary": "Angebot anfordern",
+    "ctaSecondary": "Projekte ansehen",
+    "est": "Seit 2015"
+  },
+  "about": {
+    "title": "10 Jahre Handwerkskunst.",
+    "subtitle": "Handwerk & Leidenschaft",
+    "description": "Wir arbeiten mit einem festen Team von zwei Handwerkern. Dies ermöglicht es uns, jedes Projekt persönlich zu begleiten und eine sorgfältige und qualitativ hochwertige Ausführung von Anfang bis Ende zu garantieren. Unsere Leidenschaft liegt darin, das authentische Erscheinungsbeild Ihres Hauses wiederherzustellen, sowohl in Belgien als auch im Ausland.",
+    "features": [
+      "10 Jahre spezialisierte Erfahrung",
+      "Festes Team von 2 Handwerkern",
+      "Eigene Pigmentmischung",
+      "Projekte in Belgien & Ausland"
+    ]
+  },
+  "features": {
+    "title": "Die Kunst des Kalei.",
+    "subtitle": "Eine uralte Technik mit modernen Vorteilen. Die perfekte Balance zwischen Ästhetik und Funktionalität.",
+    "items": [
+      {
+        "title": "Atmungsaktiver Schutz",
+        "desc": "Kalei verleiht ein authentisches Aussehen und lässt Wände atmen, was Feuchtigkeitsprobleme verhindert."
+      },
+      {
+        "title": "Mineralische Pigmente",
+        "desc": "Wir mischen unsere Farben selbst mit mineralischen Pigmenten für ein einzigartiges, natürliches Erscheinungsbild."
+      },
+      {
+        "title": "Hydrophobe Veredelung",
+        "desc": "Optionale wasserabweisende Behandlung für zusätzlichen Schutz vor Feuchtigkeit und Schmutz."
+      }
+    ]
+  }
+}

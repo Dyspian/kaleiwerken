@@ -9,8 +9,13 @@ import { QuoteWizard } from "@/components/quote/quote-wizard";
 import { Toaster } from "@/components/ui/sonner";
 import { Loader } from "@/components/layout/loader";
 import Script from "next/script";
+import { getDictionary } from "@/lib/get-dictionary";
+import { Locale } from "@/lib/i18n-config";
 
-export default function Home() {
+export default async function Home({ params }: { params: Promise<{ locale: Locale }> }) {
+  const { locale } = await params;
+  const dict = await getDictionary(locale);
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
@@ -48,7 +53,7 @@ export default function Home() {
       "https://www.instagram.com/vanroeykalei"
     ],
     "priceRange": "$$",
-    "description": "Specialist in authentieke kaleiwerken en gevelrenovatie in Antwerpen en omstreken. Hoogwaardige afwerkingen voor een duurzaam resultaat."
+    "description": dict.hero.subtitle
   };
 
   return (
@@ -61,12 +66,12 @@ export default function Home() {
       <Loader />
       <Header />
       
-      <Hero />
+      <Hero dict={dict.hero} />
       <SocialProof />
       
       <div className="bg-brand-stone">
         <BeforeAfter />
-        <Features />
+        <Features dict={dict.features} />
         <Process />
 
         <section id="offerte" className="py-32 bg-brand-white relative overflow-hidden">
@@ -75,7 +80,7 @@ export default function Home() {
             <div className="container mx-auto px-6 md:px-12 relative z-10">
                 <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-start">
                     <div className="lg:sticky lg:top-32">
-                        <span className="uppercase text-xs tracking-[0.3em] text-brand-bronze font-medium mb-6 block">Contact</span>
+                        <span className="uppercase text-xs tracking-[0.3em] text-brand-bronze font-medium mb-6 block">{dict.common.contact}</span>
                         <h2 className="font-serif text-5xl md:text-7xl font-medium mb-8 leading-[0.9] text-brand-dark">
                             Klaar voor een <span className="italic text-brand-bronze">nieuwe</span> uitstraling?
                         </h2>
