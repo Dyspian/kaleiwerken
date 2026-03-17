@@ -16,6 +16,11 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
   const { locale } = await params;
   const dict = await getDictionary(locale) as any;
 
+  // Fallback to prevent crashes if dict is not fully loaded
+  const heroDict = dict?.hero || {};
+  const quoteDict = dict?.quote || {};
+  const commonDict = dict?.common || {};
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
@@ -53,7 +58,7 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
       "https://www.instagram.com/vanroeykalei"
     ],
     "priceRange": "$$",
-    "description": dict.hero.subtitle
+    "description": heroDict.subtitle || ""
   };
 
   return (
@@ -66,12 +71,12 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
       <Loader />
       <Header dict={dict} />
       
-      <Hero dict={dict.hero} />
+      <Hero dict={heroDict} />
       <SocialProof dict={dict} />
       
       <div className="bg-brand-stone">
         <BeforeAfter dict={dict} />
-        <Features dict={dict.features} />
+        <Features dict={dict?.features} />
         <Process dict={dict} />
 
         <section id="offerte" className="py-32 bg-brand-white relative overflow-hidden">
@@ -80,17 +85,17 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
             <div className="container mx-auto px-6 md:px-12 relative z-10">
                 <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-start">
                     <div className="lg:sticky lg:top-32">
-                        <span className="uppercase text-xs tracking-[0.3em] text-brand-bronze font-medium mb-6 block">{dict.common.contact}</span>
+                        <span className="uppercase text-xs tracking-[0.3em] text-brand-bronze font-medium mb-6 block">{commonDict.contact}</span>
                         <h2 className="font-serif text-5xl md:text-7xl font-medium mb-8 leading-[0.9] text-brand-dark">
-                            {dict.quote.title}
+                            {quoteDict.title}
                         </h2>
                         <p className="text-xl text-brand-dark/60 mb-12 max-w-md font-light leading-relaxed">
-                            {dict.quote.subtitle}
+                            {quoteDict.subtitle}
                         </p>
                         
                         <div className="hidden lg:block space-y-6 pt-12 border-t border-brand-dark/5">
                             <div>
-                                <h4 className="uppercase text-[10px] tracking-widest text-brand-dark/40 mb-2">{dict.footer.contact}</h4>
+                                <h4 className="uppercase text-[10px] tracking-widest text-brand-dark/40 mb-2">{dict?.footer?.contact}</h4>
                                 <p className="font-serif text-2xl text-brand-dark">+32 470 12 34 56</p>
                             </div>
                             <div>
@@ -101,7 +106,7 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
                     </div>
                     
                     <div>
-                        <QuoteWizard dict={dict.quote} />
+                        <QuoteWizard dict={quoteDict} />
                     </div>
                 </div>
             </div>

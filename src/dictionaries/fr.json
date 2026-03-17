@@ -7,7 +7,15 @@
     "contact": "Contact",
     "back": "Retour",
     "more": "En savoir plus",
-    "loading": "Chargement..."
+    "loading": "Chargement...",
+    "privacy": "Politique de confidentialité",
+    "terms": "Conditions générales"
+  },
+  "header": {
+    "home": "Accueil",
+    "about": "À propos",
+    "projects": "Réalisations",
+    "quote": "Devis"
   },
   "hero": {
     "title1": "Travaux de",
@@ -17,20 +25,23 @@
     "ctaSecondary": "Voir les réalisations",
     "est": "Depuis 2015"
   },
-  "about": {
-    "title": "10 ans de Savoir-faire.",
-    "subtitle": "Artisanat & Passion",
-    "description": "Nous travaillons avec une équipe fixe de deux artisans. Cela nous permet de suivre personnellement chaque projet et de garantir une exécution soignée et de qualité du début à la fin. Notre passion est de restaurer l'aspect authentique de votre maison, en Belgique comme à l'étranger.",
-    "features": [
-      "10 ans d'expérience spécialisée",
-      "Équipe fixe de 2 artisans",
-      "Mélange de pigments propre",
-      "Projets en Belgique et à l'étranger"
+  "socialProof": {
+    "items": [
+      "10 ans d'expérience",
+      "Belgique & Étranger",
+      "Pigments propres",
+      "Intérieur & Extérieur",
+      "Réparations incluses"
     ]
+  },
+  "beforeAfter": {
+    "tag": "Transformation",
+    "title": "La différence dans le détail",
+    "instruction": "Faites glisser pour révéler le résultat"
   },
   "features": {
     "title": "L'art du kalei.",
-    "subtitle": "Une technique ancestrale aux avantages modernes. L'équilibre parfait tussen esthétique et fonctionnalité.",
+    "subtitle": "Une technique ancestrale aux avantages modernes. L'équilibre parfait entre esthétique et fonctionnalité.",
     "items": [
       {
         "title": "Protection respirante",
@@ -45,5 +56,91 @@
         "desc": "Traitement hydrofuge optionnel pour une protection supplémentaire contre l'humidité et la saleté."
       }
     ]
+  },
+  "about": {
+    "title": "10 ans de Savoir-faire.",
+    "subtitle": "Artisanat & Passion",
+    "description": "Nous travaillons avec une équipe fixe de deux artisans. Cela nous permet de suivre personnellement chaque projet et de garantir une exécution soignée et de qualité du début à la fin. Notre passion est de restaurer l'aspect authentique de votre maison, en Belgique comme à l'étranger.",
+    "features": [
+      "10 ans d'expérience spécialisée",
+      "Équipe fixe de 2 artisans",
+      "Mélange de pigments propre",
+      "Projets en Belgique et à l'étranger"
+    ]
+  },
+  "process": {
+    "title": "Transparent du début à la fin.",
+    "subtitle": "Méthode",
+    "desc": "Nous croyons en une communication claire et une planification rigoureuse. Ainsi, vous savez toujours à quoi vous attendre.",
+    "steps": [
+      { "title": "Mesure", "desc": "Nous venons sur place pour une analyse précise de la façade." },
+      { "title": "Conseil", "desc": "Ensemble, nous choisissons la technique et la couleur adaptées à votre maison." },
+      { "title": "Exécution", "desc": "Nos artisans appliquent le kalei avec un souci du détail constant." },
+      { "title": "Livraison", "desc": "Un contrôle approfondi garantit un résultat parfait." }
+    ]
+  },
+  "quote": {
+    "title": "Prêt pour un nouveau look ?",
+    "subtitle": "Commencez votre demande ici. Cela ne prend que 2 minutes et c'est sans engagement.",
+    "step1": "Projet",
+    "step2": "Détails",
+    "step3": "Contact",
+    "question1": "Quel type de projet s'agit-il ?",
+    "question2": "Détails du projet",
+    "question3": "Comment pouvons-nous vous joindre ?",
+    "surface": "Surface (m²)",
+    "surfaceType": "Support actuel",
+    "timing": "Délai",
+    "name": "Nom",
+    "email": "E-mail",
+    "phone": "Téléphone",
+    "postalCode": "Code postal",
+    "city": "Commune",
+    "submit": "Demander un devis",
+    "next": "Suivant",
+    "prev": "Précédent",
+    "success": "Merci.",
+    "successDesc": "Nous avons bien reçu vos coordonnées. Nous vous contacterons dans les 48 heures pour une visite sur place.",
+    "newRequest": "Nouvelle demande",
+    "types": {
+      "gevel": "Façade",
+      "binnen": "Intérieur",
+      "totaal": "Total",
+      "renovatie": "Rénovation"
+    },
+    "surfaces": {
+      "baksteen": "Brique",
+      "crepi": "Crépi",
+      "onbekend": "Inconnu"
+    },
+    "timings": {
+      "asap": "Dès que possible",
+      "1-3_maanden": "D'ici 1 à 3 mois",
+      "later": "Plus tard cette année"
+    }
+  },
+  "projects": {
+    "title": "Nos Réalisations.",
+    "subtitle": "Le savoir-faire en images. Découvrez nos projets récents.",
+    "all": "Tous",
+    "back": "Retour au portfolio",
+    "location": "Lieu",
+    "year": "Année",
+    "expertise": "Expertise",
+    "status": "Statut",
+    "specs": "Spécifications",
+    "technique": "Technique",
+    "finishing": "Finition",
+    "pigment": "Pigment",
+    "team": "Équipe",
+    "gallery": "Galerie",
+    "next": "Projet suivant",
+    "discover": "Découvrez plus de réalisations."
+  },
+  "footer": {
+    "desc": "Spécialiste de la rénovation de façade authentique et des travaux de kalei avec une finition de haute qualité depuis 10 ans.",
+    "socials": "Réseaux sociaux",
+    "menu": "Menu",
+    "contact": "Contact"
   }
 }

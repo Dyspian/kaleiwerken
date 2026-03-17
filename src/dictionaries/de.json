@@ -7,7 +7,15 @@
     "contact": "Kontakt",
     "back": "Zurück",
     "more": "Mehr entdecken",
-    "loading": "Laden..."
+    "loading": "Laden...",
+    "privacy": "Datenschutz",
+    "terms": "AGB"
+  },
+  "header": {
+    "home": "Home",
+    "about": "Über uns",
+    "projects": "Projekte",
+    "quote": "Angebot"
   },
   "hero": {
     "title1": "Authentische",
@@ -17,16 +25,19 @@
     "ctaSecondary": "Projekte ansehen",
     "est": "Seit 2015"
   },
-  "about": {
-    "title": "10 Jahre Handwerkskunst.",
-    "subtitle": "Handwerk & Leidenschaft",
-    "description": "Wir arbeiten mit einem festen Team von zwei Handwerkern. Dies ermöglicht es uns, jedes Projekt persönlich zu begleiten und eine sorgfältige und qualitativ hochwertige Ausführung von Anfang bis Ende zu garantieren. Unsere Leidenschaft liegt darin, das authentische Erscheinungsbeild Ihres Hauses wiederherzustellen, sowohl in Belgien als auch im Ausland.",
-    "features": [
-      "10 Jahre spezialisierte Erfahrung",
-      "Festes Team von 2 Handwerkern",
-      "Eigene Pigmentmischung",
-      "Projekte in Belgien & Ausland"
+  "socialProof": {
+    "items": [
+      "10 Jahre Erfahrung",
+      "Belgien & Ausland",
+      "Eigene Pigmente",
+      "Innen & Außen",
+      "Inkl. Reparaturen"
     ]
+  },
+  "beforeAfter": {
+    "tag": "Transformation",
+    "title": "Der Unterschied im Detail",
+    "instruction": "Ziehen Sie, um das Ergebnis zu sehen"
   },
   "features": {
     "title": "Die Kunst des Kalei.",
@@ -45,5 +56,91 @@
         "desc": "Optionale wasserabweisende Behandlung für zusätzlichen Schutz vor Feuchtigkeit und Schmutz."
       }
     ]
+  },
+  "about": {
+    "title": "10 Jahre Handwerkskunst.",
+    "subtitle": "Handwerk & Leidenschaft",
+    "description": "Wir arbeiten mit einem festen Team von zwei Handwerkern. Dies ermöglicht es uns, jedes Projekt persönlich zu begleiten und eine sorgfältige und qualitativ hochwertige Ausführung von Anfang bis Ende zu garantieren. Unsere Leidenschaft liegt darin, das authentische Erscheinungsbild Ihres Hauses wiederherzustellen, sowohl in Belgien als auch im Ausland.",
+    "features": [
+      "10 Jahre spezialisierte Erfahrung",
+      "Festes Team von 2 Handwerkern",
+      "Eigene Pigmentmischung",
+      "Projekte in Belgien & Ausland"
+    ]
+  },
+  "process": {
+    "title": "Transparent von Anfang bis Ende.",
+    "subtitle": "Arbeitsweise",
+    "desc": "Wir glauben an klare Kommunikation und eine straffe Planung. So wissen Sie immer, woran Sie sind.",
+    "steps": [
+      { "title": "Aufmaß", "desc": "Wir kommen vor Ort für eine genaue Analyse der Fassade." },
+      { "title": "Beratung", "desc": "Gemeinsam wählen wir die richtige Technik und Farbe für Ihr Haus." },
+      { "title": "Ausführung", "desc": "Unsere Handwerker bringen das Kalei mit Blick für jedes Detail an." },
+      { "title": "Abnahme", "desc": "Eine gründliche Überprüfung garantiert ein perfektes Ergebnis." }
+    ]
+  },
+  "quote": {
+    "title": "Bereit für einen neuen Look?",
+    "subtitle": "Starten Sie hier Ihre Anfrage. Es dauert nur 2 Minuten und ist völlig unverbindlich.",
+    "step1": "Projekt",
+    "step2": "Details",
+    "step3": "Kontakt",
+    "question1": "Um welche Art von Projekt handelt es sich?",
+    "question2": "Projektdetails",
+    "question3": "Wie können wir Sie erreichen?",
+    "surface": "Fläche (m²)",
+    "surfaceType": "Aktueller Untergrund",
+    "timing": "Zeitplan",
+    "name": "Name",
+    "email": "E-Mail",
+    "phone": "Telefon",
+    "postalCode": "Postleitzahl",
+    "city": "Gemeinde",
+    "submit": "Angebot anfordern",
+    "next": "Weiter",
+    "prev": "Zurück",
+    "success": "Vielen Dank.",
+    "successDesc": "Wir haben Ihre Daten erhalten. Wir werden uns innerhalb von 48 Stunden für einen Vor-Ort-Termin bei Ihnen melden.",
+    "newRequest": "Neue Anfrage",
+    "types": {
+      "gevel": "Fassade",
+      "binnen": "Innen",
+      "totaal": "Gesamt",
+      "renovatie": "Renovierung"
+    },
+    "surfaces": {
+      "baksteen": "Backstein",
+      "crepi": "Putz",
+      "onbekend": "Unbekannt"
+    },
+    "timings": {
+      "asap": "So schnell wie möglich",
+      "1-3_maanden": "Innerhalb von 1-3 Monaten",
+      "later": "Später in diesem Jahr"
+    }
+  },
+  "projects": {
+    "title": "Unsere Projekte.",
+    "subtitle": "Handwerkskunst im Bild. Entdecken Sie unsere aktuellen Projekte.",
+    "all": "Alle",
+    "back": "Zurück zum Portfolio",
+    "location": "Ort",
+    "year": "Jahr",
+    "expertise": "Expertise",
+    "status": "Status",
+    "specs": "Spezifikationen",
+    "technique": "Technik",
+    "finishing": "Veredelung",
+    "pigment": "Pigment",
+    "team": "Team",
+    "gallery": "Galerie",
+    "next": "Nächstes Projekt",
+    "discover": "Entdecken Sie weitere Projekte."
+  },
+  "footer": {
+    "desc": "Seit 10 Jahren Spezialist für authentische Fassadenrenovierung und Kalei-Arbeiten mit hochwertiger Veredelung.",
+    "socials": "Social Media",
+    "menu": "Menü",
+    "contact": "Kontakt"
   }
 }
