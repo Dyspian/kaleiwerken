@@ -11,6 +11,7 @@ export interface Lead {
   email: string;
   phone?: string;
   postal_code?: string;
+  city?: string; // Nieuwe kolom
   project_type: string;
   surface_area: string;
   surface_type: string;
@@ -47,15 +48,15 @@ export const useLeads = (user: User | null, authLoading: boolean) => {
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'leads' }, (payload) => {
         const newLead = payload.new as Lead;
         toast.info(`Nieuwe aanvraag van ${newLead.name}!`, {
-          description: `${newLead.project_type} - ${newLead.postal_code}`,
+          description: `${newLead.project_type} - ${newLead.postal_code} ${newLead.city || ''}`,
           action: {
             label: 'Bekijk',
             onClick: () => {
-              fetchLeads(); // Refresh the list
+              fetchLeads();
             },
           },
         });
-        fetchLeads(); // Refresh the list to show the new lead
+        fetchLeads();
       })
       .subscribe();
 
@@ -69,7 +70,7 @@ export const useLeads = (user: User | null, authLoading: boolean) => {
     let query = supabase.from("leads").select("*", { count: 'exact' });
 
     if (searchQuery) {
-      query = query.or(`name.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%`);
+      query = query.or(`name.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%,city.ilike.%${searchQuery}%`);
     }
 
     if (filterStatus !== 'all') {
@@ -123,6 +124,7 @@ export const useLeads = (user: User | null, authLoading: boolean) => {
         status: updatedLead.status,
         notes: updatedLead.notes,
         postal_code: updatedLead.postal_code,
+        city: updatedLead.city,
         project_type: updatedLead.project_type,
         surface_area: updatedLead.surface_area,
         surface_type: updatedLead.surface_type,

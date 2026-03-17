@@ -66,14 +66,25 @@ export const EditLeadDialog = ({
                 />
               </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="postalCode">Postcode</Label>
-              <Input
-                id="postalCode"
-                value={editingLead.postal_code || ''}
-                onChange={(e) => setEditingLead({ ...editingLead, postal_code: e.target.value })}
-                className="rounded-none border-brand-dark/10"
-              />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="postalCode">Postcode</Label>
+                <Input
+                  id="postalCode"
+                  value={editingLead.postal_code || ''}
+                  onChange={(e) => setEditingLead({ ...editingLead, postal_code: e.target.value })}
+                  className="rounded-none border-brand-dark/10"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="city">Gemeente</Label>
+                <Input
+                  id="city"
+                  value={editingLead.city || ''}
+                  onChange={(e) => setEditingLead({ ...editingLead, city: e.target.value })}
+                  className="rounded-none border-brand-dark/10"
+                />
+              </div>
             </div>
             <div className="space-y-2">
               <Label htmlFor="projectType">Project Type</Label>

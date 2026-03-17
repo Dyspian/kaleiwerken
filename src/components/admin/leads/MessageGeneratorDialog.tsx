@@ -17,15 +17,50 @@ interface MessageGeneratorDialogProps {
 
 type TemplateType = 'email_initial' | 'whatsapp_visit' | 'email_followup';
 
+// Mapping van postcodes naar gemeentes (voorbeelden voor regio Antwerpen)
+const postcodeMapping: Record<string, string> = {
+  "2000": "Antwerpen",
+  "2018": "Antwerpen",
+  "2020": "Antwerpen",
+  "2060": "Antwerpen",
+  "2100": "Deurne",
+  "2140": "Borgerhout",
+  "2170": "Merksem",
+  "2180": "Ekeren",
+  "2600": "Berchem",
+  "2610": "Wilrijk",
+  "2660": "Hoboken",
+  "2900": "Schoten",
+  "2930": "Brasschaat",
+  "2970": "Schilde",
+  "2500": "Lier",
+  "2520": "Ranst",
+  "2540": "Hove",
+  "2550": "Kontich",
+  "2240": "Zandhoven",
+  "2242": "Pulderbos",
+  "2243": "Pulle",
+};
+
 export const MessageGeneratorDialog = ({ isOpen, onOpenChange, lead }: MessageGeneratorDialogProps) => {
   const [template, setTemplate] = useState<TemplateType>('email_initial');
   const [message, setMessage] = useState("");
   const [copied, setCopied] = useState(false);
 
+  const getCity = (leadData: Lead) => {
+    if (leadData.city) return leadData.city;
+    if (leadData.postal_code && postcodeMapping[leadData.postal_code]) {
+      return postcodeMapping[leadData.postal_code];
+    }
+    return leadData.postal_code || "uw regio";
+  };
+
   const generateMessage = (type: TemplateType, leadData: Lead) => {
     const firstName = leadData.name.split(' ')[0];
     const projectType = leadData.project_type.toLowerCase();
-    const location = leadData.postal_code || "uw regio";
+    const city = getCity(leadData);
+    const postalCode = leadData.postal_code || "";
+    const location = postalCode ? `${postalCode} ${city}` : city;
     const area = leadData.surface_area;
 
     switch (type) {

@@ -23,6 +23,7 @@ const formSchema = z.object({
   email: z.string().email("Ongeldig emailadres"),
   phone: z.string().min(9, "Ongeldig telefoonnummer"),
   postalCode: z.string().min(4, "Ongeldige postcode"),
+  city: z.string().optional(),
 });
 
 export type FormValues = z.infer<typeof formSchema>;
@@ -38,6 +39,31 @@ const projectTypeIcons = {
   binnen: Building,
   totaal: Paintbrush,
   renovatie: Wrench,
+};
+
+// Mapping van postcodes naar gemeentes
+const postcodeMapping: Record<string, string> = {
+  "2000": "Antwerpen",
+  "2018": "Antwerpen",
+  "2020": "Antwerpen",
+  "2060": "Antwerpen",
+  "2100": "Deurne",
+  "2140": "Borgerhout",
+  "2170": "Merksem",
+  "2180": "Ekeren",
+  "2600": "Berchem",
+  "2610": "Wilrijk",
+  "2660": "Hoboken",
+  "2900": "Schoten",
+  "2930": "Brasschaat",
+  "2970": "Schilde",
+  "2500": "Lier",
+  "2520": "Ranst",
+  "2540": "Hove",
+  "2550": "Kontich",
+  "2240": "Zandhoven",
+  "2242": "Pulderbos",
+  "2243": "Pulle",
 };
 
 interface QuoteWizardProps {
@@ -59,20 +85,28 @@ export const QuoteWizard = ({ onFormChange }: QuoteWizardProps) => {
   });
 
   const formValues = watch();
-  const serializedFormValues = JSON.stringify(formValues); // Serialize for comparison
+  const postalCode = watch('postalCode');
+
+  // Automatisch gemeente invullen op basis van postcode
+  useEffect(() => {
+    if (postalCode && postcodeMapping[postalCode]) {
+      setValue('city', postcodeMapping[postalCode]);
+    }
+  }, [postalCode, setValue]);
+
+  const serializedFormValues = JSON.stringify(formValues);
   const prevSerializedFormValues = useRef(serializedFormValues);
   const prevStepRef = useRef(step);
 
   useEffect(() => {
     if (onFormChange) {
-      // Only call onFormChange if serialized form values or step have actually changed
       if (serializedFormValues !== prevSerializedFormValues.current || step !== prevStepRef.current) {
         onFormChange(formValues, step);
         prevSerializedFormValues.current = serializedFormValues;
         prevStepRef.current = step;
       }
     }
-  }, [serializedFormValues, step, onFormChange]); // Removed formValues from dependencies
+  }, [serializedFormValues, step, onFormChange, formValues]);
 
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
@@ -88,6 +122,7 @@ export const QuoteWizard = ({ onFormChange }: QuoteWizardProps) => {
         email: data.email,
         phone: data.phone,
         postal_code: data.postalCode,
+        city: data.city || postcodeMapping[data.postalCode] || "",
       });
 
     if (error) {
@@ -101,7 +136,6 @@ export const QuoteWizard = ({ onFormChange }: QuoteWizardProps) => {
   };
 
   const nextStep = () => {
-    // Basic validation before moving to next step
     let isValid = true;
     if (step === 1) {
       if (!getValues('projectType')) {
@@ -282,10 +316,16 @@ export const QuoteWizard = ({ onFormChange }: QuoteWizardProps) => {
                     {errors.email && <span className="text-red-500 text-xs mt-1 block opacity-70">{errors.email.message}</span>}
                 </div>
 
-                <div className="group relative">
-                    <Label className="uppercase text-[10px] tracking-[0.2em] text-brand-dark/40 mb-2 block group-focus-within:text-brand-bronze transition-colors">Postcode werfadres</Label>
-                    <Input {...register('postalCode')} className="border-0 border-b border-brand-dark/10 rounded-none px-0 py-4 text-xl font-serif focus-visible:ring-0 focus-visible:border-brand-bronze bg-transparent transition-colors placeholder:text-brand-dark/10" placeholder="2000" />
-                    {errors.postalCode && <span className="text-red-500 text-xs mt-1 block opacity-70">{errors.postalCode.message}</span>}
+                <div className="grid md:grid-cols-2 gap-12">
+                    <div className="group relative">
+                        <Label className="uppercase text-[10px] tracking-[0.2em] text-brand-dark/40 mb-2 block group-focus-within:text-brand-bronze transition-colors">Postcode</Label>
+                        <Input {...register('postalCode')} className="border-0 border-b border-brand-dark/10 rounded-none px-0 py-4 text-xl font-serif focus-visible:ring-0 focus-visible:border-brand-bronze bg-transparent transition-colors placeholder:text-brand-dark/10" placeholder="2000" />
+                        {errors.postalCode && <span className="text-red-500 text-xs mt-1 block opacity-70">{errors.postalCode.message}</span>}
+                    </div>
+                    <div className="group relative">
+                        <Label className="uppercase text-[10px] tracking-[0.2em] text-brand-dark/40 mb-2 block group-focus-within:text-brand-bronze transition-colors">Gemeente</Label>
+                        <Input {...register('city')} className="border-0 border-b border-brand-dark/10 rounded-none px-0 py-4 text-xl font-serif focus-visible:ring-0 focus-visible:border-brand-bronze bg-transparent transition-colors placeholder:text-brand-dark/10" placeholder="Antwerpen" />
+                    </div>
                 </div>
               </div>
             </motion.div>
