@@ -32,10 +32,11 @@ export default function AboutPage() {
             </div>
             <div className="relative aspect-[4/5] bg-brand-dark/5 overflow-hidden">
                 <Image 
-                    src="https://sjfosmcpbekkokmedwil.supabase.co/storage/v1/object/public/hero/hero.jpeg" 
+                    src="https://sjfosmcpbekkokmedwil.supabase.co/storage/v1/object/public/about%20us/Kaleiwerk-buitengevel-Pulle-Vincent-Van-Roey-Schilderwerken-3.jpg" 
                     alt="Vakmanschap in actie" 
                     fill 
                     className="object-cover"
+                    unoptimized
                 />
             </div>
         </div>
