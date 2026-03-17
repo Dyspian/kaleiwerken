@@ -64,15 +64,15 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <Loader />
-      <Header />
+      <Header dict={dict} />
       
       <Hero dict={dict.hero} />
-      <SocialProof />
+      <SocialProof dict={dict} />
       
       <div className="bg-brand-stone">
-        <BeforeAfter />
+        <BeforeAfter dict={dict} />
         <Features dict={dict.features} />
-        <Process />
+        <Process dict={dict} />
 
         <section id="offerte" className="py-32 bg-brand-white relative overflow-hidden">
             <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-brand-bronze/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
@@ -82,7 +82,7 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
                     <div className="lg:sticky lg:top-32">
                         <span className="uppercase text-xs tracking-[0.3em] text-brand-bronze font-medium mb-6 block">{dict.common.contact}</span>
                         <h2 className="font-serif text-5xl md:text-7xl font-medium mb-8 leading-[0.9] text-brand-dark">
-                            Klaar voor een <span className="italic text-brand-bronze">nieuwe</span> uitstraling?
+                            {dict.quote.title}
                         </h2>
                         <p className="text-xl text-brand-dark/60 mb-12 max-w-md font-light leading-relaxed">
                             {dict.quote.subtitle}
@@ -90,12 +90,12 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
                         
                         <div className="hidden lg:block space-y-6 pt-12 border-t border-brand-dark/5">
                             <div>
-                                <h4 className="uppercase text-[10px] tracking-widest text-brand-dark/40 mb-2">Direct contact</h4>
+                                <h4 className="uppercase text-[10px] tracking-widest text-brand-dark/40 mb-2">{dict.footer.contact}</h4>
                                 <p className="font-serif text-2xl text-brand-dark">+32 470 12 34 56</p>
                             </div>
                             <div>
                                 <h4 className="uppercase text-[10px] tracking-widest text-brand-dark/40 mb-2">Email</h4>
-                                <p className="font-serif text-2xl text-brand-dark">info@vanroey.be</p>
+                                <p className="font-serif text-2xl text-brand-dark">info@vanroey-kalei.be</p>
                             </div>
                         </div>
                     </div>
@@ -108,7 +108,7 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
         </section>
       </div>
 
-      <Footer />
+      <Footer dict={dict} />
       <Toaster position="top-center" richColors />
     </main>
   );

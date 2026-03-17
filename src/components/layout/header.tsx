@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { LanguageSwitcher } from "./language-switcher";
 import { usePathname } from "next/navigation";
 
-export const Header = () => {
+export const Header = ({ dict }: { dict?: any }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { scrollY } = useScroll();
   const [hidden, setHidden] = useState(false);
@@ -27,10 +27,10 @@ export const Header = () => {
   });
 
   const navLinks = [
-    { href: `/${locale}`, label: "Home" },
-    { href: `/${locale}/over-ons`, label: "Over Ons" },
-    { href: `/${locale}/projecten`, label: "Realisaties" },
-    { href: `/${locale}/offerte`, label: "Offerte", primary: true },
+    { href: `/${locale}`, label: dict?.header?.home || "Home" },
+    { href: `/${locale}/over-ons`, label: dict?.header?.about || "Over Ons" },
+    { href: `/${locale}/projecten`, label: dict?.header?.projects || "Realisaties" },
+    { href: `/${locale}/offerte`, label: dict?.header?.quote || "Offerte", primary: true },
   ];
 
   const logoUrl = "https://sjfosmcpbekkokmedwil.supabase.co/storage/v1/object/sign/logo/logo.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV85ZjFlYzljYS0wYTI5LTRhZDYtYWY5My0yYWFhZjJmZmNiNzEiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJsb2dvL2xvZ28ucG5nIiwiaWF0IjoxNzczNTA4ODM3LCJleHAiOjIwODg4Njg4Mzd9._JsyJFoJNsHg_-6zXibQmbbFoZoXAComlXyobGwVb4c";

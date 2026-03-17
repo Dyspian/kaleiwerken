@@ -11,6 +11,12 @@
     "privacy": "Privacybeleid",
     "terms": "Algemene Voorwaarden"
   },
+  "header": {
+    "home": "Home",
+    "about": "Over Ons",
+    "projects": "Realisaties",
+    "quote": "Offerte"
+  },
   "hero": {
     "title1": "Authentieke",
     "title2": "Kaleiwerken.",
@@ -18,6 +24,20 @@
     "ctaPrimary": "Vraag offerte aan",
     "ctaSecondary": "Bekijk realisaties",
     "est": "Sinds 2015"
+  },
+  "socialProof": {
+    "items": [
+      "10 jaar ervaring",
+      "België & Buitenland",
+      "Eigen pigmenten",
+      "Binnen & Buiten",
+      "Incl. herstellingen"
+    ]
+  },
+  "beforeAfter": {
+    "tag": "Transformatie",
+    "title": "Het verschil in detail",
+    "instruction": "Sleep om het resultaat te onthullen"
   },
   "about": {
     "title": "10 jaar Vakmanschap.",
@@ -107,6 +127,8 @@
   },
   "footer": {
     "desc": "Al 10 jaar specialist in authentieke gevelrenovatie en kaleiwerken met een hoogwaardige afwerking.",
-    "socials": "Socials"
+    "socials": "Socials",
+    "menu": "Menu",
+    "contact": "Contact"
   }
 }

@@ -11,6 +11,12 @@
     "privacy": "Privacy Policy",
     "terms": "Terms & Conditions"
   },
+  "header": {
+    "home": "Home",
+    "about": "About Us",
+    "projects": "Projects",
+    "quote": "Quote"
+  },
   "hero": {
     "title1": "Authentic",
     "title2": "Kalei Works.",
@@ -18,6 +24,20 @@
     "ctaPrimary": "Request quote",
     "ctaSecondary": "View projects",
     "est": "Since 2015"
+  },
+  "socialProof": {
+    "items": [
+      "10 years experience",
+      "Belgium & Abroad",
+      "Custom pigments",
+      "Interior & Exterior",
+      "Incl. repairs"
+    ]
+  },
+  "beforeAfter": {
+    "tag": "Transformation",
+    "title": "The difference in detail",
+    "instruction": "Slide to reveal the result"
   },
   "about": {
     "title": "10 years of Craftsmanship.",
@@ -107,6 +127,8 @@
   },
   "footer": {
     "desc": "Specialist in authentic facade renovation and kalei works with a high-quality finish for 10 years.",
-    "socials": "Socials"
+    "socials": "Socials",
+    "menu": "Menu",
+    "contact": "Contact"
   }
 }
