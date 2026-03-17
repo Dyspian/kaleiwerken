@@ -6,6 +6,8 @@ import { motion } from "framer-motion";
 const icons = [ShieldCheck, Clock, Wind];
 
 export const Features = ({ dict }: { dict: any }) => {
+  if (!dict || !dict.title) return null;
+
   return (
     <section className="py-32 bg-brand-stone relative overflow-hidden">
         <div className="absolute inset-0 bg-grid-pattern opacity-[0.03] pointer-events-none" />
@@ -23,8 +25,8 @@ export const Features = ({ dict }: { dict: any }) => {
         </div>
 
         <div className="grid md:grid-cols-3 gap-12 lg:gap-24">
-          {dict.items.map((benefit: any, idx: number) => {
-            const Icon = icons[idx];
+          {dict.items?.map((benefit: any, idx: number) => {
+            const Icon = icons[idx] || ShieldCheck;
             return (
               <motion.div 
                 key={idx}

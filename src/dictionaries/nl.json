@@ -39,6 +39,24 @@
     "title": "Het verschil in detail",
     "instruction": "Sleep om het resultaat te onthullen"
   },
+  "features": {
+    "title": "De kunst van kalei.",
+    "subtitle": "Een eeuwenoude techniek met moderne voordelen. De perfecte balans tussen esthetiek en functionaliteit.",
+    "items": [
+      {
+        "title": "Ademende bescherming",
+        "desc": "Kalei geeft een authentieke look en laat muren ademen, wat vochtproblemen voorkomt."
+      },
+      {
+        "title": "Minerale pigmenten",
+        "desc": "Wij mengen onze kleuren zelf met minerale pigmenten voor een unieke, natuurlijke uitstraling."
+      },
+      {
+        "title": "Hydrofuge afwerking",
+        "desc": "Optionele waterafstotende behandeling voor extra bescherming tegen vocht en vuil."
+      }
+    ]
+  },
   "about": {
     "title": "10 jaar Vakmanschap.",
     "subtitle": "Vakmanschap & Passie",
@@ -48,13 +66,7 @@
       "Vast team van 2 vakmensen",
       "Eigen pigmentmenging",
       "Projecten in België & Buitenland"
-    ],
-    "personal": "Persoonlijke Opvolging",
-    "personalDesc": "Omdat we met een vast team van twee werken, heeft u altijd hetzelfde aanspreekpunt. Van de eerste opmeting tot de laatste borstelstreek.",
-    "pigments": "Eigen Pigmenten",
-    "pigmentsDesc": "Geen standaardkleuren uit een pot. Wij mengen onze kalei zelf met minerale pigmenten voor een resultaat dat perfect past bij de lichtinval van uw woning.",
-    "protection": "Duurzame Bescherming",
-    "protectionDesc": "Een gevel moet niet alleen mooi zijn, maar ook beschermd. Onze hydrofuge behandeling zorgt ervoor dat uw kalei jarenlang bestand is tegen weer en wind."
+    ]
   },
   "process": {
     "title": "Transparant van begin tot eind.",

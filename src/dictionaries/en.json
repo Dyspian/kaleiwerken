@@ -39,6 +39,24 @@
     "title": "The difference in detail",
     "instruction": "Slide to reveal the result"
   },
+  "features": {
+    "title": "The art of kalei.",
+    "subtitle": "An ancient technique with modern benefits. The perfect balance between aesthetics and functionality.",
+    "items": [
+      {
+        "title": "Breathable protection",
+        "desc": "Kalei gives an authentic look and lets walls breathe, preventing moisture problems."
+      },
+      {
+        "title": "Mineral pigments",
+        "desc": "We mix our colors ourselves with mineral pigments for a unique, natural appearance."
+      },
+      {
+        "title": "Hydrophobic finish",
+        "desc": "Optional water-repellent treatment for extra protection against moisture and dirt."
+      }
+    ]
+  },
   "about": {
     "title": "10 years of Craftsmanship.",
     "subtitle": "Craftsmanship & Passion",
@@ -48,13 +66,7 @@
       "Dedicated team of 2 craftsmen",
       "Custom pigment mixing",
       "Projects in Belgium & Abroad"
-    ],
-    "personal": "Personal Follow-up",
-    "personalDesc": "Because we work with a dedicated team of two, you always have the same point of contact. From the first measurement to the last brushstroke.",
-    "pigments": "Custom Pigments",
-    "pigmentsDesc": "No standard colors from a pot. We mix our kalei ourselves with mineral pigments for a result that perfectly matches the light of your home.",
-    "protection": "Durable Protection",
-    "protectionDesc": "A facade must not only be beautiful, but also protected. Our hydrofuge treatment ensures that your kalei is resistant to weather and wind for years."
+    ]
   },
   "process": {
     "title": "Transparent from start to finish.",
