@@ -80,7 +80,7 @@ export const Loader = ({ words = defaultWords }: LoaderProps) => {
                         className="absolute top-0 left-0 h-full bg-gradient-to-r from-brand-bronze/40 to-brand-bronze shadow-[0_0_10px_rgba(140,123,108,0.5)]"
                         initial={{ width: "0%" }}
                         animate={{ width: "100%" }}
-                        transition={{ duration: 3.2, ease: "linear" }}
+                        transition={{ duration: 2.8, ease: "linear" }}
                     />
                 </div>
 
@@ -90,22 +90,24 @@ export const Loader = ({ words = defaultWords }: LoaderProps) => {
                     initial={{ x: -10, opacity: 0 }}
                     animate={{ 
                         x: ["0%", "100%"],
+                        y: [0, -4, 2, -4, 0], // Vertical "brushing" motion
                         opacity: [0, 1, 1, 0],
-                        rotate: [15, 25, 15, 25, 15, 25, 15] // Brushing wiggle
+                        rotate: [10, 30, 10, 30, 10, 30, 10] // Dynamic rotation
                     }}
                     transition={{ 
-                        x: { duration: 3.2, ease: "linear" },
-                        opacity: { times: [0, 0.1, 0.9, 1], duration: 3.2 },
-                        rotate: { repeat: Infinity, duration: 0.5, ease: "easeInOut" }
+                        x: { duration: 2.8, ease: "linear" },
+                        y: { repeat: Infinity, duration: 0.6, ease: "easeInOut" },
+                        opacity: { times: [0, 0.1, 0.9, 1], duration: 2.8 },
+                        rotate: { repeat: Infinity, duration: 0.4, ease: "easeInOut" }
                     }}
                     style={{ translateX: "-50%" }}
                 >
-                    <Paintbrush size={24} strokeWidth={1.5} />
+                    <Paintbrush size={28} strokeWidth={1.2} />
                     {/* Subtle paint drip effect */}
                     <motion.div 
                         className="absolute top-full left-1/2 w-[1px] h-2 bg-brand-bronze/40"
-                        animate={{ height: [2, 6, 2], opacity: [0.4, 0.8, 0.4] }}
-                        transition={{ repeat: Infinity, duration: 0.8 }}
+                        animate={{ height: [2, 8, 2], opacity: [0.4, 0.8, 0.4] }}
+                        transition={{ repeat: Infinity, duration: 0.5 }}
                     />
                 </motion.div>
             </div>
