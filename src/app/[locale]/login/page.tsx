@@ -4,18 +4,20 @@ import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { supabase } from '@/integrations/supabase/client';
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { useAuth } from '@/components/auth/auth-provider';
 
 export default function LoginPage() {
   const { session, loading } = useAuth();
   const router = useRouter();
+  const params = useParams();
+  const locale = params.locale || 'nl';
 
   useEffect(() => {
     if (session) {
-      router.push('/admin');
+      router.push(`/${locale}/admin`);
     }
-  }, [session, router]);
+  }, [session, router, locale]);
 
   if (loading) return null;
 

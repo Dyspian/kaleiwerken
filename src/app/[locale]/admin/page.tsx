@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuth } from '@/components/auth/auth-provider';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { AdminSidebar } from '@/components/admin/admin-sidebar';
 import { supabase } from '@/integrations/supabase/client';
@@ -12,16 +12,19 @@ import { nl } from 'date-fns/locale';
 export default function AdminDashboard() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
+  const params = useParams();
+  const locale = params.locale || 'nl';
+  
   const [stats, setStats] = useState({ projects: 0, leads: 0, recentLeads: [] as any[] });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!authLoading && !user) {
-      router.push('/login');
+      router.push(`/${locale}/login`);
     } else if (user) {
       fetchStats();
     }
-  }, [user, authLoading, router]);
+  }, [user, authLoading, router, locale]);
 
   const fetchStats = async () => {
     setLoading(true);
@@ -123,11 +126,11 @@ export default function AdminDashboard() {
                     <p className="text-brand-stone/40 text-sm mb-8">Beheer direct uw belangrijkste onderdelen.</p>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                    <button onClick={() => router.push('/admin/projects/new')} className="border border-white/10 p-4 text-left hover:bg-white/5 transition-colors">
+                    <button onClick={() => router.push(`/${locale}/admin/projects/new`)} className="border border-white/10 p-4 text-left hover:bg-white/5 transition-colors">
                         <span className="text-[10px] uppercase tracking-widest block mb-2">Project</span>
                         <span className="font-serif text-lg">Toevoegen</span>
                     </button>
-                    <button onClick={() => router.push('/admin/leads')} className="border border-white/10 p-4 text-left hover:bg-white/5 transition-colors">
+                    <button onClick={() => router.push(`/${locale}/admin/leads`)} className="border border-white/10 p-4 text-left hover:bg-white/5 transition-colors">
                         <span className="text-[10px] uppercase tracking-widest block mb-2">Aanvragen</span>
                         <span className="font-serif text-lg">Bekijken</span>
                     </button>

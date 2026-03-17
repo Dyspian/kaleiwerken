@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useParams } from "next/navigation";
 import { LayoutDashboard, FolderKanban, LogOut, User, MessageSquare, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/auth/auth-provider";
@@ -9,12 +9,14 @@ import { cn } from "@/lib/utils";
 
 export const AdminSidebar = () => {
   const pathname = usePathname();
+  const params = useParams();
+  const locale = params.locale || 'nl';
   const { user, signOut } = useAuth();
 
   const navItems = [
-    { href: "/admin", label: "Overzicht", icon: LayoutDashboard },
-    { href: "/admin/projects", label: "Projecten", icon: FolderKanban },
-    { href: "/admin/leads", label: "Aanvragen", icon: MessageSquare },
+    { href: `/${locale}/admin`, label: "Overzicht", icon: LayoutDashboard },
+    { href: `/${locale}/admin/projects`, label: "Projecten", icon: FolderKanban },
+    { href: `/${locale}/admin/leads`, label: "Aanvragen", icon: MessageSquare },
   ];
 
   return (
@@ -26,7 +28,7 @@ export const AdminSidebar = () => {
       <nav className="flex-1 space-y-2">
         {navItems.map((item) => {
           const Icon = item.icon;
-          const isActive = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href));
+          const isActive = pathname === item.href || (item.href !== `/${locale}/admin` && pathname.startsWith(item.href));
           
           return (
             <Link 
@@ -46,7 +48,7 @@ export const AdminSidebar = () => {
         
         <div className="pt-4 mt-4 border-t border-white/5">
             <Link 
-                href="/" 
+                href={`/${locale}`} 
                 target="_blank"
                 className="flex items-center gap-3 px-4 py-3 text-brand-stone/40 hover:text-brand-stone transition-colors text-xs uppercase tracking-widest"
             >
