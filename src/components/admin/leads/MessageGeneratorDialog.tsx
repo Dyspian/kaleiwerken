@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Copy, Check, MessageSquare, Mail } from "lucide-react";
+import { Copy, Check, MessageSquare, Mail, ExternalLink, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import { Lead } from "@/hooks/use-leads";
 
@@ -17,7 +17,6 @@ interface MessageGeneratorDialogProps {
 
 type TemplateType = 'email_initial' | 'whatsapp_visit' | 'email_followup';
 
-// Mapping van postcodes naar gemeentes (voorbeelden voor regio Antwerpen)
 const postcodeMapping: Record<string, string> = {
   "2000": "Antwerpen",
   "2018": "Antwerpen",
@@ -111,6 +110,30 @@ Van Roey Kaleiwerken`;
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const openWhatsApp = () => {
+    if (!lead?.phone) {
+      toast.error("Geen telefoonnummer beschikbaar");
+      return;
+    }
+    const cleanPhone = lead.phone.replace(/\D/g, '');
+    const url = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
+    window.open(url, '_blank');
+  };
+
+  const openGmail = () => {
+    if (!lead?.email) return;
+    const subject = `Aanvraag Kaleiwerken - ${lead.name}`;
+    const url = `https://mail.google.com/mail/?view=cm&fs=1&to=${lead.email}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
+    window.open(url, '_blank');
+  };
+
+  const openOutlook = () => {
+    if (!lead?.email) return;
+    const subject = `Aanvraag Kaleiwerken - ${lead.name}`;
+    const url = `https://outlook.office.com/mail/deeplink/compose?to=${lead.email}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
+    window.open(url, '_blank');
+  };
+
   if (!lead) return null;
 
   return (
@@ -158,7 +181,7 @@ Van Roey Kaleiwerken`;
           </div>
         </div>
 
-        <DialogFooter>
+        <DialogFooter className="flex flex-col gap-4 sm:flex-col">
           <Button 
             onClick={handleCopy} 
             className="w-full bg-brand-dark text-white rounded-none hover:bg-brand-bronze transition-all py-6 uppercase text-[10px] tracking-widest"
@@ -166,6 +189,33 @@ Van Roey Kaleiwerken`;
             {copied ? <Check size={16} className="mr-2" /> : <Copy size={16} className="mr-2" />}
             {copied ? "Gekopieerd" : "Kopieer naar klembord"}
           </Button>
+
+          <div className="grid grid-cols-3 gap-2 w-full">
+            <Button 
+              variant="outline" 
+              onClick={openWhatsApp}
+              className="rounded-none border-brand-dark/10 hover:bg-green-50 hover:text-green-600 hover:border-green-200 transition-all py-6 text-[10px] uppercase tracking-widest flex flex-col h-auto gap-2"
+            >
+              <MessageCircle size={18} />
+              WhatsApp
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={openGmail}
+              className="rounded-none border-brand-dark/10 hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-all py-6 text-[10px] uppercase tracking-widest flex flex-col h-auto gap-2"
+            >
+              <Mail size={18} />
+              Gmail
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={openOutlook}
+              className="rounded-none border-brand-dark/10 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition-all py-6 text-[10px] uppercase tracking-widest flex flex-col h-auto gap-2"
+            >
+              <ExternalLink size={18} />
+              Outlook
+            </Button>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>
