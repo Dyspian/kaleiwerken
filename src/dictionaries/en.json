@@ -7,7 +7,9 @@
     "contact": "Contact",
     "back": "Back",
     "more": "Discover more",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "privacy": "Privacy Policy",
+    "terms": "Terms & Conditions"
   },
   "hero": {
     "title1": "Authentic",
@@ -26,24 +28,85 @@
       "Dedicated team of 2 craftsmen",
       "Custom pigment mixing",
       "Projects in Belgium & Abroad"
+    ],
+    "personal": "Personal Follow-up",
+    "personalDesc": "Because we work with a dedicated team of two, you always have the same point of contact. From the first measurement to the last brushstroke.",
+    "pigments": "Custom Pigments",
+    "pigmentsDesc": "No standard colors from a pot. We mix our kalei ourselves with mineral pigments for a result that perfectly matches the light of your home.",
+    "protection": "Durable Protection",
+    "protectionDesc": "A facade must not only be beautiful, but also protected. Our hydrofuge treatment ensures that your kalei is resistant to weather and wind for years."
+  },
+  "process": {
+    "title": "Transparent from start to finish.",
+    "subtitle": "Method",
+    "desc": "We believe in clear communication and tight planning. This way you always know where you stand.",
+    "steps": [
+      { "title": "Measurement", "desc": "We come on-site for a precise analysis of the facade." },
+      { "title": "Advice", "desc": "Together we choose the right technique and color for your home." },
+      { "title": "Execution", "desc": "Our craftsmen apply the kalei with an eye for every detail." },
+      { "title": "Delivery", "desc": "A thorough check-up guarantees a perfect result." }
     ]
   },
-  "features": {
-    "title": "The art of kalei.",
-    "subtitle": "An ancient technique with modern benefits. The perfect balance between aesthetics and functionality.",
-    "items": [
-      {
-        "title": "Breathable protection",
-        "desc": "Kalei provides an authentic look and allows walls to breathe, preventing moisture problems."
-      },
-      {
-        "title": "Mineral pigments",
-        "desc": "We mix our colors ourselves with mineral pigments for a unique, natural appearance."
-      },
-      {
-        "title": "Hydrofuge finish",
-        "desc": "Optional water-repellent treatment for extra protection against moisture and dirt."
-      }
-    ]
+  "quote": {
+    "title": "Ready for a new look?",
+    "subtitle": "Start your request here. It only takes 2 minutes and is completely non-binding.",
+    "step1": "Project",
+    "step2": "Details",
+    "step3": "Contact",
+    "question1": "What type of project is it?",
+    "question2": "Project details",
+    "question3": "How can we reach you?",
+    "surface": "Surface area (m²)",
+    "surfaceType": "Current substrate",
+    "timing": "Timing",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "postalCode": "Postal code",
+    "city": "City",
+    "submit": "Request quote",
+    "next": "Next",
+    "prev": "Previous",
+    "success": "Thank you.",
+    "successDesc": "We have received your details. We will contact you within 48 hours for a site visit.",
+    "newRequest": "New request",
+    "types": {
+      "gevel": "Facade",
+      "binnen": "Interior",
+      "totaal": "Total",
+      "renovatie": "Renovation"
+    },
+    "surfaces": {
+      "baksteen": "Brick",
+      "crepi": "Crepi",
+      "onbekend": "Unknown"
+    },
+    "timings": {
+      "asap": "As soon as possible",
+      "1-3_maanden": "Within 1-3 months",
+      "later": "Later this year"
+    }
+  },
+  "projects": {
+    "title": "Our Realizations.",
+    "subtitle": "Craftsmanship in focus. Discover our recent projects.",
+    "all": "All",
+    "back": "Back to portfolio",
+    "location": "Location",
+    "year": "Year",
+    "expertise": "Expertise",
+    "status": "Status",
+    "specs": "Specifications",
+    "technique": "Technique",
+    "finishing": "Finishing",
+    "pigment": "Pigment",
+    "team": "Team",
+    "gallery": "Gallery",
+    "next": "Next Project",
+    "discover": "Discover more realizations."
+  },
+  "footer": {
+    "desc": "Specialist in authentic facade renovation and kalei works with a high-quality finish for 10 years.",
+    "socials": "Socials"
   }
 }

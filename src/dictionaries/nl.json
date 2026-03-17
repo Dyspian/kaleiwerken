@@ -7,7 +7,9 @@
     "contact": "Contact",
     "back": "Terug",
     "more": "Ontdek meer",
-    "loading": "Laden..."
+    "loading": "Laden...",
+    "privacy": "Privacybeleid",
+    "terms": "Algemene Voorwaarden"
   },
   "hero": {
     "title1": "Authentieke",
@@ -26,24 +28,85 @@
       "Vast team van 2 vakmensen",
       "Eigen pigmentmenging",
       "Projecten in België & Buitenland"
+    ],
+    "personal": "Persoonlijke Opvolging",
+    "personalDesc": "Omdat we met een vast team van twee werken, heeft u altijd hetzelfde aanspreekpunt. Van de eerste opmeting tot de laatste borstelstreek.",
+    "pigments": "Eigen Pigmenten",
+    "pigmentsDesc": "Geen standaardkleuren uit een pot. Wij mengen onze kalei zelf met minerale pigmenten voor een resultaat dat perfect past bij de lichtinval van uw woning.",
+    "protection": "Duurzame Bescherming",
+    "protectionDesc": "Een gevel moet niet alleen mooi zijn, maar ook beschermd. Onze hydrofuge behandeling zorgt ervoor dat uw kalei jarenlang bestand is tegen weer en wind."
+  },
+  "process": {
+    "title": "Transparant van begin tot eind.",
+    "subtitle": "Werkwijze",
+    "desc": "Wij geloven in duidelijke communicatie en een strakke planning. Zo weet u altijd waar u aan toe bent.",
+    "steps": [
+      { "title": "Opmeting", "desc": "We komen ter plaatse voor een nauwkeurige analyse van de gevel." },
+      { "title": "Advies", "desc": "Samen kiezen we de juiste techniek en kleur voor uw woning." },
+      { "title": "Uitvoering", "desc": "Onze vakmannen brengen de kalei aan met oog voor elk detail." },
+      { "title": "Oplevering", "desc": "Een grondige check-up garandeert een perfect resultaat." }
     ]
   },
-  "features": {
-    "title": "De kunst van kalei.",
-    "subtitle": "Een eeuwenoude techniek met moderne voordelen. De perfecte balans tussen esthetiek en functionaliteit.",
-    "items": [
-      {
-        "title": "Ademende bescherming",
-        "desc": "Kalei geeft een authentieke look en laat muren ademen, wat vochtproblemen voorkomt."
-      },
-      {
-        "title": "Minerale pigmenten",
-        "desc": "Wij mengen onze kleuren zelf met minerale pigmenten voor een unieke, natuurlijke uitstraling."
-      },
-      {
-        "title": "Hydrofuge afwerking",
-        "desc": "Optionele waterafstotende behandeling voor extra bescherming tegen vocht en vuil."
-      }
-    ]
+  "quote": {
+    "title": "Klaar voor een nieuwe uitstraling?",
+    "subtitle": "Start hier uw aanvraag. Het duurt slechts 2 minuten en is volledig vrijblijvend.",
+    "step1": "Project",
+    "step2": "Details",
+    "step3": "Contact",
+    "question1": "Wat voor type project betreft het?",
+    "question2": "Project details",
+    "question3": "Hoe kunnen we u bereiken?",
+    "surface": "Oppervlakte (m²)",
+    "surfaceType": "Huidige ondergrond",
+    "timing": "Timing",
+    "name": "Naam",
+    "email": "Email",
+    "phone": "Telefoon",
+    "postalCode": "Postcode",
+    "city": "Gemeente",
+    "submit": "Offerte aanvragen",
+    "next": "Volgende",
+    "prev": "Vorige",
+    "success": "Bedankt.",
+    "successDesc": "We hebben uw gegevens goed ontvangen. We nemen binnen de 48u contact op voor een plaatsbezoek.",
+    "newRequest": "Nieuwe aanvraag",
+    "types": {
+      "gevel": "Gevel",
+      "binnen": "Binnen",
+      "totaal": "Totaal",
+      "renovatie": "Renovatie"
+    },
+    "surfaces": {
+      "baksteen": "Baksteen",
+      "crepi": "Crepi",
+      "onbekend": "Onbekend"
+    },
+    "timings": {
+      "asap": "Zo snel mogelijk",
+      "1-3_maanden": "Binnen 1-3 maanden",
+      "later": "Later dit jaar"
+    }
+  },
+  "projects": {
+    "title": "Onze Realisaties.",
+    "subtitle": "Vakmanschap in beeld. Ontdek onze recente projecten.",
+    "all": "Alle",
+    "back": "Terug naar portfolio",
+    "location": "Locatie",
+    "year": "Jaar",
+    "expertise": "Expertise",
+    "status": "Status",
+    "specs": "Specificaties",
+    "technique": "Techniek",
+    "finishing": "Afwerking",
+    "pigment": "Pigment",
+    "team": "Team",
+    "gallery": "Galerij",
+    "next": "Volgend Project",
+    "discover": "Ontdek meer realisaties."
+  },
+  "footer": {
+    "desc": "Al 10 jaar specialist in authentieke gevelrenovatie en kaleiwerken met een hoogwaardige afwerking.",
+    "socials": "Socials"
   }
 }

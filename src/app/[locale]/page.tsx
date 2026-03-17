@@ -14,7 +14,7 @@ import { Locale } from "@/lib/i18n-config";
 
 export default async function Home({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params;
-  const dict = await getDictionary(locale);
+  const dict = await getDictionary(locale) as any;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -85,7 +85,7 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
                             Klaar voor een <span className="italic text-brand-bronze">nieuwe</span> uitstraling?
                         </h2>
                         <p className="text-xl text-brand-dark/60 mb-12 max-w-md font-light leading-relaxed">
-                            Start hier uw aanvraag. Het duurt slechts 2 minuten en is volledig vrijblijvend.
+                            {dict.quote.subtitle}
                         </p>
                         
                         <div className="hidden lg:block space-y-6 pt-12 border-t border-brand-dark/5">
@@ -101,7 +101,7 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
                     </div>
                     
                     <div>
-                        <QuoteWizard />
+                        <QuoteWizard dict={dict.quote} />
                     </div>
                 </div>
             </div>
