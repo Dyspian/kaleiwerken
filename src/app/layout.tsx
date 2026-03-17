@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   title: "Van Roey Kaleiwerken",
   description: "Specialist in authentieke kaleiwerken.",
   icons: {
-    icon: "/favicon.png",
+    icon: "/favicon.png", // Dit verwijst naar /public/favicon.png
   },
 };
 
