@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 export const metadata: Metadata = {
   title: "Kaleiwerken Antwerpen | Uw Specialist in Gevelrenovatie",
   description: "Op zoek naar een specialist in kaleiwerken in Antwerpen? Van Roey Kaleiwerken biedt authentieke en duurzame gevelrenovatie met hoogwaardige afwerkingen. Vraag nu uw vrijblijvende offerte aan!",
-  keywords: ["kaleiwerken Antwerpen", "gevelrenovatie Antwerpen", "kalei Antwerpen", "gevels kaleien Antwerpen", "specialist kalei Antwerpen"],
+  keywords: ["kaleiwerken Antwerpen", "gevelrenovatie Antwerpen", "kalei Antwerpen", "gevels kaleien Antwerpen", "specialist kalei Antwerpen", "kaleiwerken"],
   openGraph: {
     title: "Kaleiwerken Antwerpen | Uw Specialist in Gevelrenovatie",
     description: "Van Roey Kaleiwerken: dé expert voor kaleiwerken en gevelrenovatie in Antwerpen. Ervaar vakmanschap en duurzaamheid voor uw woning.",
