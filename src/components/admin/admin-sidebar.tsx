@@ -17,6 +17,7 @@ export const AdminSidebar = () => {
     { href: `/${locale}/admin`, label: "Overzicht", icon: LayoutDashboard },
     { href: `/${locale}/admin/projects`, label: "Projecten", icon: FolderKanban },
     { href: `/${locale}/admin/leads`, label: "Aanvragen", icon: MessageSquare },
+    { href: `/${locale}/admin/chatbot`, label: "Chatbot Inbox", icon: MessageSquare }, // Nieuwe link
   ];
 
   return (

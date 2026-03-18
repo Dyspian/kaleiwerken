@@ -15,7 +15,7 @@ export default function AdminDashboard() {
   const params = useParams();
   const locale = params.locale || 'nl';
   
-  const [stats, setStats] = useState({ projects: 0, leads: 0, recentLeads: [] as any[] });
+  const [stats, setStats] = useState({ projects: 0, leads: 0, chatbotConversations: 0, recentLeads: [] as any[] });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -28,15 +28,17 @@ export default function AdminDashboard() {
 
   const fetchStats = async () => {
     setLoading(true);
-    const [projectsRes, leadsRes, recentLeadsRes] = await Promise.all([
+    const [projectsRes, leadsRes, chatbotRes, recentLeadsRes] = await Promise.all([
       supabase.from('projects').select('id', { count: 'exact', head: true }),
       supabase.from('leads').select('id', { count: 'exact', head: true }),
+      supabase.from('chatbot_conversations').select('id', { count: 'exact', head: true }), // Fetch chatbot conversations count
       supabase.from('leads').select('*').order('created_at', { ascending: false }).limit(3)
     ]);
 
     setStats({
       projects: projectsRes.count || 0,
       leads: leadsRes.count || 0,
+      chatbotConversations: chatbotRes.count || 0, // Set chatbot conversations count
       recentLeads: recentLeadsRes.data || []
     });
     setLoading(false);
@@ -82,11 +84,11 @@ export default function AdminDashboard() {
           <div className="bg-white p-8 border border-brand-dark/5 shadow-sm">
             <div className="flex items-center gap-4 mb-4">
                 <div className="w-12 h-12 bg-brand-stone flex items-center justify-center text-brand-bronze">
-                    <TrendingUp size={24} />
+                    <MessageSquare size={24} />
                 </div>
                 <div>
-                    <span className="text-[10px] uppercase tracking-widest text-brand-dark/40 block">Status</span>
-                    <span className="text-sm font-medium text-green-600">Online</span>
+                    <span className="text-[10px] uppercase tracking-widest text-brand-dark/40 block">Chatbot Conversaties</span>
+                    <span className="text-3xl font-serif">{stats.chatbotConversations}</span>
                 </div>
             </div>
           </div>
@@ -133,6 +135,10 @@ export default function AdminDashboard() {
                     <button onClick={() => router.push(`/${locale}/admin/leads`)} className="border border-white/10 p-4 text-left hover:bg-white/5 transition-colors">
                         <span className="text-[10px] uppercase tracking-widest block mb-2">Aanvragen</span>
                         <span className="font-serif text-lg">Bekijken</span>
+                    </button>
+                    <button onClick={() => router.push(`/${locale}/admin/chatbot`)} className="border border-white/10 p-4 text-left hover:bg-white/5 transition-colors">
+                        <span className="text-[10px] uppercase tracking-widest block mb-2">Chatbot</span>
+                        <span className="font-serif text-lg">Inbox</span>
                     </button>
                 </div>
             </div>

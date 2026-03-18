@@ -30,6 +30,7 @@ export const useChatbotConversation = (dict: any) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
+  const [currentConversationId, setCurrentConversationId] = useState<string | null>(null); // Track current conversation
 
   const { register, handleSubmit, formState: { errors }, watch, setValue, getValues, reset } = useForm<ChatbotFormValues>({
     resolver: zodResolver(chatbotFormSchema),
@@ -57,6 +58,7 @@ export const useChatbotConversation = (dict: any) => {
     setMessages([]);
     setCurrentStep(0);
     setIsComplete(false);
+    setCurrentConversationId(null); // Reset conversation ID
     reset();
     // Initial bot message
     if (dict?.chatbot?.welcome) { // Check if dict.chatbot.welcome is available
@@ -70,35 +72,78 @@ export const useChatbotConversation = (dict: any) => {
 
   const onSubmit = async (data: ChatbotFormValues) => {
     setIsSubmitting(true);
-    addMessage(data.questionText || data.name, 'user'); // Show user's final input
+    const userMessageText = data.questionText || data.name; // Use name for offer, questionText for question
+    addMessage(userMessageText, 'user'); // Show user's final input
 
-    const leadData = {
-      project_type: data.type === 'offer' ? data.projectType : 'vraag',
-      surface_area: data.surfaceArea || null,
-      surface_type: data.surfaceType || null,
-      timing: data.timing || null,
-      name: data.name,
-      email: data.email,
-      phone: data.phone || null,
-      postal_code: data.postalCode || null,
-      city: data.city || null,
-      notes: data.type === 'question' ? `Vraag via chatbot: ${data.questionText}` : null,
-      status: 'nieuw',
-    };
+    try {
+      if (data.type === 'offer') {
+        // Existing logic for offer requests (still goes to leads table)
+        const leadData = {
+          project_type: data.projectType,
+          surface_area: data.surfaceArea || null,
+          surface_type: data.surfaceType || null,
+          timing: data.timing || null,
+          name: data.name,
+          email: data.email,
+          phone: data.phone || null,
+          postal_code: data.postalCode || null,
+          city: data.city || null,
+          notes: null,
+          status: 'nieuw',
+        };
 
-    const { error } = await supabase
-      .from("leads")
-      .insert(leadData);
+        const { error } = await supabase
+          .from("leads")
+          .insert(leadData);
 
-    if (error) {
+        if (error) throw error;
+
+        addMessage(dict.chatbot.thankYou, 'bot');
+        setIsComplete(true);
+        toast.success(dict.chatbot.successSubmit);
+
+      } else if (data.type === 'question') {
+        // New logic for general questions (goes to chatbot_conversations and chatbot_messages)
+        const { data: userData, error: userError } = await supabase.auth.getUser();
+        const userId = userData?.user?.id || null;
+
+        const { data: conversationData, error: conversationError } = await supabase
+          .from("chatbot_conversations")
+          .insert({
+            user_id: userId,
+            name: data.name,
+            email: data.email,
+            phone: data.phone || null,
+            initial_question: data.questionText || '',
+            status: 'open',
+          })
+          .select()
+          .single();
+
+        if (conversationError) throw conversationError;
+
+        setCurrentConversationId(conversationData.id);
+
+        const { error: messageError } = await supabase
+          .from("chatbot_messages")
+          .insert({
+            conversation_id: conversationData.id,
+            sender: 'user',
+            message_text: data.questionText || '',
+          });
+
+        if (messageError) throw messageError;
+
+        addMessage(dict.chatbot.thankYouMessage, 'bot');
+        setIsComplete(true);
+        toast.success(dict.chatbot.successSubmit);
+      }
+    } catch (error: any) {
       toast.error(dict.chatbot.errorSubmit);
       console.error(error);
-    } else {
-      addMessage(dict.chatbot.thankYou, 'bot');
-      setIsComplete(true);
-      toast.success(dict.chatbot.successSubmit);
+    } finally {
+      setIsSubmitting(false);
     }
-    setIsSubmitting(false);
   };
 
   const conversationSteps = useCallback((values: ChatbotFormValues): ConversationStep[] => {

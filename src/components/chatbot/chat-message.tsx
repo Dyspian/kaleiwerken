@@ -4,7 +4,7 @@ import { Paintbrush, User } from 'lucide-react'; // Import Paintbrush
 
 interface ChatMessageProps {
   message: string;
-  sender: 'user' | 'bot';
+  sender: 'user' | 'bot' | 'admin'; // Updated to accept 'admin'
 }
 
 export const ChatMessage = ({ message, sender }: ChatMessageProps) => {
@@ -13,7 +13,7 @@ export const ChatMessage = ({ message, sender }: ChatMessageProps) => {
       "flex items-start gap-3",
       sender === 'user' ? "justify-end" : "justify-start"
     )}>
-      {sender === 'bot' && (
+      {(sender === 'bot' || sender === 'admin') && ( // Bot or Admin messages
         <div className="flex-shrink-0 w-8 h-8 rounded-full bg-brand-bronze text-white flex items-center justify-center">
           <Paintbrush size={16} /> {/* De Paintbrush mascotte */}
         </div>
