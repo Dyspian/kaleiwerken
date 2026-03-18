@@ -7,7 +7,7 @@ import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2, Save, X, Plus, Image as ImageIcon, Info } from "lucide-react";
+import { Loader2, Save, X, Plus, Image as ImageIcon, Info, CalendarIcon } from "lucide-react";
 import Link from "next/link";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -15,6 +15,10 @@ import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import dynamic from "next/dynamic";
 import 'react-quill/dist/quill.snow.css'; // Import Quill styles
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
@@ -31,12 +35,37 @@ const projectSchema = z.object({
   finishing: z.string().optional(),
   pigment: z.string().optional(),
   team: z.string().optional(),
+  start_date: z.date().nullable().optional(),
+  end_date: z.date().nullable().optional(),
+  planning_status: z.enum(['pending', 'in_progress', 'completed', 'cancelled']).default('pending'),
 });
 
 type ProjectFormValues = z.infer<typeof projectSchema>;
 
+// Define a more specific type for initialData to help TypeScript
+interface InitialProjectData {
+  id?: string;
+  title?: string;
+  subtitle?: string;
+  description?: string;
+  location?: string;
+  year?: string;
+  category?: string;
+  images?: string[];
+  image_url?: string | null;
+  stats?: {
+    technique?: string;
+    finishing?: string;
+    pigment?: string;
+    team?: string;
+  };
+  start_date?: string | null; // Assuming it comes as string from DB
+  end_date?: string | null;   // Assuming it comes as string from DB
+  planning_status?: 'pending' | 'in_progress' | 'completed' | 'cancelled' | null; // Allow null from DB
+}
+
 interface ProjectFormProps {
-  initialData?: any;
+  initialData?: InitialProjectData;
   isEditing?: boolean;
 }
 
@@ -46,29 +75,36 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
-  const stats = initialData?.stats || {};
-
-  const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<ProjectFormValues>({
+  const { register, handleSubmit, setValue, watch, control, formState: { errors } } = useForm<ProjectFormValues>({
     resolver: zodResolver(projectSchema),
     defaultValues: {
-      title: initialData?.title || "",
-      subtitle: initialData?.subtitle || "",
-      description: initialData?.description || "",
-      location: initialData?.location || "",
-      year: initialData?.year || new Date().getFullYear().toString(),
-      category: initialData?.category || "Kaleiwerken",
-      images: initialData?.images || [],
-      image_url: initialData?.image_url || null,
-      technique: stats.technique || "Kalei op maat",
-      finishing: stats.finishing || "Hydrofuge",
-      pigment: stats.pigment || "Mineraal",
-      team: stats.team || "Vast team (2)",
-    }
+      title: initialData?.title ?? "",
+      subtitle: initialData?.subtitle ?? "",
+      description: initialData?.description ?? "",
+      location: initialData?.location ?? "",
+      year: initialData?.year ?? new Date().getFullYear().toString(),
+      category: initialData?.category ?? "Kaleiwerken",
+      images: initialData?.images ?? [],
+      image_url: initialData?.image_url ?? null,
+      technique: initialData?.stats?.technique ?? "Kalei op maat",
+      finishing: initialData?.stats?.finishing ?? "Hydrofuge",
+      pigment: initialData?.stats?.pigment ?? "Mineraal",
+      team: initialData?.stats?.team ?? "Vast team (2)",
+      start_date: initialData?.start_date ? new Date(initialData.start_date) : null,
+      end_date: initialData?.end_date ? new Date(initialData.end_date) : null,
+      // Explicitly ensure planning_status is one of the enum values
+      planning_status: (initialData?.planning_status && projectSchema.shape.planning_status.options.includes(initialData.planning_status))
+        ? initialData.planning_status
+        : 'pending',
+    } as ProjectFormValues // Cast the entire defaultValues object to ProjectFormValues
   });
 
   const currentImages = watch("images") || [];
   const heroImage = watch("image_url");
   const description = watch("description");
+  const startDate = watch("start_date");
+  const endDate = watch("end_date");
+  const planningStatus = watch("planning_status");
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -165,6 +201,9 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
       image_url: data.image_url || (data.images.length > 0 ? data.images[0] : null),
       user_id: user.id,
       stats: stats,
+      start_date: data.start_date ? format(data.start_date, 'yyyy-MM-dd') : null,
+      end_date: data.end_date ? format(data.end_date, 'yyyy-MM-dd') : null,
+      planning_status: data.planning_status,
     };
 
     try {
@@ -173,7 +212,7 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
         const { error: updateError } = await supabase
           .from("projects")
           .update(projectData)
-          .eq("id", initialData.id);
+          .eq("id", initialData!.id); // Non-null assertion for initialData.id when editing
         error = updateError;
       } else {
         const { error: insertError } = await supabase
@@ -234,6 +273,80 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
                     onChange={(content) => setValue("description", content === "<p><br></p>" ? "" : content)} 
                     className="bg-white rounded-none border-brand-dark/10"
                 />
+            </div>
+        </div>
+      </div>
+
+      <div className="space-y-8 pt-8 border-t border-brand-dark/5">
+        <div className="flex items-center gap-2 mb-4">
+            <Info size={16} className="text-brand-bronze" />
+            <h3 className="font-serif text-xl">Planning & Status</h3>
+        </div>
+        
+        <div className="grid md:grid-cols-3 gap-6">
+            <div className="space-y-2">
+                <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Startdatum</Label>
+                <Popover>
+                    <PopoverTrigger asChild>
+                        <Button
+                            variant={"outline"}
+                            className={cn(
+                                "w-full justify-start text-left font-normal rounded-none border-brand-dark/10",
+                                !startDate && "text-muted-foreground"
+                            )}
+                        >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {startDate ? format(startDate, "PPP") : <span>Kies een datum</span>}
+                        </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0 bg-white border-brand-dark/10 rounded-none" align="start">
+                        <Calendar
+                            mode="single"
+                            selected={startDate || undefined}
+                            onSelect={(date) => setValue("start_date", date)}
+                            initialFocus
+                        />
+                    </PopoverContent>
+                </Popover>
+            </div>
+            <div className="space-y-2">
+                <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Einddatum</Label>
+                <Popover>
+                    <PopoverTrigger asChild>
+                        <Button
+                            variant={"outline"}
+                            className={cn(
+                                "w-full justify-start text-left font-normal rounded-none border-brand-dark/10",
+                                !endDate && "text-muted-foreground"
+                            )}
+                        >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {endDate ? format(endDate, "PPP") : <span>Kies een datum</span>}
+                        </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0 bg-white border-brand-dark/10 rounded-none" align="start">
+                        <Calendar
+                            mode="single"
+                            selected={endDate || undefined}
+                            onSelect={(date) => setValue("end_date", date)}
+                            initialFocus
+                        />
+                    </PopoverContent>
+                </Popover>
+            </div>
+            <div className="space-y-2">
+                <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Status</Label>
+                <Select value={planningStatus} onValueChange={(value: "pending" | "in_progress" | "completed" | "cancelled") => setValue("planning_status", value)}>
+                    <SelectTrigger className="rounded-none border-brand-dark/10 focus:ring-brand-bronze">
+                        <SelectValue placeholder="Selecteer status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="pending">In Afwachting</SelectItem>
+                        <SelectItem value="in_progress">Bezig</SelectItem>
+                        <SelectItem value="completed">Voltooid</SelectItem>
+                        <SelectItem value="cancelled">Geannuleerd</SelectItem>
+                    </SelectContent>
+                </Select>
             </div>
         </div>
       </div>

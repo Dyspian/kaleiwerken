@@ -26,6 +26,9 @@ interface Project {
   stats?: any;
   created_at: string;
   user_id: string;
+  start_date?: string; // Nieuw
+  end_date?: string;   // Nieuw
+  planning_status?: 'pending' | 'in_progress' | 'completed' | 'cancelled'; // Nieuw
 }
 
 const PROJECTS_PER_PAGE = 9;
@@ -43,7 +46,7 @@ export default function AdminProjectsPage() {
   const [totalProjectsCount, setTotalProjectsCount] = useState(0);
   const [categories, setCategories] = useState<string[]>([]);
 
-  const [selectedProjects, setSelectedProjects] = useState<Set<string>>(new Set());
+  const [selectedProjects, setSelectedProjects] = useState<Set<string>>(new Set()); // Fix 1 & 2
   const isAllSelected = useMemo(() => {
     const currentProjectsOnPage = projects.filter(project => {
       const matchesSearch = searchQuery ? (project.title.toLowerCase().includes(searchQuery.toLowerCase()) || (project.location?.toLowerCase().includes(searchQuery.toLowerCase())) || (project.category?.toLowerCase().includes(searchQuery.toLowerCase()))) : true;
@@ -114,8 +117,8 @@ export default function AdminProjectsPage() {
     } else {
       toast.success("Project verwijderd");
       setProjects(projects.filter((p) => p.id !== id));
-      setTotalProjectsCount(prev => prev - 1);
-      setSelectedProjects(prev => {
+      setTotalProjectsCount((prev: number) => prev - 1); // Fix 3
+      setSelectedProjects((prev: Set<string>) => { // Fix 4
         const newSet = new Set(prev);
         newSet.delete(id);
         return newSet;
@@ -125,7 +128,7 @@ export default function AdminProjectsPage() {
   };
 
   const handleSelectProject = (id: string, checked: boolean) => {
-    setSelectedProjects(prev => {
+    setSelectedProjects((prev: Set<string>) => { // Fix 4
       const newSet = new Set(prev);
       if (checked) {
         newSet.add(id);
