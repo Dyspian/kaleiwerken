@@ -93,7 +93,7 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
       start_date: initialData?.start_date ? new Date(initialData.start_date) : null,
       end_date: initialData?.end_date ? new Date(initialData.end_date) : null,
       planning_status: initialData?.planning_status ?? 'pending',
-    }
+    } as ProjectFormValues // Cast the entire defaultValues object to ProjectFormValues
   });
 
   const currentImages = watch("images") || [];
@@ -171,7 +171,7 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
   };
 
   // Fix: Add proper type annotation for the onSubmit function
-  const onSubmit = async (data: ProjectFormValues) => {
+  const onSubmit = handleSubmit(async (data: ProjectFormValues) => {
     setLoading(true);
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -229,10 +229,10 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
     } finally {
       setLoading(false);
     }
-  };
+  });
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-12">
+    <form onSubmit={onSubmit} className="space-y-12">
       <div className="grid md:grid-cols-2 gap-12">
         <div className="space-y-6">
             <div className="space-y-2">
