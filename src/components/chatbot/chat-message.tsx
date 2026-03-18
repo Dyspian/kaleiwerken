@@ -1,6 +1,6 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { Bot, User } from 'lucide-react';
+import { Paintbrush, User } from 'lucide-react'; // Import Paintbrush
 
 interface ChatMessageProps {
   message: string;
@@ -15,7 +15,7 @@ export const ChatMessage = ({ message, sender }: ChatMessageProps) => {
     )}>
       {sender === 'bot' && (
         <div className="flex-shrink-0 w-8 h-8 rounded-full bg-brand-bronze text-white flex items-center justify-center">
-          <Bot size={16} />
+          <Paintbrush size={16} /> {/* De Paintbrush mascotte */}
         </div>
       )}
       <div className={cn(

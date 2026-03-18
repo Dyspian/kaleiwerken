@@ -3,14 +3,14 @@
 import React, { useEffect, useRef } from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { X, RefreshCcw } from 'lucide-react';
+import { X, RefreshCcw, Paintbrush } from 'lucide-react'; // Import Paintbrush
 import { ChatMessage } from './chat-message';
 import { useChatbotConversation } from '@/hooks/use-chatbot-conversation';
 import { usePathname } from 'next/navigation';
 import { getDictionary } from '@/lib/get-dictionary';
 import { Locale } from '@/lib/i18n-config';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ConversationStep, Option } from '@/hooks/use-chatbot-conversation'; // Import types
+import { ConversationStep, Option } from '@/hooks/use-chatbot-conversation';
 
 interface ChatbotDialogProps {
   isOpen: boolean;
@@ -54,9 +54,14 @@ export const ChatbotDialog = ({ isOpen, onOpenChange }: ChatbotDialogProps) => {
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
       <SheetContent className="w-full sm:max-w-md flex flex-col bg-brand-white border-l border-brand-dark/5 rounded-none">
-        <SheetHeader className="pb-4 border-b border-brand-dark/5">
-          <SheetTitle className="font-serif text-2xl">{dict.chatbot.title}</SheetTitle>
-          <SheetDescription>{dict.chatbot.subtitle}</SheetDescription>
+        <SheetHeader className="pb-4 border-b border-brand-dark/5 flex-row items-center gap-3"> {/* Flex-row voor icoon en tekst */}
+          <div className="flex-shrink-0 w-10 h-10 rounded-full bg-brand-bronze text-white flex items-center justify-center">
+            <Paintbrush size={20} /> {/* Mascotte in de header */}
+          </div>
+          <div>
+            <SheetTitle className="font-serif text-2xl">{dict.chatbot.title}</SheetTitle>
+            <SheetDescription>{dict.chatbot.subtitle}</SheetDescription>
+          </div>
         </SheetHeader>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
