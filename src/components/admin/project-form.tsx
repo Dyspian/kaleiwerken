@@ -40,7 +40,7 @@ const projectSchema = z.object({
   planning_status: z.enum(['pending', 'in_progress', 'completed', 'cancelled']).default('pending'),
 });
 
-type ProjectFormValues = z.infer<typeof projectSchema>;
+export type ProjectFormValues = z.infer<typeof projectSchema>;
 
 // Define a more specific type for initialData to help TypeScript
 interface InitialProjectData {
@@ -61,7 +61,7 @@ interface InitialProjectData {
   };
   start_date?: string | null; // Assuming it comes as string from DB
   end_date?: string | null;   // Assuming it comes as string from DB
-  planning_status?: 'pending' | 'in_progress' | 'completed' | 'cancelled' | null; // Allow null from DB
+  planning_status?: 'pending' | 'in_progress' | 'completed' | 'cancelled'; // Remove null option
 }
 
 interface ProjectFormProps {
@@ -92,11 +92,8 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
       team: initialData?.stats?.team ?? "Vast team (2)",
       start_date: initialData?.start_date ? new Date(initialData.start_date) : null,
       end_date: initialData?.end_date ? new Date(initialData.end_date) : null,
-      // Explicitly ensure planning_status is one of the enum values
-      planning_status: (initialData?.planning_status && projectSchema.shape.planning_status._def.schema.options.includes(initialData.planning_status))
-        ? initialData.planning_status
-        : 'pending',
-    } as ProjectFormValues // Cast the entire defaultValues object to ProjectFormValues
+      planning_status: initialData?.planning_status ?? 'pending',
+    }
   });
 
   const currentImages = watch("images") || [];
@@ -173,6 +170,7 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
     toast.success("Ingesteld als banner foto");
   };
 
+  // Fix: Add proper type annotation for the onSubmit function
   const onSubmit = async (data: ProjectFormValues) => {
     setLoading(true);
     const { data: { user } } = await supabase.auth.getUser();

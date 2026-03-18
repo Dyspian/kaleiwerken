@@ -10,7 +10,6 @@ import { usePathname } from 'next/navigation';
 import { getDictionary } from '@/lib/get-dictionary';
 import { Locale } from '@/lib/i18n-config';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ConversationStep, Option } from '@/hooks/use-chatbot-conversation';
 import { useAuth } from '@/components/auth/auth-provider'; // Import useAuth
 import { ChatHistoryList } from './ChatHistoryList'; // Import ChatHistoryList
 
@@ -120,7 +119,7 @@ export const ChatbotDialog = ({ isOpen, onOpenChange }: ChatbotDialogProps) => {
                   currentConversationStep.renderInput
                 ) : (
                   <div className="grid grid-cols-2 gap-2">
-                    {currentConversationStep?.options?.map((option: Option, index: number) => (
+                    {currentConversationStep?.options?.map((option: any, index: number) => (
                       <Button
                         key={index}
                         onClick={option.action}

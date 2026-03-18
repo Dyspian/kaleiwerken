@@ -16,6 +16,7 @@ import {
   createContactStep,
   createQuestionStep
 } from './chatbot-steps';
+import { ConversationStep } from './chatbot-steps';
 
 // Types
 export interface Message {
@@ -64,12 +65,12 @@ export const useChatbotConversation = (dict: any) => {
 
   const formValues = watch();
 
-  // Message management
+  // Core message management
   const addMessage = useCallback((text: string, sender: 'user' | 'bot') => {
     setMessages((prev) => [...prev, { id: prev.length + 1, text, sender }]);
   }, []);
 
-  // Conversation reset
+  // Conversation lifecycle management
   const resetChat = useCallback(() => {
     setMessages([]);
     setCurrentStep(0);
@@ -84,7 +85,7 @@ export const useChatbotConversation = (dict: any) => {
     }
   }, [addMessage, dict, reset, user]);
 
-  // Fetch user conversations
+  // User conversations management
   const fetchUserConversations = useCallback(async () => {
     if (!user?.id) {
       setUserConversations([]);
@@ -205,27 +206,7 @@ export const useChatbotConversation = (dict: any) => {
     };
   }, [currentConversationId, addMessage, messages, fetchUserConversations]);
 
-  // Handle form submission
-  const onSubmit = async (data: ChatbotFormValues) => {
-    setIsSubmitting(true);
-    const userMessageText = data.questionText || data.name;
-    addMessage(userMessageText, 'user');
-
-    try {
-      if (data.type === 'offer') {
-        await handleOfferSubmission(data);
-      } else if (data.type === 'question') {
-        await handleQuestionSubmission(data);
-      }
-    } catch (error: any) {
-      toast.error(dict.chatbot.errorSubmit);
-      console.error(error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  // Handle offer submission
+  // Form submission handlers
   const handleOfferSubmission = async (data: ChatbotFormValues) => {
     const leadData = {
       project_type: data.projectType,
@@ -250,7 +231,6 @@ export const useChatbotConversation = (dict: any) => {
     toast.success(dict.chatbot.successSubmit);
   };
 
-  // Handle question submission
   const handleQuestionSubmission = async (data: ChatbotFormValues) => {
     let conversationIdToUse = currentConversationId;
 
@@ -273,7 +253,7 @@ export const useChatbotConversation = (dict: any) => {
       if (conversationError) throw conversationError;
       conversationIdToUse = conversationData.id;
       setCurrentConversationId(conversationIdToUse);
-      if (!user) {
+      if (!user && conversationIdToUse) {
         localStorage.setItem(CONVERSATION_ID_KEY, conversationIdToUse);
       }
       fetchUserConversations();
@@ -294,31 +274,57 @@ export const useChatbotConversation = (dict: any) => {
     toast.success(dict.chatbot.successSubmit);
   };
 
-  // Generate conversation steps
-  const conversationSteps = useCallback((values: ChatbotFormValues) => {
+  // Main form submission
+  const onSubmit = async (data: ChatbotFormValues) => {
+    setIsSubmitting(true);
+    const userMessageText = data.questionText || data.name;
+    addMessage(userMessageText, 'user');
+
+    try {
+      if (data.type === 'offer') {
+        await handleOfferSubmission(data);
+      } else if (data.type === 'question') {
+        await handleQuestionSubmission(data);
+      }
+    } catch (error: any) {
+      toast.error(dict.chatbot.errorSubmit);
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Generate conversation steps using modular creators
+  const generateConversationSteps = useCallback((values: ChatbotFormValues): ConversationStep[] => {
     if (!dict || !dict.chatbot || !dict.quote) {
       return [];
     }
 
+    // Create a wrapper for setValue to handle the type mismatch
+    const setValueWrapper = (name: string, value: any) => {
+      setValue(name as any, value);
+    };
+
     const steps = [
-      createWelcomeStep(dict, setValue, setCurrentStep, addMessage),
+      createWelcomeStep(dict, setValueWrapper, setCurrentStep, addMessage),
       ...(values.type === 'offer' ? [
-        createProjectTypeStep(dict, setValue, setCurrentStep, addMessage),
+        createProjectTypeStep(dict, setValueWrapper, setCurrentStep, addMessage),
         createSurfaceAreaStep(dict, register, errors, getValues, addMessage, toast, setCurrentStep),
-        createSurfaceTypeStep(dict, setValue, setCurrentStep, addMessage),
-        createTimingStep(dict, setValue, setCurrentStep, addMessage),
-        createContactStep(dict, register, errors, handleSubmit, onSubmit, isSubmitting)
+        createSurfaceTypeStep(dict, setValueWrapper, setCurrentStep, addMessage),
+        createTimingStep(dict, setValueWrapper, setCurrentStep, addMessage),
+        createContactStep(dict, register, errors, handleSubmit, onSubmit, isSubmitting),
       ] : []),
       ...(values.type === 'question' ? [
-        createQuestionStep(dict, register, errors, handleSubmit, onSubmit, isSubmitting)
-      ] : [])
-    ];
+        createQuestionStep(dict, register, errors, handleSubmit, onSubmit, isSubmitting),
+      ] : []),
+    ].filter(Boolean) as ConversationStep[];
     
     return steps;
-  }, [dict, errors, getValues, handleSubmit, isSubmitting, register, setValue, addMessage, onSubmit]);
+  }, [dict, errors, getValues, handleSubmit, isSubmitting, register, setValue, addMessage, onSubmit, toast]);
 
-  const currentConversationStep = conversationSteps(formValues)[currentStep];
+  const currentConversationStep = generateConversationSteps(formValues)[currentStep];
 
+  // Update messages when step changes
   useEffect(() => {
     if (currentConversationStep?.botMessage && messages.length === 0) {
       addMessage(currentConversationStep.botMessage, 'bot');

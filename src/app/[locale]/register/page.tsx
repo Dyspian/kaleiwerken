@@ -9,6 +9,7 @@ import { useAuth } from '@/components/auth/auth-provider';
 import { toast } from 'sonner';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button'; // Fix: Add missing Button import
 
 export default function RegisterPage() {
   const { session, loading: authLoading } = useAuth();

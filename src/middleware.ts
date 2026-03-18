@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { match as matchLocale } from '@formatjs/intl-localematcher';
 import Negotiator from 'negotiator';
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'; // Import for Supabase client in middleware
+import { createClient } from '@supabase/supabase-js'; // Fix: Use createClient instead of createMiddlewareClient
 
 const locales = ['nl', 'en', 'fr', 'de'];
 const defaultLocale = 'nl';
@@ -32,7 +32,10 @@ export async function middleware(request: NextRequest) {
 
   // --- Role-based Access Control for /admin routes ---
   if (pathname.startsWith(`/${locale}/admin`)) {
-    const supabase = createMiddlewareClient({ req: request, res: NextResponse.next() });
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
     const { data: { session } } = await supabase.auth.getSession();
 
     if (!session) {
