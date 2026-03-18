@@ -25,12 +25,14 @@ export interface ConversationStep {
   renderInput?: React.ReactNode;
 }
 
+const CONVERSATION_ID_KEY = 'chatbot_conversation_id';
+
 export const useChatbotConversation = (dict: any) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
-  const [currentConversationId, setCurrentConversationId] = useState<string | null>(null); // Track current conversation
+  const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
 
   const { register, handleSubmit, formState: { errors }, watch, setValue, getValues, reset } = useForm<ChatbotFormValues>({
     resolver: zodResolver(chatbotFormSchema),
@@ -58,26 +60,85 @@ export const useChatbotConversation = (dict: any) => {
     setMessages([]);
     setCurrentStep(0);
     setIsComplete(false);
-    setCurrentConversationId(null); // Reset conversation ID
+    setCurrentConversationId(null);
+    localStorage.removeItem(CONVERSATION_ID_KEY); // Clear conversation ID from local storage
     reset();
-    // Initial bot message
-    if (dict?.chatbot?.welcome) { // Check if dict.chatbot.welcome is available
+    if (dict?.chatbot?.welcome) {
       addMessage(dict.chatbot.welcome, 'bot');
     }
   }, [addMessage, dict, reset]);
 
+  // Initialize chat or load existing conversation
   useEffect(() => {
-    resetChat();
-  }, [resetChat]);
+    const storedConversationId = localStorage.getItem(CONVERSATION_ID_KEY);
+    if (storedConversationId) {
+      setCurrentConversationId(storedConversationId);
+      // Fetch existing messages
+      const fetchExistingMessages = async () => {
+        const { data, error } = await supabase
+          .from('chatbot_messages')
+          .select('*')
+          .eq('conversation_id', storedConversationId)
+          .order('created_at', { ascending: true });
+
+        if (error) {
+          console.error("Error fetching existing messages:", error);
+          toast.error("Fout bij ophalen chatgeschiedenis.");
+          resetChat(); // Start fresh if error
+        } else {
+          const loadedMessages = data.map(msg => ({
+            id: msg.id,
+            text: msg.message_text,
+            sender: (msg.sender === 'admin' ? 'bot' : 'user') as Message['sender'], // Fix 1: Type assertion for sender
+          }));
+          setMessages([
+            { id: 0, text: dict.chatbot.welcome, sender: 'bot' }, // Always start with welcome message
+            ...loadedMessages
+          ]);
+          setIsComplete(true); // Assume ongoing conversation is complete until new input
+          // Determine current step based on last message if needed, for now, just show history
+        }
+      };
+      fetchExistingMessages();
+    } else {
+      resetChat(); // Start a new chat if no stored ID
+    }
+  }, [resetChat, dict]);
+
+  // Real-time subscription for new messages
+  useEffect(() => {
+    if (!currentConversationId) return;
+
+    const channel = supabase
+      .channel(`chatbot_messages_${currentConversationId}`)
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'chatbot_messages',
+        filter: `conversation_id=eq.${currentConversationId}`
+      }, (payload) => {
+        const newMessage = payload.new as any;
+        // Only add messages that are not already in state (to prevent duplicates from initial fetch)
+        if (!messages.some(msg => msg.id === newMessage.id)) {
+          addMessage(newMessage.message_text, (newMessage.sender === 'admin' ? 'bot' : 'user') as Message['sender']);
+          setIsComplete(true); // Mark as complete after receiving a new message
+        }
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [currentConversationId, addMessage, messages]);
+
 
   const onSubmit = async (data: ChatbotFormValues) => {
     setIsSubmitting(true);
-    const userMessageText = data.questionText || data.name; // Use name for offer, questionText for question
-    addMessage(userMessageText, 'user'); // Show user's final input
+    const userMessageText = data.questionText || data.name;
+    addMessage(userMessageText, 'user');
 
     try {
       if (data.type === 'offer') {
-        // Existing logic for offer requests (still goes to leads table)
         const leadData = {
           project_type: data.projectType,
           surface_area: data.surfaceArea || null,
@@ -103,31 +164,35 @@ export const useChatbotConversation = (dict: any) => {
         toast.success(dict.chatbot.successSubmit);
 
       } else if (data.type === 'question') {
-        // New logic for general questions (goes to chatbot_conversations and chatbot_messages)
-        const { data: userData, error: userError } = await supabase.auth.getUser();
-        const userId = userData?.user?.id || null;
+        let conversationIdToUse = currentConversationId;
 
-        const { data: conversationData, error: conversationError } = await supabase
-          .from("chatbot_conversations")
-          .insert({
-            user_id: userId,
-            name: data.name,
-            email: data.email,
-            phone: data.phone || null,
-            initial_question: data.questionText || '',
-            status: 'open',
-          })
-          .select()
-          .single();
+        if (!conversationIdToUse) {
+          const { data: userData, error: userError } = await supabase.auth.getUser();
+          const userId = userData?.user?.id || null;
 
-        if (conversationError) throw conversationError;
+          const { data: conversationData, error: conversationError } = await supabase
+            .from("chatbot_conversations")
+            .insert({
+              user_id: userId,
+              name: data.name,
+              email: data.email,
+              phone: data.phone || null,
+              initial_question: data.questionText || '',
+              status: 'open',
+            })
+            .select()
+            .single();
 
-        setCurrentConversationId(conversationData.id);
+          if (conversationError) throw conversationError;
+          conversationIdToUse = conversationData.id;
+          setCurrentConversationId(conversationIdToUse);
+          localStorage.setItem(CONVERSATION_ID_KEY, conversationIdToUse!); // Fix 2: Non-null assertion
+        }
 
         const { error: messageError } = await supabase
           .from("chatbot_messages")
           .insert({
-            conversation_id: conversationData.id,
+            conversation_id: conversationIdToUse,
             sender: 'user',
             message_text: data.questionText || '',
           });
@@ -147,7 +212,6 @@ export const useChatbotConversation = (dict: any) => {
   };
 
   const conversationSteps = useCallback((values: ChatbotFormValues): ConversationStep[] => {
-    // Return empty steps if dictionary is not ready
     if (!dict || !dict.chatbot || !dict.quote) {
       return [];
     }
@@ -171,7 +235,6 @@ export const useChatbotConversation = (dict: any) => {
         ],
         renderInput: undefined,
       },
-      // Offer flow
       values.type === 'offer' && {
         botMessage: dict.chatbot.questionProjectType,
         options: [
@@ -330,7 +393,6 @@ export const useChatbotConversation = (dict: any) => {
         ),
         options: undefined,
       },
-      // Question flow
       values.type === 'question' && {
         botMessage: dict.chatbot.questionGeneral,
         renderInput: (
