@@ -6,7 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 type AuthContextType = {
   session: Session | null;
-  user: User | null;
+  user: (User & { role?: string }) | null; // Add role to user type
   loading: boolean;
   signOut: () => Promise<void>;
 };
@@ -20,19 +20,66 @@ const AuthContext = createContext<AuthContextType>({
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<(User & { role?: string }) | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const getSessionAndProfile = async () => {
+      setLoading(true);
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError) {
+        console.error("Error fetching session:", sessionError);
+        setSession(null);
+        setUser(null);
+        setLoading(false);
+        return;
+      }
+
+      if (session) {
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', session.user.id)
+          .single();
+
+        if (profileError && profileError.code !== 'PGRST116') { // PGRST116 means no rows found, which is fine for new users
+          console.error("Error fetching profile:", profileError);
+          // Continue without role if profile not found or error
+          setUser(session.user);
+        } else {
+          setUser({ ...session.user, role: profile?.role || 'user' });
+        }
+      } else {
+        setUser(null);
+      }
       setSession(session);
-      setUser(session?.user ?? null);
       setLoading(false);
-    });
+    };
+
+    getSessionAndProfile();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        const fetchProfileOnAuthChange = async () => {
+          const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', session.user.id)
+            .single();
+
+          if (profileError && profileError.code !== 'PGRST116') {
+            console.error("Error fetching profile on auth change:", profileError);
+            setUser(session.user);
+          } else {
+            setUser({ ...session.user, role: profile?.role || 'user' });
+          }
+        };
+        fetchProfileOnAuthChange();
+      } else {
+        setUser(null);
+      }
       setSession(session);
-      setUser(session?.user ?? null);
       setLoading(false);
     });
 

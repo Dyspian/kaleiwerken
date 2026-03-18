@@ -18,6 +18,11 @@ export const ChatMessage = ({ message, sender }: ChatMessageProps) => {
           <Paintbrush size={16} /> {/* De Paintbrush mascotte */}
         </div>
       )}
+      {sender === 'user' && (
+        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-brand-dark text-white flex items-center justify-center">
+          <User size={16} />
+        </div>
+      )}
       <div className={cn(
         "max-w-[70%] p-3 rounded-lg shadow-sm text-sm leading-relaxed",
         sender === 'user'
@@ -26,11 +31,6 @@ export const ChatMessage = ({ message, sender }: ChatMessageProps) => {
       )}>
         {message}
       </div>
-      {sender === 'user' && (
-        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-brand-dark text-white flex items-center justify-center">
-          <User size={16} />
-        </div>
-      )}
     </div>
   );
 };

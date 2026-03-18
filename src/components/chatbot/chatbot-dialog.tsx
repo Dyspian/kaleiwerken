@@ -3,7 +3,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { X, RefreshCcw, Paintbrush } from 'lucide-react'; // Import Paintbrush
+import { X, RefreshCcw, Paintbrush, User } from 'lucide-react'; // Import User icon
 import { ChatMessage } from './chat-message';
 import { useChatbotConversation } from '@/hooks/use-chatbot-conversation';
 import { usePathname } from 'next/navigation';
@@ -11,6 +11,8 @@ import { getDictionary } from '@/lib/get-dictionary';
 import { Locale } from '@/lib/i18n-config';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ConversationStep, Option } from '@/hooks/use-chatbot-conversation';
+import { useAuth } from '@/components/auth/auth-provider'; // Import useAuth
+import { ChatHistoryList } from './ChatHistoryList'; // Import ChatHistoryList
 
 interface ChatbotDialogProps {
   isOpen: boolean;
@@ -21,6 +23,7 @@ export const ChatbotDialog = ({ isOpen, onOpenChange }: ChatbotDialogProps) => {
   const pathname = usePathname();
   const locale = (pathname.split("/")[1] || "nl") as Locale;
   const [dict, setDict] = React.useState<any>(null);
+  const { user, loading: authLoading } = useAuth(); // Get user and auth loading state
 
   useEffect(() => {
     getDictionary(locale).then(setDict);
@@ -37,6 +40,9 @@ export const ChatbotDialog = ({ isOpen, onOpenChange }: ChatbotDialogProps) => {
     register,
     handleSubmit,
     onSubmit,
+    userConversations, // From new hook
+    loadConversation,  // From new hook
+    currentConversationId, // From new hook
   } = useChatbotConversation(dict || {});
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -49,14 +55,14 @@ export const ChatbotDialog = ({ isOpen, onOpenChange }: ChatbotDialogProps) => {
     scrollToBottom();
   }, [messages]);
 
-  if (!dict) return null; // Wait for dictionary to load
+  if (!dict || authLoading) return null; // Wait for dictionary and auth to load
 
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
       <SheetContent className="w-full sm:max-w-md flex flex-col bg-brand-white border-l border-brand-dark/5 rounded-none">
-        <SheetHeader className="pb-4 border-b border-brand-dark/5 flex-row items-center gap-3"> {/* Flex-row voor icoon en tekst */}
+        <SheetHeader className="pb-4 border-b border-brand-dark/5 flex-row items-center gap-3">
           <div className="flex-shrink-0 w-10 h-10 rounded-full bg-brand-bronze text-white flex items-center justify-center">
-            <Paintbrush size={20} /> {/* Mascotte in de header */}
+            <Paintbrush size={20} />
           </div>
           <div>
             <SheetTitle className="font-serif text-2xl">{dict.chatbot.title}</SheetTitle>
@@ -65,6 +71,18 @@ export const ChatbotDialog = ({ isOpen, onOpenChange }: ChatbotDialogProps) => {
         </SheetHeader>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
+          {user && userConversations.length > 0 && (
+            <div className="mb-4 p-3 bg-brand-stone/30 border border-brand-dark/5 rounded-md">
+              <ChatHistoryList
+                conversations={userConversations}
+                onSelectConversation={loadConversation}
+                onStartNewConversation={resetChat}
+                currentConversationId={currentConversationId}
+                dict={dict}
+              />
+            </div>
+          )}
+
           {messages.map((msg) => (
             <ChatMessage key={msg.id} message={msg.text} sender={msg.sender} />
           ))}

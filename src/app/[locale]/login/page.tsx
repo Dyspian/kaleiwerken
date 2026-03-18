@@ -6,33 +6,38 @@ import { supabase } from '@/integrations/supabase/client';
 import { useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useAuth } from '@/components/auth/auth-provider';
+import Link from 'next/link';
 
 export default function LoginPage() {
-  const { session, loading } = useAuth();
+  const { session, user, loading: authLoading } = useAuth(); // Get user object to check role
   const router = useRouter();
   const params = useParams();
   const locale = params.locale || 'nl';
 
   useEffect(() => {
-    if (session) {
-      router.push(`/${locale}/admin`);
+    if (session && user) { // Check if user object is also available
+      if (user.role === 'admin') {
+        router.push(`/${locale}/admin`);
+      } else {
+        router.push(`/${locale}`); // Redirect regular users to home page
+      }
     }
-  }, [session, router, locale]);
+  }, [session, user, router, locale]); // Add user to dependency array
 
-  if (loading) return null;
+  if (authLoading) return null;
 
   return (
     <div className="min-h-screen bg-brand-stone flex items-center justify-center p-6">
       <div className="w-full max-w-md bg-white p-8 shadow-2xl border border-brand-dark/5">
         <div className="mb-8 text-center">
-          <h1 className="font-serif text-3xl mb-2">Admin Login</h1>
-          <p className="text-brand-dark/60 text-sm">Beheer uw projecten en aanvragen</p>
+          <h1 className="font-serif text-3xl mb-2">Inloggen</h1>
+          <p className="text-brand-dark/60 text-sm">Log in op uw account</p>
         </div>
         
         <Auth
           supabaseClient={supabase}
           view="sign_in"
-          showLinks={false}
+          showLinks={false} // We will provide our own link to register
           appearance={{ 
             theme: ThemeSupa,
             variables: {
@@ -56,8 +61,14 @@ export default function LoginPage() {
           }}
         />
         
+        <p className="mt-6 text-center text-sm text-brand-dark/60">
+          Nog geen account?{' '}
+          <Link href={`/${locale}/register`} className="text-brand-bronze hover:underline">
+            Registreer hier
+          </Link>
+        </p>
         <p className="mt-8 text-center text-[10px] uppercase tracking-widest text-brand-dark/30">
-          Toegang alleen voor geautoriseerde gebruikers
+          Toegang tot admin dashboard alleen voor geautoriseerde gebruikers
         </p>
       </div>
     </div>

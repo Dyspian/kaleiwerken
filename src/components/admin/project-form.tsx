@@ -93,7 +93,7 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
       start_date: initialData?.start_date ? new Date(initialData.start_date) : null,
       end_date: initialData?.end_date ? new Date(initialData.end_date) : null,
       // Explicitly ensure planning_status is one of the enum values
-      planning_status: (initialData?.planning_status && projectSchema.shape.planning_status.options.includes(initialData.planning_status))
+      planning_status: (initialData?.planning_status && projectSchema.shape.planning_status._def.schema.options.includes(initialData.planning_status))
         ? initialData.planning_status
         : 'pending',
     } as ProjectFormValues // Cast the entire defaultValues object to ProjectFormValues

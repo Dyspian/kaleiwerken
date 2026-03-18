@@ -11,13 +11,18 @@ export const AdminSidebar = () => {
   const pathname = usePathname();
   const params = useParams();
   const locale = params.locale || 'nl';
-  const { user, signOut } = useAuth();
+  const { user, signOut, loading: authLoading } = useAuth(); // Get loading state
+
+  // If auth is still loading or user is not an admin, don't render sidebar
+  if (authLoading || user?.role !== 'admin') {
+    return null;
+  }
 
   const navItems = [
     { href: `/${locale}/admin`, label: "Overzicht", icon: LayoutDashboard },
     { href: `/${locale}/admin/projects`, label: "Projecten", icon: FolderKanban },
     { href: `/${locale}/admin/leads`, label: "Aanvragen", icon: MessageSquare },
-    { href: `/${locale}/admin/chatbot`, label: "Chatbot Inbox", icon: MessageSquare }, // Nieuwe link
+    { href: `/${locale}/admin/chatbot`, label: "Chatbot Inbox", icon: MessageSquare },
   ];
 
   return (

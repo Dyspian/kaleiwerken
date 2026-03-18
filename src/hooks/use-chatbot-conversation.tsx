@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { ChatbotFormValues, chatbotFormSchema } from '@/components/chatbot/chatbot-schema';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useAuth } from '@/components/auth/auth-provider'; // Import useAuth
 
 interface Message {
   id: number;
@@ -25,14 +26,23 @@ export interface ConversationStep {
   renderInput?: React.ReactNode;
 }
 
-const CONVERSATION_ID_KEY = 'chatbot_conversation_id';
+export interface UserConversation { // New interface for user's past conversations
+  id: string;
+  initial_question: string;
+  created_at: string;
+  updated_at: string;
+}
+
+const CONVERSATION_ID_KEY = 'chatbot_conversation_id'; // Still used for anonymous users
 
 export const useChatbotConversation = (dict: any) => {
+  const { user, loading: authLoading } = useAuth(); // Get user and auth loading state
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
+  const [userConversations, setUserConversations] = useState<UserConversation[]>([]); // New state for user's past conversations
 
   const { register, handleSubmit, formState: { errors }, watch, setValue, getValues, reset } = useForm<ChatbotFormValues>({
     resolver: zodResolver(chatbotFormSchema),
@@ -61,49 +71,92 @@ export const useChatbotConversation = (dict: any) => {
     setCurrentStep(0);
     setIsComplete(false);
     setCurrentConversationId(null);
-    localStorage.removeItem(CONVERSATION_ID_KEY); // Clear conversation ID from local storage
+    if (!user) { // Only clear local storage for anonymous users
+      localStorage.removeItem(CONVERSATION_ID_KEY);
+    }
     reset();
     if (dict?.chatbot?.welcome) {
       addMessage(dict.chatbot.welcome, 'bot');
     }
-  }, [addMessage, dict, reset]);
+  }, [addMessage, dict, reset, user]);
+
+  const fetchUserConversations = useCallback(async () => {
+    if (user?.id) {
+      const { data, error } = await supabase
+        .from('chatbot_conversations')
+        .select('id, initial_question, created_at, updated_at')
+        .eq('user_id', user.id)
+        .order('updated_at', { ascending: false });
+
+      if (error) {
+        console.error("Error fetching user conversations:", error);
+        toast.error("Fout bij ophalen van uw conversaties.");
+      } else {
+        setUserConversations(data || []);
+      }
+    } else {
+      setUserConversations([]);
+    }
+  }, [user?.id]);
+
+  const loadConversation = useCallback(async (conversationId: string) => {
+    setCurrentConversationId(conversationId);
+    setIsComplete(false); // Assume it's not complete until new interaction
+    setCurrentStep(0); // Reset step for new conversation context
+
+    const { data, error } = await supabase
+      .from('chatbot_messages')
+      .select('*')
+      .eq('conversation_id', conversationId)
+      .order('created_at', { ascending: true });
+
+    if (error) {
+      console.error("Error fetching messages for conversation:", error);
+      toast.error("Fout bij ophalen chatgeschiedenis.");
+      resetChat();
+    } else {
+      const loadedMessages = data.map(msg => ({
+        id: msg.id,
+        text: msg.message_text,
+        sender: (msg.sender === 'admin' ? 'bot' : 'user') as Message['sender'],
+      }));
+      setMessages([
+        { id: 0, text: dict.chatbot.welcome, sender: 'bot' },
+        ...loadedMessages
+      ]);
+      // If the last message is from admin, it's "complete" from user's perspective
+      if (loadedMessages.length > 0 && loadedMessages[loadedMessages.length - 1].sender === 'bot') {
+        setIsComplete(true);
+      } else {
+        setIsComplete(false);
+      }
+    }
+  }, [dict, resetChat]);
 
   // Initialize chat or load existing conversation
   useEffect(() => {
-    const storedConversationId = localStorage.getItem(CONVERSATION_ID_KEY);
-    if (storedConversationId) {
-      setCurrentConversationId(storedConversationId);
-      // Fetch existing messages
-      const fetchExistingMessages = async () => {
-        const { data, error } = await supabase
-          .from('chatbot_messages')
-          .select('*')
-          .eq('conversation_id', storedConversationId)
-          .order('created_at', { ascending: true });
+    if (authLoading) return;
 
-        if (error) {
-          console.error("Error fetching existing messages:", error);
-          toast.error("Fout bij ophalen chatgeschiedenis.");
-          resetChat(); // Start fresh if error
+    if (user) { // Logged-in user
+      fetchUserConversations();
+      // If no current conversation is selected, or if the selected one doesn't belong to this user,
+      // start a new one or load the most recent one.
+      if (!currentConversationId || !userConversations.some(conv => conv.id === currentConversationId)) {
+        if (userConversations.length > 0) {
+          loadConversation(userConversations[0].id); // Load most recent conversation
         } else {
-          const loadedMessages = data.map(msg => ({
-            id: msg.id,
-            text: msg.message_text,
-            sender: (msg.sender === 'admin' ? 'bot' : 'user') as Message['sender'], // Fix 1: Type assertion for sender
-          }));
-          setMessages([
-            { id: 0, text: dict.chatbot.welcome, sender: 'bot' }, // Always start with welcome message
-            ...loadedMessages
-          ]);
-          setIsComplete(true); // Assume ongoing conversation is complete until new input
-          // Determine current step based on last message if needed, for now, just show history
+          resetChat(); // Start fresh if no conversations
         }
-      };
-      fetchExistingMessages();
-    } else {
-      resetChat(); // Start a new chat if no stored ID
+      }
+    } else { // Anonymous user
+      const storedConversationId = localStorage.getItem(CONVERSATION_ID_KEY);
+      if (storedConversationId) {
+        loadConversation(storedConversationId);
+      } else {
+        resetChat();
+      }
     }
-  }, [resetChat, dict]);
+  }, [authLoading, user, currentConversationId, userConversations, fetchUserConversations, loadConversation, resetChat]);
 
   // Real-time subscription for new messages
   useEffect(() => {
@@ -118,10 +171,10 @@ export const useChatbotConversation = (dict: any) => {
         filter: `conversation_id=eq.${currentConversationId}`
       }, (payload) => {
         const newMessage = payload.new as any;
-        // Only add messages that are not already in state (to prevent duplicates from initial fetch)
         if (!messages.some(msg => msg.id === newMessage.id)) {
           addMessage(newMessage.message_text, (newMessage.sender === 'admin' ? 'bot' : 'user') as Message['sender']);
           setIsComplete(true); // Mark as complete after receiving a new message
+          fetchUserConversations(); // Refresh user conversations list
         }
       })
       .subscribe();
@@ -129,7 +182,7 @@ export const useChatbotConversation = (dict: any) => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [currentConversationId, addMessage, messages]);
+  }, [currentConversationId, addMessage, messages, fetchUserConversations]);
 
 
   const onSubmit = async (data: ChatbotFormValues) => {
@@ -167,13 +220,12 @@ export const useChatbotConversation = (dict: any) => {
         let conversationIdToUse = currentConversationId;
 
         if (!conversationIdToUse) {
-          const { data: userData, error: userError } = await supabase.auth.getUser();
-          const userId = userData?.user?.id || null;
+          const userId = user?.id || null; // Use logged-in user ID if available
 
           const { data: conversationData, error: conversationError } = await supabase
             .from("chatbot_conversations")
             .insert({
-              user_id: userId,
+              user_id: userId, // Link to user ID
               name: data.name,
               email: data.email,
               phone: data.phone || null,
@@ -186,7 +238,10 @@ export const useChatbotConversation = (dict: any) => {
           if (conversationError) throw conversationError;
           conversationIdToUse = conversationData.id;
           setCurrentConversationId(conversationIdToUse);
-          localStorage.setItem(CONVERSATION_ID_KEY, conversationIdToUse!); // Fix 2: Non-null assertion
+          if (!user) { // Only store in local storage for anonymous users
+            localStorage.setItem(CONVERSATION_ID_KEY, conversationIdToUse);
+          }
+          fetchUserConversations(); // Refresh user conversations after creating a new one
         }
 
         const { error: messageError } = await supabase
@@ -394,7 +449,7 @@ export const useChatbotConversation = (dict: any) => {
         options: undefined,
       },
       values.type === 'question' && {
-        botMessage: dict.chatbot.questionGeneral,
+        botMessage: dict.chatbot.questionContact, // Use contact question for general questions too
         renderInput: (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
             <textarea
@@ -418,6 +473,13 @@ export const useChatbotConversation = (dict: any) => {
               className="w-full p-2 border border-brand-dark/10 rounded-none focus:ring-brand-bronze focus:border-brand-bronze"
             />
             {errors.email && <p className="text-red-500 text-xs">{errors.email.message}</p>}
+            <input
+              type="tel"
+              placeholder={dict.quote.phone}
+              {...register('phone')}
+              className="w-full p-2 border border-brand-dark/10 rounded-none focus:ring-brand-bronze focus:border-brand-bronze"
+            />
+            {errors.phone && <p className="text-red-500 text-xs">{errors.phone.message}</p>}
             <button
               type="submit"
               disabled={isSubmitting}
@@ -431,7 +493,7 @@ export const useChatbotConversation = (dict: any) => {
       },
     ];
     return steps.filter(Boolean) as ConversationStep[];
-  }, [addMessage, dict, errors, getValues, handleSubmit, isSubmitting, register, setValue, onSubmit]);
+  }, [addMessage, dict, errors, getValues, handleSubmit, isSubmitting, register, setValue, onSubmit, user]); // Add user to dependencies
 
   const currentConversationStep = conversationSteps(formValues)[currentStep];
 
@@ -454,5 +516,8 @@ export const useChatbotConversation = (dict: any) => {
     register,
     handleSubmit,
     onSubmit,
+    userConversations, // Expose user conversations
+    loadConversation,  // Expose function to load a specific conversation
+    currentConversationId, // Expose current conversation ID
   };
 };

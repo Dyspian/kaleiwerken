@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { match as matchLocale } from '@formatjs/intl-localematcher';
 import Negotiator from 'negotiator';
+import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'; // Import for Supabase client in middleware
 
 const locales = ['nl', 'en', 'fr', 'de'];
 const defaultLocale = 'nl';
@@ -14,24 +15,45 @@ function getLocale(request: NextRequest): string | undefined {
   return matchLocale(languages, locales, defaultLocale);
 }
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
+  const locale = getLocale(request); // Get locale early
 
-  // Check if there is any supported locale in the pathname
+  // Handle locale redirection first
   const pathnameIsMissingLocale = locales.every(
-    (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
+    (loc) => !pathname.startsWith(`/${loc}/`) && pathname !== `/${loc}`
   );
 
-  // Redirect if there is no locale
   if (pathnameIsMissingLocale) {
-    const locale = getLocale(request);
-
-    // e.g. incoming request is /products
-    // The new URL is now /en/products
     return NextResponse.redirect(
       new URL(`/${locale}${pathname.startsWith('/') ? '' : '/'}${pathname}`, request.url)
     );
   }
+
+  // --- Role-based Access Control for /admin routes ---
+  if (pathname.startsWith(`/${locale}/admin`)) {
+    const supabase = createMiddlewareClient({ req: request, res: NextResponse.next() });
+    const { data: { session } } = await supabase.auth.getSession();
+
+    if (!session) {
+      // No session, redirect to login
+      return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
+    }
+
+    // Fetch user's role from profiles table
+    const { data: profile, error } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', session.user.id)
+      .single();
+
+    if (error || profile?.role !== 'admin') {
+      // User is not an admin or profile not found, redirect to home or login
+      return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
+    }
+  }
+
+  return NextResponse.next();
 }
 
 export const config = {
