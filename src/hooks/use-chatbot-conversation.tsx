@@ -59,7 +59,9 @@ export const useChatbotConversation = (dict: any) => {
     setIsComplete(false);
     reset();
     // Initial bot message
-    addMessage(dict.chatbot.welcome, 'bot');
+    if (dict?.chatbot?.welcome) { // Check if dict.chatbot.welcome is available
+      addMessage(dict.chatbot.welcome, 'bot');
+    }
   }, [addMessage, dict, reset]);
 
   useEffect(() => {
@@ -100,6 +102,11 @@ export const useChatbotConversation = (dict: any) => {
   };
 
   const conversationSteps = useCallback((values: ChatbotFormValues): ConversationStep[] => {
+    // Return empty steps if dictionary is not ready
+    if (!dict || !dict.chatbot || !dict.quote) {
+      return [];
+    }
+
     const steps: (ConversationStep | false)[] = [
       {
         botMessage: dict.chatbot.welcome,
@@ -317,7 +324,7 @@ export const useChatbotConversation = (dict: any) => {
       },
     ];
     return steps.filter(Boolean) as ConversationStep[];
-  }, [addMessage, dict, errors, getValues, handleSubmit, isSubmitting, register, setValue, onSubmit]); // Added onSubmit to dependencies
+  }, [addMessage, dict, errors, getValues, handleSubmit, isSubmitting, register, setValue, onSubmit]);
 
   const currentConversationStep = conversationSteps(formValues)[currentStep];
 
