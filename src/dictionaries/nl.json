@@ -161,5 +161,28 @@
     "socials": "Socials",
     "menu": "Menu",
     "contact": "Contact"
+  },
+  "chatbot": {
+    "title": "Digitale Assistent",
+    "subtitle": "Ik help u graag verder met uw vragen of offerteaanvraag.",
+    "openChat": "Open Chatbot",
+    "welcome": "Hallo! Ik ben uw digitale assistent. Waarmee kan ik u helpen?",
+    "optionOffer": "Ik wil een offerte aanvragen",
+    "optionQuestion": "Ik heb een algemene vraag",
+    "questionProjectType": "Wat voor type project betreft het?",
+    "questionSurfaceArea": "Wat is de geschatte oppervlakte in m²?",
+    "questionSurfaceType": "Wat is de huidige ondergrond?",
+    "questionTiming": "Wanneer wilt u het project laten uitvoeren?",
+    "questionContact": "Bijna klaar! Wat zijn uw contactgegevens?",
+    "questionGeneral": "Stel gerust uw vraag. Ik zal deze doorsturen naar ons team.",
+    "yourQuestion": "Uw vraag...",
+    "send": "Verzenden",
+    "sending": "Bezig met verzenden...",
+    "thankYou": "Bedankt! Uw aanvraag is verzonden. We nemen spoedig contact met u op.",
+    "thankYouMessage": "Uw bericht is succesvol verzonden. We nemen zo snel mogelijk contact met u op.",
+    "startNew": "Nieuwe conversatie starten",
+    "errorSurfaceArea": "Voer een geldige oppervlakte in.",
+    "errorSubmit": "Er is iets misgegaan bij het verzenden van uw aanvraag.",
+    "successSubmit": "Aanvraag succesvol verzonden!"
   }
 }

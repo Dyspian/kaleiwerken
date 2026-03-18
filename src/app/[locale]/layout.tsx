@@ -1,6 +1,7 @@
 import { SmoothScroll } from "@/components/layout/smooth-scroll";
 import { ScrollProgress } from "@/components/layout/scroll-progress";
 import { AuthProvider } from "@/components/auth/auth-provider";
+import { ChatbotButton } from "@/components/chatbot/chatbot-button"; // Import the ChatbotButton
 
 export default function LocaleLayout({
   children,
@@ -14,6 +15,7 @@ export default function LocaleLayout({
       <SmoothScroll>
           {children}
       </SmoothScroll>
+      <ChatbotButton /> {/* Add the ChatbotButton here */}
     </AuthProvider>
   );
 }

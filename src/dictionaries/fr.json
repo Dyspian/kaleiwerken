@@ -161,5 +161,28 @@
     "socials": "Réseaux sociaux",
     "menu": "Menu",
     "contact": "Contact"
+  },
+  "chatbot": {
+    "title": "Assistant Numérique",
+    "subtitle": "Je suis là pour vous aider avec vos questions ou demandes de devis.",
+    "openChat": "Ouvrir le Chatbot",
+    "welcome": "Bonjour ! Je suis votre assistant numérique. Comment puis-je vous aider ?",
+    "optionOffer": "Je souhaite demander un devis",
+    "optionQuestion": "J'ai une question générale",
+    "questionProjectType": "Quel type de projet s'agit-il ?",
+    "questionSurfaceArea": "Quelle est la surface estimée en m² ?",
+    "questionSurfaceType": "Quel est le support actuel ?",
+    "questionTiming": "Quand souhaitez-vous que le projet soit réalisé ?",
+    "questionContact": "Presque terminé ! Quelles sont vos coordonnées ?",
+    "questionGeneral": "N'hésitez pas à poser votre question. Je la transmettrai à notre équipe.",
+    "yourQuestion": "Votre question...",
+    "send": "Envoyer",
+    "sending": "Envoi en cours...",
+    "thankYou": "Merci ! Votre demande a été envoyée. Nous vous contacterons sous peu.",
+    "thankYouMessage": "Votre message a été envoyé avec succès. Nous vous contacterons dès que possible.",
+    "startNew": "Démarrer une nouvelle conversation",
+    "errorSurfaceArea": "Veuillez entrer une surface valide.",
+    "errorSubmit": "Une erreur est survenue lors de l'envoi de votre demande.",
+    "successSubmit": "Demande envoyée avec succès !"
   }
 }

@@ -161,5 +161,28 @@
     "socials": "Socials",
     "menu": "Menu",
     "contact": "Contact"
+  },
+  "chatbot": {
+    "title": "Digital Assistant",
+    "subtitle": "I'm happy to help you with your questions or quote request.",
+    "openChat": "Open Chatbot",
+    "welcome": "Hello! I am your digital assistant. How can I help you?",
+    "optionOffer": "I want to request a quote",
+    "optionQuestion": "I have a general question",
+    "questionProjectType": "What type of project is it?",
+    "questionSurfaceArea": "What is the estimated surface area in m²?",
+    "questionSurfaceType": "What is the current substrate?",
+    "questionTiming": "When do you want the project to be carried out?",
+    "questionContact": "Almost done! What are your contact details?",
+    "questionGeneral": "Feel free to ask your question. I will forward it to our team.",
+    "yourQuestion": "Your question...",
+    "send": "Send",
+    "sending": "Sending...",
+    "thankYou": "Thank you! Your request has been sent. We will contact you shortly.",
+    "thankYouMessage": "Your message has been successfully sent. We will contact you as soon as possible.",
+    "startNew": "Start new conversation",
+    "errorSurfaceArea": "Please enter a valid surface area.",
+    "errorSubmit": "Something went wrong while submitting your request.",
+    "successSubmit": "Request successfully submitted!"
   }
 }

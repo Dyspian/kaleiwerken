@@ -161,5 +161,28 @@
     "socials": "Social Media",
     "menu": "Menü",
     "contact": "Kontakt"
+  },
+  "chatbot": {
+    "title": "Digitaler Assistent",
+    "subtitle": "Ich helfe Ihnen gerne bei Ihren Fragen oder Angebotsanfragen.",
+    "openChat": "Chatbot öffnen",
+    "welcome": "Hallo! Ich bin Ihr digitaler Assistent. Wie kann ich Ihnen helfen?",
+    "optionOffer": "Ich möchte ein Angebot anfordern",
+    "optionQuestion": "Ich habe eine allgemeine Frage",
+    "questionProjectType": "Um welche Art von Projekt handelt es sich?",
+    "questionSurfaceArea": "Wie groß ist die geschätzte Fläche in m²?",
+    "questionSurfaceType": "Was ist der aktuelle Untergrund?",
+    "questionTiming": "Wann soll das Projekt durchgeführt werden?",
+    "questionContact": "Fast fertig! Was sind Ihre Kontaktdaten?",
+    "questionGeneral": "Stellen Sie Ihre Frage. Ich werde sie an unser Team weiterleiten.",
+    "yourQuestion": "Ihre Frage...",
+    "send": "Senden",
+    "sending": "Senden...",
+    "thankYou": "Vielen Dank! Ihre Anfrage wurde gesendet. Wir werden uns in Kürze bei Ihnen melden.",
+    "thankYouMessage": "Ihre Nachricht wurde erfolgreich gesendet. Wir werden uns so schnell wie möglich bei Ihnen melden.",
+    "startNew": "Neue Konversation starten",
+    "errorSurfaceArea": "Bitte geben Sie eine gültige Fläche ein.",
+    "errorSubmit": "Beim Senden Ihrer Anfrage ist ein Fehler aufgetreten.",
+    "successSubmit": "Anfrage erfolgreich gesendet!"
   }
 }
