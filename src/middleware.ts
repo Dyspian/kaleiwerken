@@ -2,10 +2,13 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { match as matchLocale } from '@formatjs/intl-localematcher';
 import Negotiator from 'negotiator';
-import { createClient } from '@supabase/supabase-js'; // Fix: Use createClient instead of createMiddlewareClient
+import { createClient } from '@supabase/supabase-js';
 
 const locales = ['nl', 'en', 'fr', 'de'];
 const defaultLocale = 'nl';
+
+const SUPABASE_URL = "https://sjfosmcpbekkokmedwil.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNqZm9zbWNwYmVra29rbWVkd2lsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1MDAwMzQsImV4cCI6MjA4OTA3NjAzNH0.J4merO1jIzh3gysLZJx-h6hIPtUNfNeSrcovcA4rTVo";
 
 function getLocale(request: NextRequest): string | undefined {
   const negotiatorHeaders: Record<string, string> = {};
@@ -17,7 +20,7 @@ function getLocale(request: NextRequest): string | undefined {
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
-  const locale = getLocale(request); // Get locale early
+  const locale = getLocale(request);
 
   // Handle locale redirection first
   const pathnameIsMissingLocale = locales.every(
@@ -32,14 +35,10 @@ export async function middleware(request: NextRequest) {
 
   // --- Role-based Access Control for /admin routes ---
   if (pathname.startsWith(`/${locale}/admin`)) {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     const { data: { session } } = await supabase.auth.getSession();
 
     if (!session) {
-      // No session, redirect to login
       return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
     }
 
@@ -51,7 +50,6 @@ export async function middleware(request: NextRequest) {
       .single();
 
     if (error || profile?.role !== 'admin') {
-      // User is not an admin or profile not found, redirect to home or login
       return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
     }
   }
@@ -60,6 +58,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  // Matcher ignoring `/_next/` and `/api/`
   matcher: ['/((?!api|_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|.*\\.svg|.*\\.png|.*\\.jpg|.*\\.jpeg).*)'],
 };
