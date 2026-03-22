@@ -69,7 +69,8 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  const { data: { session } } = await supabase.auth.getSession();
+  // Gebruik getUser() voor een veilige check van de sessie
+  const { data: { user } } = await supabase.auth.getUser();
   const pathname = request.nextUrl.pathname;
 
   const locale = getLocale(request);
@@ -84,18 +85,10 @@ export async function middleware(request: NextRequest) {
   }
 
   const currentLocale = pathname.split('/')[1];
+  
+  // Alleen controleren of er een gebruiker is. De rol-check doen we in de Layout.
   if (pathname.startsWith(`/${currentLocale}/admin`)) {
-    if (!session) {
-      return NextResponse.redirect(new URL(`/${currentLocale}/login`, request.url));
-    }
-
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', session.user.id)
-      .single();
-
-    if (!profile || profile.role !== 'admin') {
+    if (!user) {
       return NextResponse.redirect(new URL(`/${currentLocale}/login`, request.url));
     }
   }

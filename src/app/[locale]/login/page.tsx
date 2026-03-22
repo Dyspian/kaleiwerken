@@ -7,37 +7,45 @@ import { useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useAuth } from '@/components/auth/auth-provider';
 import Link from 'next/link';
+import { Loader2 } from 'lucide-react';
 
 export default function LoginPage() {
-  const { session, user, loading: authLoading } = useAuth(); // Get user object to check role
+  const { session, user, loading: authLoading } = useAuth();
   const router = useRouter();
   const params = useParams();
   const locale = params.locale || 'nl';
 
   useEffect(() => {
-    if (session && user) { // Check if user object is also available
+    // Alleen redirecten als we zeker weten wie de gebruiker is en wat de rol is
+    if (!authLoading && session && user) {
       if (user.role === 'admin') {
         router.push(`/${locale}/admin`);
       } else {
-        router.push(`/${locale}`); // Redirect regular users to home page
+        router.push(`/${locale}`);
       }
     }
-  }, [session, user, router, locale]); // Add user to dependency array
+  }, [session, user, authLoading, router, locale]);
 
-  if (authLoading) return null;
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-brand-stone flex items-center justify-center">
+        <Loader2 className="animate-spin text-brand-bronze" size={48} />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-brand-stone flex items-center justify-center p-6">
       <div className="w-full max-w-md bg-white p-8 shadow-2xl border border-brand-dark/5">
         <div className="mb-8 text-center">
           <h1 className="font-serif text-3xl mb-2">Inloggen</h1>
-          <p className="text-brand-dark/60 text-sm">Log in op uw account</p>
+          <p className="text-brand-dark/60 text-sm">Beheerpaneel toegang</p>
         </div>
         
         <Auth
           supabaseClient={supabase}
           view="sign_in"
-          showLinks={false} // We will provide our own link to register
+          showLinks={false}
           appearance={{ 
             theme: ThemeSupa,
             variables: {
@@ -56,20 +64,17 @@ export default function LoginPage() {
                 email_label: 'E-mailadres',
                 password_label: 'Wachtwoord',
                 button_label: 'Inloggen',
+                loading_button_label: 'Bezig met inloggen...',
               }
             }
           }}
         />
         
-        <p className="mt-6 text-center text-sm text-brand-dark/60">
-          Nog geen account?{' '}
-          <Link href={`/${locale}/register`} className="text-brand-bronze hover:underline">
-            Registreer hier
+        <div className="mt-8 pt-6 border-t border-brand-dark/5 text-center">
+          <Link href={`/${locale}`} className="text-[10px] uppercase tracking-widest text-brand-dark/40 hover:text-brand-bronze transition-colors">
+            Terug naar de website
           </Link>
-        </p>
-        <p className="mt-8 text-center text-[10px] uppercase tracking-widest text-brand-dark/30">
-          Toegang tot admin dashboard alleen voor geautoriseerde gebruikers
-        </p>
+        </div>
       </div>
     </div>
   );
