@@ -7,20 +7,17 @@ import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Loader2, Save, X, Plus, Image as ImageIcon, Info, CalendarIcon } from "lucide-react";
 import Link from "next/link";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import dynamic from "next/dynamic";
-import 'react-quill/dist/quill.snow.css'; 
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
 
 const projectSchema = z.object({
   title: z.string().min(2, "Titel is verplicht"),
@@ -74,7 +71,7 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
-  const { register, handleSubmit, setValue, watch, control, formState: { errors } } = useForm<ProjectFormValues>({
+  const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<ProjectFormValues>({
     resolver: zodResolver(projectSchema),
     defaultValues: {
       title: initialData?.title ?? "",
@@ -263,11 +260,10 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
             </div>
             <div className="space-y-2">
                 <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40 mb-2 block">Uitgebreide beschrijving</Label>
-                <ReactQuill 
-                    theme="snow" 
-                    value={description || ''} 
-                    onChange={(content) => setValue("description", content === "<p><br></p>" ? "" : content)} 
-                    className="bg-white rounded-none border-brand-dark/10"
+                <Textarea 
+                    {...register("description")}
+                    className="bg-white rounded-none border-brand-dark/10 min-h-[200px] focus-visible:ring-brand-bronze"
+                    placeholder="Beschrijf het project in detail..."
                 />
             </div>
         </div>
