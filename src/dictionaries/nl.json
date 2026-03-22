@@ -11,6 +11,12 @@
     "privacy": "Privacybeleid",
     "terms": "Algemene Voorwaarden"
   },
+  "cookies": {
+    "title": "Cookies & Privacy",
+    "description": "Wij gebruiken cookies om uw ervaring op onze website te verbeteren en het verkeer te analyseren. Door te accepteren gaat u akkoord met ons gebruik van cookies.",
+    "accept": "Accepteren",
+    "decline": "Instellingen"
+  },
   "header": {
     "home": "Home",
     "about": "Over Ons",

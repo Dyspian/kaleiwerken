@@ -1,13 +1,21 @@
 import { SmoothScroll } from "@/components/layout/smooth-scroll";
 import { ScrollProgress } from "@/components/layout/scroll-progress";
 import { AuthProvider } from "@/components/auth/auth-provider";
-import { ChatbotButton } from "@/components/chatbot/chatbot-button"; // Import the ChatbotButton
+import { ChatbotButton } from "@/components/chatbot/chatbot-button";
+import { CookieConsent } from "@/components/layout/cookie-consent";
+import { getDictionary } from "@/lib/get-dictionary";
+import { Locale } from "@/lib/i18n-config";
 
-export default function LocaleLayout({
+export default async function LocaleLayout({
   children,
+  params,
 }: Readonly<{
   children: React.ReactNode;
+  params: Promise<{ locale: Locale }>;
 }>) {
+  const { locale } = await params;
+  const dict = await getDictionary(locale);
+
   return (
     <AuthProvider>
       <div className="noise-overlay" />
@@ -15,7 +23,8 @@ export default function LocaleLayout({
       <SmoothScroll>
           {children}
       </SmoothScroll>
-      <ChatbotButton /> {/* Add the ChatbotButton here */}
+      <ChatbotButton />
+      <CookieConsent dict={dict} locale={locale} />
     </AuthProvider>
   );
 }
