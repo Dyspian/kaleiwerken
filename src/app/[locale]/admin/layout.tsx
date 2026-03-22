@@ -16,12 +16,11 @@ export default function AdminLayout({
   const locale = params.locale || 'nl';
 
   useEffect(() => {
-    // Wacht tot het laden klaar is voordat we beslissen
     if (!loading) {
       if (!user) {
         router.push(`/${locale}/login`);
       } else if (user.role !== 'admin') {
-        // Als je ingelogd bent maar geen admin bent, terug naar home
+        console.error("Toegang geweigerd: Gebruiker is geen admin", user.role);
         router.push(`/${locale}`);
       }
     }
@@ -38,9 +37,5 @@ export default function AdminLayout({
     );
   }
 
-  return (
-    <div className="admin-root">
-      {children}
-    </div>
-  )
+  return <>{children}</>;
 }
