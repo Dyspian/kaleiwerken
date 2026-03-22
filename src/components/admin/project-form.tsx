@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import dynamic from "next/dynamic";
-import 'react-quill/dist/quill.snow.css'; // Import Quill styles
+import 'react-quill/dist/quill.snow.css'; 
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
@@ -37,12 +37,11 @@ const projectSchema = z.object({
   team: z.string().optional(),
   start_date: z.date().nullable().optional(),
   end_date: z.date().nullable().optional(),
-  planning_status: z.enum(['pending', 'in_progress', 'completed', 'cancelled']).default('pending'),
+  planning_status: z.enum(['pending', 'in_progress', 'completed', 'cancelled']),
 });
 
 export type ProjectFormValues = z.infer<typeof projectSchema>;
 
-// Define a more specific type for initialData to help TypeScript
 interface InitialProjectData {
   id?: string;
   title?: string;
@@ -59,8 +58,8 @@ interface InitialProjectData {
     pigment?: string;
     team?: string;
   };
-  start_date?: string | null; // Assuming it comes as string from DB
-  end_date?: string | null;   // Assuming it comes as string from DB
+  start_date?: string | null;
+  end_date?: string | null;
   planning_status?: 'pending' | 'in_progress' | 'completed' | 'cancelled';
 }
 
@@ -92,9 +91,7 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
       team: initialData?.stats?.team ?? "Vast team (2)",
       start_date: initialData?.start_date ? new Date(initialData.start_date) : null,
       end_date: initialData?.end_date ? new Date(initialData.end_date) : null,
-      // Fix: Explicitly cast initialData?.planning_status to the correct enum type
-      // before applying the default, to satisfy TypeScript's strict checking.
-      planning_status: (initialData?.planning_status as ProjectFormValues['planning_status']) ?? 'pending',
+      planning_status: initialData?.planning_status ?? 'pending',
     }
   });
 
@@ -172,7 +169,7 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
     toast.success("Ingesteld als banner foto");
   };
 
-  const onSubmit = handleSubmit(async (data: ProjectFormValues) => {
+  const processSubmit: SubmitHandler<ProjectFormValues> = async (data) => {
     setLoading(true);
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -211,7 +208,7 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
         const { error: updateError } = await supabase
           .from("projects")
           .update(projectData)
-          .eq("id", initialData!.id); // Non-null assertion for initialData.id when editing
+          .eq("id", initialData!.id);
         error = updateError;
       } else {
         const { error: insertError } = await supabase
@@ -230,10 +227,10 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
     } finally {
       setLoading(false);
     }
-  });
+  };
 
   return (
-    <form onSubmit={onSubmit} className="space-y-12">
+    <form onSubmit={handleSubmit(processSubmit)} className="space-y-12">
       <div className="grid md:grid-cols-2 gap-12">
         <div className="space-y-6">
             <div className="space-y-2">
