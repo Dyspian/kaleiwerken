@@ -44,6 +44,7 @@ export const QuoteWizard = ({ onFormChange, dict }: QuoteWizardProps) => {
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const lastSyncedRef = useRef<string>("");
 
   const { register, handleSubmit, formState: { errors }, watch, setValue, getValues } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -56,9 +57,15 @@ export const QuoteWizard = ({ onFormChange, dict }: QuoteWizardProps) => {
 
   const formValues = watch();
 
+  // Sync form state with parent, but only if something actually changed
+  // to prevent infinite re-render loops
   useEffect(() => {
     if (onFormChange) {
-      onFormChange(formValues, step);
+      const currentDataStr = JSON.stringify({ data: formValues, step });
+      if (currentDataStr !== lastSyncedRef.current) {
+        lastSyncedRef.current = currentDataStr;
+        onFormChange(formValues, step);
+      }
     }
   }, [formValues, step, onFormChange]);
 
