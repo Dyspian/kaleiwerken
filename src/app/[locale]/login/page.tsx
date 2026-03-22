@@ -16,9 +16,10 @@ export default function LoginPage() {
   const locale = params.locale || 'nl';
 
   useEffect(() => {
-    // Alleen redirecten als we zeker weten wie de gebruiker is en wat de rol is
     if (!authLoading && session && user) {
-      if (user.role === 'admin') {
+      // Forceer admin toegang voor de eigenaar
+      if (user.role === 'admin' || user.email === 'jmmysalau@gmail.com') {
+        console.log("Redirecting to admin dashboard...");
         router.push(`/${locale}/admin`);
       } else {
         router.push(`/${locale}`);

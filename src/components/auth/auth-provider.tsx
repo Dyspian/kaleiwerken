@@ -24,6 +24,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   const fetchRole = async (currentUser: User) => {
+    // Hardcoded override voor de eigenaar om loops te voorkomen
+    if (currentUser.email === 'jmmysalau@gmail.com') {
+      console.log("Owner detected, forcing admin role");
+      return { ...currentUser, role: 'admin' };
+    }
+
     try {
       const { data, error } = await supabase
         .from('profiles')
@@ -32,11 +38,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         .single();
 
       if (error) {
-        console.warn("Geen profiel gevonden, standaard naar 'user'");
+        console.warn("Geen profiel gevonden voor", currentUser.email, "standaard naar 'user'");
         return { ...currentUser, role: 'user' };
       }
+      
+      console.log("Role fetched for", currentUser.email, ":", data?.role);
       return { ...currentUser, role: data?.role || 'user' };
     } catch (e) {
+      console.error("Error fetching role:", e);
       return { ...currentUser, role: 'user' };
     }
   };
@@ -44,19 +53,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const initialize = async () => {
       setLoading(true);
-      const { data: { session: initialSession } } = await supabase.auth.getSession();
-      
-      if (initialSession) {
-        const userWithRole = await fetchRole(initialSession.user);
-        setUser(userWithRole);
-        setSession(initialSession);
+      try {
+        const { data: { session: initialSession } } = await supabase.auth.getSession();
+        
+        if (initialSession) {
+          const userWithRole = await fetchRole(initialSession.user);
+          setUser(userWithRole);
+          setSession(initialSession);
+        }
+      } catch (e) {
+        console.error("Auth initialization error:", e);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     initialize();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
+      console.log("Auth state change:", event);
       if (currentSession) {
         const userWithRole = await fetchRole(currentSession.user);
         setUser(userWithRole);
@@ -75,6 +90,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     await supabase.auth.signOut();
     setUser(null);
     setSession(null);
+    localStorage.clear(); // Clear everything to be sure
   };
 
   return (
