@@ -14,8 +14,16 @@
   "cookies": {
     "title": "Cookies & Privacy",
     "description": "Wij gebruiken cookies om uw ervaring op onze website te verbeteren en het verkeer te analyseren. Door te accepteren gaat u akkoord met ons gebruik van cookies.",
-    "accept": "Accepteren",
-    "decline": "Instellingen"
+    "accept": "Alles Accepteren",
+    "decline": "Instellingen",
+    "save": "Voorkeuren Opslaan",
+    "functional": "Functionele Cookies",
+    "functionalDesc": "Noodzakelijk voor het functioneren van de website.",
+    "analytical": "Analytische Cookies",
+    "analyticalDesc": "Helpen ons te begrijpen hoe bezoekers de website gebruiken.",
+    "marketing": "Marketing Cookies",
+    "marketingDesc": "Gebruikt voor gepersonaliseerde advertenties en sociale media.",
+    "manage": "Cookie Instellingen"
   },
   "header": {
     "home": "Home",
@@ -70,7 +78,7 @@
     "tag": "Onze Historiek",
     "title": "10 jaar Vakmanschap.",
     "subtitle": "Vakmanschap & Passie",
-    "description": "Wij werken met een vast team van twee vakmensen. Hierdoor kunnen we elk project persoonlijk opvolgen en garanderen we een zorgvuldige en kwalitatieve uitvoering van begin tot einde. Onze passie ligt in het herstellen van de authentieke uitstraling van uw woning, zowel in België als daarbuiten.",
+    "description": "Wij werken met een vast team van twee vakmensen. Hierdoor kunnen we elk project persoonlijk opvolgen en garanderen we een zorgvuldige en kwalitatieve uitvoering van begin tot einde. Onze passie ligt in het herstellen van de authentieke uitstraling van uw woning, zoals in België als daarbuiten.",
     "features": [
       "10 jaar gespecialiseerde ervaring",
       "Vast team van 2 vakmensen",
@@ -189,6 +197,6 @@
     "startNew": "Nieuwe conversatie starten",
     "errorSurfaceArea": "Voer een geldige oppervlakte in.",
     "errorSubmit": "Er is iets misgegaan bij het verzenden van uw aanvraag.",
-    "successSubmit": "Aanvraag succesvol verzonden!"
+    "successSubmit": "Anvraag succesvol verzonden!"
   }
 }
