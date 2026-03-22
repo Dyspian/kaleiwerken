@@ -61,7 +61,7 @@ interface InitialProjectData {
   };
   start_date?: string | null; // Assuming it comes as string from DB
   end_date?: string | null;   // Assuming it comes as string from DB
-  planning_status?: 'pending' | 'in_progress' | 'completed' | 'cancelled'; // Remove null option
+  planning_status?: 'pending' | 'in_progress' | 'completed' | 'cancelled';
 }
 
 interface ProjectFormProps {
@@ -92,8 +92,10 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
       team: initialData?.stats?.team ?? "Vast team (2)",
       start_date: initialData?.start_date ? new Date(initialData.start_date) : null,
       end_date: initialData?.end_date ? new Date(initialData.end_date) : null,
-      planning_status: initialData?.planning_status ?? 'pending',
-    } as ProjectFormValues // Cast the entire defaultValues object to ProjectFormValues
+      // Fix: Explicitly cast initialData?.planning_status to the correct enum type
+      // before applying the default, to satisfy TypeScript's strict checking.
+      planning_status: (initialData?.planning_status as ProjectFormValues['planning_status']) ?? 'pending',
+    }
   });
 
   const currentImages = watch("images") || [];
@@ -170,7 +172,6 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
     toast.success("Ingesteld als banner foto");
   };
 
-  // Fix: Add proper type annotation for the onSubmit function
   const onSubmit = handleSubmit(async (data: ProjectFormValues) => {
     setLoading(true);
     const { data: { user } } = await supabase.auth.getUser();
