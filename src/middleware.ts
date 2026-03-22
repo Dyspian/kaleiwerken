@@ -1,14 +1,12 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import { NextResponse, type NextRequest } from 'next/server';
 import { match as matchLocale } from '@formatjs/intl-localematcher';
 import Negotiator from 'negotiator';
-import { createClient } from '@supabase/supabase-js';
 
 const locales = ['nl', 'en', 'fr', 'de'];
 const defaultLocale = 'nl';
-
 const SUPABASE_URL = "https://sjfosmcpbekkokmedwil.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNqZm9zbWNwYmVra29rbWVkd2lsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1MDAwMzQsImV4cCI6MjA4OTA3NjAzNH0.J4merO1jIzh3gysLZJx-h6hIPtUNfNeSrcovcA4rTVo";
+const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNqZm9zbWNwYmVra29rbWVkd2lsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1MDAwMzQsImV4cCI6MjA4OTA3NjAzNH0.J4merO1jIzh3gysLZJx-h6hIPtUNfNeSrcovcA4rTVo";
 
 function getLocale(request: NextRequest): string | undefined {
   const negotiatorHeaders: Record<string, string> = {};
@@ -19,10 +17,62 @@ function getLocale(request: NextRequest): string | undefined {
 }
 
 export async function middleware(request: NextRequest) {
-  const pathname = request.nextUrl.pathname;
-  const locale = getLocale(request);
+  let response = NextResponse.next({
+    request: {
+      headers: request.headers,
+    },
+  });
 
-  // Handle locale redirection first
+  const supabase = createServerClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY,
+    {
+      cookies: {
+        get(name: string) {
+          return request.cookies.get(name)?.value;
+        },
+        set(name: string, value: string, options: CookieOptions) {
+          request.cookies.set({
+            name,
+            value,
+            ...options,
+          });
+          response = NextResponse.next({
+            request: {
+              headers: request.headers,
+            },
+          });
+          response.cookies.set({
+            name,
+            value,
+            ...options,
+          });
+        },
+        remove(name: string, options: CookieOptions) {
+          request.cookies.set({
+            name,
+            value: '',
+            ...options,
+          });
+          response = NextResponse.next({
+            request: {
+              headers: request.headers,
+            },
+          });
+          response.cookies.set({
+            name,
+            value: '',
+            ...options,
+          });
+        },
+      },
+    }
+  );
+
+  const { data: { session } } = await supabase.auth.getSession();
+  const pathname = request.nextUrl.pathname;
+
+  const locale = getLocale(request);
   const pathnameIsMissingLocale = locales.every(
     (loc) => !pathname.startsWith(`/${loc}/`) && pathname !== `/${loc}`
   );
@@ -33,28 +83,24 @@ export async function middleware(request: NextRequest) {
     );
   }
 
-  // --- Role-based Access Control for /admin routes ---
-  if (pathname.startsWith(`/${locale}/admin`)) {
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    const { data: { session } } = await supabase.auth.getSession();
-
+  const currentLocale = pathname.split('/')[1];
+  if (pathname.startsWith(`/${currentLocale}/admin`)) {
     if (!session) {
-      return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
+      return NextResponse.redirect(new URL(`/${currentLocale}/login`, request.url));
     }
 
-    // Fetch user's role from profiles table
-    const { data: profile, error } = await supabase
+    const { data: profile } = await supabase
       .from('profiles')
       .select('role')
       .eq('id', session.user.id)
       .single();
 
-    if (error || profile?.role !== 'admin') {
-      return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
+    if (!profile || profile.role !== 'admin') {
+      return NextResponse.redirect(new URL(`/${currentLocale}/login`, request.url));
     }
   }
 
-  return NextResponse.next();
+  return response;
 }
 
 export const config = {
