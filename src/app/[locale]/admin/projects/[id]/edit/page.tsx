@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ProjectForm } from "@/components/admin/project-form";
+import { ProjectForm } from "@/components/admin/project-form/project-form";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { supabase } from "@/integrations/supabase/client";
