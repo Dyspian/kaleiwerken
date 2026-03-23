@@ -13,11 +13,12 @@ export interface Lead {
   postal_code?: string;
   city?: string; // Nieuwe kolom
   project_type: string;
-  surface_area: string;
+  surface_area?: string; // Made optional since we're replacing it
   surface_type: string;
   timing: string;
   status: 'nieuw' | 'gecontacteerd' | 'offerte_verzonden' | 'gearchiveerd' | 'afgewezen';
   notes?: string;
+  comment?: string; // Added comment field
   created_at: string;
 }
 
@@ -70,7 +71,7 @@ export const useLeads = (user: User | null, authLoading: boolean) => {
     let query = supabase.from("leads").select("*", { count: 'exact' });
 
     if (searchQuery) {
-      query = query.or(`name.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%,city.ilike.%${searchQuery}%`);
+      query = query.or(`name.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%,city.ilike.%${searchQuery}%,comment.ilike.%${searchQuery}%`);
     }
 
     if (filterStatus !== 'all') {
@@ -129,6 +130,7 @@ export const useLeads = (user: User | null, authLoading: boolean) => {
         surface_area: updatedLead.surface_area,
         surface_type: updatedLead.surface_type,
         timing: updatedLead.timing,
+        comment: updatedLead.comment, // Added comment field
       })
       .eq("id", updatedLead.id);
 
@@ -158,7 +160,7 @@ export const useLeads = (user: User | null, authLoading: boolean) => {
   const handleSelectAllLeads = (checked: boolean) => {
     if (checked) {
       const currentLeadsOnPage = leads.filter(lead => {
-        const matchesSearch = searchQuery ? (lead.name.toLowerCase().includes(searchQuery.toLowerCase()) || lead.email.toLowerCase().includes(searchQuery.toLowerCase())) : true;
+        const matchesSearch = searchQuery ? (lead.name.toLowerCase().includes(searchQuery.toLowerCase()) || lead.email.toLowerCase().includes(searchQuery.toLowerCase()) || (lead.comment && lead.comment.toLowerCase().includes(searchQuery.toLowerCase()))) : true;
         const matchesStatus = filterStatus !== 'all' ? lead.status === filterStatus : true;
         return matchesSearch && matchesStatus;
       });

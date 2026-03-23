@@ -84,18 +84,25 @@ export const LeadCard = ({ lead, onEdit, onDelete, onGenerateMessage, isSelected
             <span className="capitalize font-medium">{lead.project_type}</span>
           </div>
           <div>
-            <span className="text-[10px] uppercase tracking-widest text-brand-dark/30 block mb-1">Oppervlakte</span>
-            <span className="font-medium">{lead.surface_area} m²</span>
-          </div>
-          <div>
             <span className="text-[10px] uppercase tracking-widest text-brand-dark/30 block mb-1">Ondergrond</span>
             <span className="capitalize font-medium">{lead.surface_type}</span>
+          </div>
+          <div>
+            <span className="text-[10px] uppercase tracking-widest text-brand-dark/30 block mb-1">Timing</span>
+            <span className="font-medium">{formatTiming(lead.timing)}</span>
           </div>
           <div>
             <span className="text-[10px] uppercase tracking-widest text-brand-dark/30 block mb-1">Ontvangen</span>
             <span className="font-medium">{format(new Date(lead.created_at), "d MMM yyyy", { locale: nl })}</span>
           </div>
         </div>
+
+        {lead.comment && (
+          <div className="mt-6 p-4 bg-brand-stone/30 border-l-2 border-brand-bronze">
+            <span className="text-[10px] uppercase tracking-widest text-brand-dark/40 block mb-1">Opmerkingen</span>
+            <p className="text-sm text-brand-dark/70 italic">{lead.comment}</p>
+          </div>
+        )}
 
         {lead.notes && (
           <div className="mt-6 p-4 bg-brand-stone/30 border-l-2 border-brand-bronze">
@@ -106,4 +113,13 @@ export const LeadCard = ({ lead, onEdit, onDelete, onGenerateMessage, isSelected
       </div>
     </div>
   );
+};
+
+const formatTiming = (timing: string) => {
+  switch (timing) {
+    case 'asap': return 'Zo snel mogelijk';
+    case '1-3_maanden': return 'Binnen 1-3 maanden';
+    case 'later': return 'Later dit jaar';
+    default: return timing;
+  }
 };

@@ -104,15 +104,6 @@ export const EditLeadDialog = ({
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="surfaceArea">Oppervlakte (m²)</Label>
-              <Input
-                id="surfaceArea"
-                value={editingLead.surface_area}
-                onChange={(e) => setEditingLead({ ...editingLead, surface_area: e.target.value })}
-                className="rounded-none border-brand-dark/10"
-              />
-            </div>
-            <div className="space-y-2">
               <Label htmlFor="surfaceType">Ondergrond Type</Label>
               <Select
                 value={editingLead.surface_type}
@@ -161,6 +152,16 @@ export const EditLeadDialog = ({
                   <SelectItem value="afgewezen">Afgewezen</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="comment">Opmerkingen van klant</Label>
+              <Textarea
+                id="comment"
+                value={editingLead.comment || ''}
+                onChange={(e) => setEditingLead({ ...editingLead, comment: e.target.value })}
+                placeholder="Opmerkingen van de klant..."
+                className="rounded-none border-brand-dark/10 min-h-[100px]"
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="notes">Interne Notities</Label>

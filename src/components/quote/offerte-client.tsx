@@ -1,7 +1,7 @@
 "use client";
 
 import { QuoteWizard, FormValues } from "@/components/quote/quote-wizard";
-import { Home, Building, Wrench, Paintbrush, Ruler, Layers, Clock, User, Mail, Phone, MapPin, Check } from "lucide-react";
+import { Home, Building, Wrench, Paintbrush, Layers, Clock, User, Mail, Phone, MapPin, Check, MessageSquare } from "lucide-react";
 import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -59,9 +59,6 @@ export const OfferteClient = ({ dict }: OfferteClientProps) => {
     },
   };
 
-  const currentContent = statusMessages[currentStep as keyof typeof statusMessages];
-  const ProjectIcon = formData?.projectType ? projectTypeIcons[formData.projectType as keyof typeof projectTypeIcons] : null;
-
   const formatTiming = (timing: string) => {
     switch (timing) {
       case 'asap': return 'Zo snel mogelijk';
@@ -85,10 +82,10 @@ export const OfferteClient = ({ dict }: OfferteClientProps) => {
           >
               <span className="uppercase text-xs tracking-[0.3em] text-brand-bronze font-medium mb-6 block">Offerte</span>
               <h1 className="font-serif text-5xl md:text-7xl mb-8 leading-[0.9] text-brand-dark">
-                  {currentContent.title}
+                  {statusMessages[currentStep as keyof typeof statusMessages].title}
               </h1>
               <p className="text-xl text-brand-dark/60 mb-12 font-light leading-relaxed">
-                  {currentContent.subtitle}
+                  {statusMessages[currentStep as keyof typeof statusMessages].subtitle}
               </p>
 
               {formData && (
@@ -106,17 +103,12 @@ export const OfferteClient = ({ dict }: OfferteClientProps) => {
                           {currentStep >= 1 && formData.projectType && (
                               <div className="flex items-start gap-4 group">
                                   <div className="mt-1 min-w-[1.25rem] w-5 h-5 rounded-full border border-brand-bronze flex items-center justify-center bg-brand-bronze/10">
-                                      {ProjectIcon && <ProjectIcon className="w-3 h-3 text-brand-bronze" strokeWidth={2} />}
+                                      {(() => {
+                                        const Icon = projectTypeIcons[formData.projectType as keyof typeof projectTypeIcons];
+                                        return Icon ? <Icon className="w-3 h-3 text-brand-bronze" strokeWidth={2} /> : null;
+                                      })()}
                                   </div>
                                   <span className="text-brand-dark/80 font-light leading-relaxed capitalize">Projecttype: <span className="font-medium">{formData.projectType}</span></span>
-                              </div>
-                          )}
-                          {currentStep >= 2 && formData.surfaceArea && (
-                              <div className="flex items-start gap-4 group">
-                                  <div className="mt-1 min-w-[1.25rem] w-5 h-5 rounded-full border border-brand-bronze flex items-center justify-center bg-brand-bronze/10">
-                                      <Ruler className="w-3 h-3 text-brand-bronze" strokeWidth={2} />
-                                  </div>
-                                  <span className="text-brand-dark/80 font-light leading-relaxed">Oppervlakte: <span className="font-medium">{formData.surfaceArea} m²</span></span>
                               </div>
                           )}
                           {currentStep >= 2 && formData.surfaceType && (
@@ -135,13 +127,21 @@ export const OfferteClient = ({ dict }: OfferteClientProps) => {
                                   <span className="text-brand-dark/80 font-light leading-relaxed">Timing: <span className="font-medium">{formatTiming(formData.timing)}</span></span>
                               </div>
                           )}
+                          {currentStep >= 2 && formData.comment && (
+                              <div className="flex items-start gap-4 group">
+                                  <div className="mt-1 min-w-[1.25rem] w-5 h-5 rounded-full border border-brand-bronze flex items-center justify-center bg-brand-bronze/10">
+                                      <MessageSquare className="w-3 h-3 text-brand-bronze" strokeWidth={2} />
+                                  </div>
+                                  <span className="text-brand-dark/80 font-light leading-relaxed">Opmerkingen: <span className="font-medium">{formData.comment}</span></span>
+                              </div>
+                          )}
                       </motion.div>
                   </AnimatePresence>
               )}
 
               <div className={cn("space-y-6 pt-12 border-t border-brand-dark/10", formData ? "mt-12" : "mt-0")}>
                   <h3 className="uppercase text-[10px] tracking-widest text-brand-dark/40 mb-6">Waarom kiezen voor Van Roey?</h3>
-                  {currentContent.points.map((item, idx) => (
+                  {statusMessages[currentStep as keyof typeof statusMessages].points.map((item, idx) => (
                       <div key={idx} className="flex items-start gap-4 group">
                           <div className="mt-1 min-w-[1.25rem] w-5 h-5 rounded-full border border-brand-dark/20 flex items-center justify-center group-hover:border-brand-bronze group-hover:bg-brand-bronze/10 transition-colors">
                               <Check className="w-3 h-3 text-brand-bronze opacity-0 group-hover:opacity-100 transition-opacity" strokeWidth={3} />

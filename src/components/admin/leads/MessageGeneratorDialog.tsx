@@ -60,7 +60,7 @@ export const MessageGeneratorDialog = ({ isOpen, onOpenChange, lead }: MessageGe
     const city = getCity(leadData);
     const postalCode = leadData.postal_code || "";
     const location = postalCode ? `${postalCode} ${city}` : city;
-    const area = leadData.surface_area;
+    const hasComment = leadData.comment && leadData.comment.trim().length > 0;
 
     switch (type) {
       case 'email_initial':
@@ -68,7 +68,7 @@ export const MessageGeneratorDialog = ({ isOpen, onOpenChange, lead }: MessageGe
 
 Bedankt voor uw aanvraag bij Van Roey Kaleiwerken voor uw project in ${location}.
 
-We hebben uw gegevens goed ontvangen met betrekking tot het ${projectType} project (ca. ${area} m²). Graag zouden we een moment inplannen om ter plaatse te komen kijken, zodat we een nauwkeurige offerte kunnen opstellen die perfect aansluit bij uw wensen.
+We hebben uw gegevens goed ontvangen met betrekking tot het ${projectType} project. ${hasComment ? `U gaf aan: "${leadData.comment}"` : ''} Graag zouden we een moment inplannen om ter plaatse te komen kijken, zodat we een nauwkeurige offerte kunnen opstellen die perfect aansluit bij uw wensen.
 
 Wanneer zou het voor u passen om even af te spreken?
 
@@ -78,12 +78,12 @@ Van Roey Kaleiwerken
 www.vanroey-kalei.be`;
 
       case 'whatsapp_visit':
-        return `Dag ${firstName}, ik ben het van Van Roey Kaleiwerken. Ik zag uw aanvraag voor het kaleien van uw ${projectType} in ${location}. Wanneer past het voor u dat ik even langskom voor een korte opmeting en kleuradvies? Mvg, Van Roey`;
+        return `Dag ${firstName}, ik ben het van Van Roey Kaleiwerken. Ik zag uw aanvraag voor het kaleien van uw ${projectType} in ${location}. ${hasComment ? `U gaf aan: "${leadData.comment}"` : ''} Wanneer past het voor u dat ik even langskom voor een korte opmeting en kleuradvies? Mvg, Van Roey`;
 
       case 'email_followup':
         return `Beste ${firstName},
 
-Onlangs hebben we contact gehad over uw ${projectType} project in ${location}. 
+Onlangs hebben we contact gehad over uw ${projectType} project in ${location}. ${hasComment ? `U gaf aan: "${leadData.comment}"` : ''}
 
 Ik wilde even horen of u nog vragen heeft over onze werkwijze of de mogelijkheden van kalei voor uw woning. We helpen u graag verder om tot het gewenste resultaat te komen.
 

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, ChevronLeft, Loader2, ArrowRight, Home, Building, Wrench, Paintbrush } from "lucide-react";
@@ -16,7 +17,6 @@ import { supabase } from "@/integrations/supabase/client";
 
 const formSchema = z.object({
   projectType: z.enum(["gevel", "binnen", "totaal", "renovatie"]),
-  surfaceArea: z.string().min(1, "Oppervlakte is verplicht"),
   surfaceType: z.enum(["baksteen", "crepi", "onbekend"]),
   timing: z.enum(["asap", "1-3_maanden", "later"]),
   name: z.string().min(2, "Naam is te kort"),
@@ -24,6 +24,7 @@ const formSchema = z.object({
   phone: z.string().min(9, "Ongeldig telefoonnummer"),
   postalCode: z.string().min(4, "Ongeldige postcode"),
   city: z.string().optional(),
+  comment: z.string().optional(), // Added comment field
 });
 
 export type FormValues = z.infer<typeof formSchema>;
@@ -76,7 +77,6 @@ export const QuoteWizard = ({ onFormChange, dict }: QuoteWizardProps) => {
       .from("leads")
       .insert({
         project_type: data.projectType,
-        surface_area: data.surfaceArea,
         surface_type: data.surfaceType,
         timing: data.timing,
         name: data.name,
@@ -84,6 +84,7 @@ export const QuoteWizard = ({ onFormChange, dict }: QuoteWizardProps) => {
         phone: data.phone,
         postal_code: data.postalCode,
         city: data.city || "",
+        comment: data.comment || "", // Added comment field
       });
 
     if (error) {
@@ -184,11 +185,6 @@ export const QuoteWizard = ({ onFormChange, dict }: QuoteWizardProps) => {
             >
               <div className="space-y-8">
                 <div className="group relative">
-                    <Label className="uppercase text-[10px] tracking-[0.2em] text-brand-dark/40 mb-3 block">{dict.surface}</Label>
-                    <Input {...register('surfaceArea')} placeholder="150" type="number" className="border-0 border-b border-brand-dark/10 rounded-none px-0 py-6 text-4xl font-serif focus-visible:ring-0 focus-visible:border-brand-bronze bg-transparent" />
-                </div>
-
-                <div className="group relative">
                     <Label className="uppercase text-[10px] tracking-[0.2em] text-brand-dark/40 mb-4 block">{dict.surfaceType}</Label>
                     <RadioGroup defaultValue="baksteen" onValueChange={(val) => setValue('surfaceType', val as any)} className="flex gap-8 border-b border-brand-dark/10 pb-6">
                         {['baksteen', 'crepi', 'onbekend'].map((val) => (
@@ -207,6 +203,16 @@ export const QuoteWizard = ({ onFormChange, dict }: QuoteWizardProps) => {
                         <option value="1-3_maanden">{dict.timings['1-3_maanden']}</option>
                         <option value="later">{dict.timings.later}</option>
                     </select>
+                </div>
+
+                <div className="group relative">
+                    <Label className="uppercase text-[10px] tracking-[0.2em] text-brand-dark/40 mb-2 block">Opmerkingen</Label>
+                    <Textarea 
+                        {...register('comment')}
+                        placeholder="Heeft u specifieke wensen of opmerkingen voor dit project?"
+                        className="bg-white rounded-none border-brand-dark/10 min-h-[100px] focus-visible:ring-brand-bronze"
+                        rows={4}
+                    />
                 </div>
               </div>
             </motion.div>
