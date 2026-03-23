@@ -5,7 +5,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
-import { Loader2, Save, Info } from "lucide-react";
+import { Loader2, Save } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -171,7 +171,6 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-12">
-      {/* Basic Information Section */}
       <div className="grid md:grid-cols-2 gap-12">
         <div className="space-y-6">
           <FormField 
@@ -229,13 +228,10 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
         </div>
       </div>
 
-      {/* Planning Section */}
       <PlanningSection watch={watch} setValue={setValue} />
 
-      {/* Specifications Section */}
       <SpecificationsSection register={register} />
 
-      {/* Image Upload Section */}
       <ImageUploadSection
         images={currentImages}
         heroImage={heroImage || null}
@@ -246,7 +242,6 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
         projectId={initialData?.id}
       />
 
-      {/* Submit Buttons */}
       <div className="flex gap-4 pt-12 border-t border-brand-dark/5">
         <Button 
           type="submit" 
