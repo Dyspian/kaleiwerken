@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useParams } from "next/navigation";
-import { LayoutDashboard, FolderKanban, LogOut, User, MessageSquare, ExternalLink } from "lucide-react";
+import { LayoutDashboard, FolderKanban, LogOut, User, MessageSquare, ExternalLink, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/auth/auth-provider";
 import { cn } from "@/lib/utils";
@@ -11,9 +11,8 @@ export const AdminSidebar = () => {
   const pathname = usePathname();
   const params = useParams();
   const locale = params.locale || 'nl';
-  const { user, signOut, loading: authLoading } = useAuth(); // Get loading state
+  const { user, signOut, loading: authLoading } = useAuth();
 
-  // If auth is still loading or user is not an admin, don't render sidebar
   if (authLoading || user?.role !== 'admin') {
     return null;
   }
@@ -23,6 +22,7 @@ export const AdminSidebar = () => {
     { href: `/${locale}/admin/projects`, label: "Projecten", icon: FolderKanban },
     { href: `/${locale}/admin/leads`, label: "Aanvragen", icon: MessageSquare },
     { href: `/${locale}/admin/chatbot`, label: "Chatbot Inbox", icon: MessageSquare },
+    { href: `/${locale}/admin/content`, label: "Website Teksten", icon: FileText },
   ];
 
   return (
