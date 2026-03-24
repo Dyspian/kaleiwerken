@@ -51,12 +51,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   useEffect(() => {
+    let isMounted = true;
+    
     const initialize = async () => {
+      if (!isMounted) return;
+      
       setLoading(true);
       try {
+        // Voeg een kleine vertraging toe om race conditions te voorkomen
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
         const { data: { session: initialSession } } = await supabase.auth.getSession();
         
-        if (initialSession) {
+        if (initialSession && isMounted) {
           const userWithRole = await fetchRole(initialSession.user);
           setUser(userWithRole);
           setSession(initialSession);
@@ -64,7 +71,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       } catch (e) {
         console.error("Auth initialization error:", e);
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
@@ -72,6 +81,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
       console.log("Auth state change:", event);
+      
+      // Voorkom race conditions door te controleren of de component nog gemount is
+      if (!isMounted) return;
+      
       if (currentSession) {
         const userWithRole = await fetchRole(currentSession.user);
         setUser(userWithRole);
@@ -80,10 +93,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUser(null);
         setSession(null);
       }
-      setLoading(false);
+      if (isMounted) {
+        setLoading(false);
+      }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signOut = async () => {
