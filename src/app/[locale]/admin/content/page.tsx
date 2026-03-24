@@ -8,10 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Save, Globe, Info, User } from "lucide-react";
+import { Loader2, Save, Globe, Info, User, Layout } from "lucide-react";
 import { toast } from "sonner";
 import { useParams } from "next/navigation";
 import { Locale } from "@/lib/i18n-config";
+import { cn } from "@/lib/utils";
+
+type ContentTab = "hero" | "about";
 
 export default function AdminContentPage() {
   const { user, loading: authLoading } = useAuth();
@@ -20,6 +23,8 @@ export default function AdminContentPage() {
   
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [activeTab, setActiveTab] = useState<ContentTab>("hero");
+  
   const [content, setContent] = useState<any>({
     hero: { title1: "", title2: "", subtitle: "" },
     about: { 
@@ -102,8 +107,8 @@ export default function AdminContentPage() {
           </Button>
         </header>
 
-        {/* Tip Section - Now at the top and more visible */}
-        <div className="mb-12 p-6 bg-brand-bronze/10 border border-brand-bronze/20 flex items-start gap-4">
+        {/* Tip Section */}
+        <div className="mb-8 p-6 bg-brand-bronze/10 border border-brand-bronze/20 flex items-start gap-4">
           <Info className="text-brand-bronze shrink-0 mt-0.5" size={20} />
           <div>
             <h4 className="font-bold text-brand-dark text-sm mb-1">Belangrijke Tip</h4>
@@ -114,143 +119,171 @@ export default function AdminContentPage() {
           </div>
         </div>
 
-        <div className="max-w-4xl space-y-12 pb-24">
-          {/* Hero Section */}
-          <section className="bg-white p-8 border border-brand-dark/5 shadow-sm">
-            <div className="flex items-center gap-3 mb-8 border-b border-brand-dark/5 pb-4">
-              <Globe size={20} className="text-brand-bronze" />
-              <h2 className="font-serif text-2xl">Home: Hero Sectie</h2>
-            </div>
+        {/* Tab Navigation */}
+        <div className="flex gap-4 mb-8 border-b border-brand-dark/5 pb-4">
+          <Button 
+            variant="ghost" 
+            onClick={() => setActiveTab("hero")}
+            className={cn(
+              "rounded-none uppercase text-[10px] tracking-widest px-6 py-4 h-auto border-b-2 transition-all",
+              activeTab === "hero" ? "border-brand-bronze text-brand-bronze bg-brand-bronze/5" : "border-transparent text-brand-dark/40 hover:text-brand-dark"
+            )}
+          >
+            <Layout size={14} className="mr-2" /> Home (Hero)
+          </Button>
+          <Button 
+            variant="ghost" 
+            onClick={() => setActiveTab("about")}
+            className={cn(
+              "rounded-none uppercase text-[10px] tracking-widest px-6 py-4 h-auto border-b-2 transition-all",
+              activeTab === "about" ? "border-brand-bronze text-brand-bronze bg-brand-bronze/5" : "border-transparent text-brand-dark/40 hover:text-brand-dark"
+            )}
+          >
+            <User size={14} className="mr-2" /> Over Ons
+          </Button>
+        </div>
 
-            <div className="space-y-6">
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Titel Regel 1</Label>
-                  <Input 
-                    value={content.hero?.title1 || ""} 
-                    onChange={(e) => updateField("hero", "title1", e.target.value)}
-                    className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze"
-                  />
+        <div className="max-w-4xl pb-24">
+          {/* Hero Section */}
+          {activeTab === "hero" && (
+            <section className="bg-white p-8 border border-brand-dark/5 shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-500">
+              <div className="flex items-center gap-3 mb-8 border-b border-brand-dark/5 pb-4">
+                <Globe size={20} className="text-brand-bronze" />
+                <h2 className="font-serif text-2xl">Home: Hero Sectie</h2>
+              </div>
+
+              <div className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Titel Regel 1</Label>
+                    <Input 
+                      value={content.hero?.title1 || ""} 
+                      onChange={(e) => updateField("hero", "title1", e.target.value)}
+                      className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Titel Regel 2 (Italic)</Label>
+                    <Input 
+                      value={content.hero?.title2 || ""} 
+                      onChange={(e) => updateField("hero", "title2", e.target.value)}
+                      className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze italic"
+                    />
+                  </div>
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Titel Regel 2 (Italic)</Label>
-                  <Input 
-                    value={content.hero?.title2 || ""} 
-                    onChange={(e) => updateField("hero", "title2", e.target.value)}
-                    className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze italic"
+                  <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Subtitel</Label>
+                  <Textarea 
+                    value={content.hero?.subtitle || ""} 
+                    onChange={(e) => updateField("hero", "subtitle", e.target.value)}
+                    className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze min-h-[100px]"
                   />
                 </div>
               </div>
-              <div className="space-y-2">
-                <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Subtitel</Label>
-                <Textarea 
-                  value={content.hero?.subtitle || ""} 
-                  onChange={(e) => updateField("hero", "subtitle", e.target.value)}
-                  className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze min-h-[100px]"
-                />
-              </div>
-            </div>
-          </section>
+            </section>
+          )}
 
           {/* About Us Section */}
-          <section className="bg-white p-8 border border-brand-dark/5 shadow-sm">
-            <div className="flex items-center gap-3 mb-8 border-b border-brand-dark/5 pb-4">
-              <User size={20} className="text-brand-bronze" />
-              <h2 className="font-serif text-2xl">Pagina: Over Ons</h2>
-            </div>
+          {activeTab === "about" && (
+            <section className="bg-white p-8 border border-brand-dark/5 shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-500">
+              <div className="flex items-center gap-3 mb-8 border-b border-brand-dark/5 pb-4">
+                <User size={20} className="text-brand-bronze" />
+                <h2 className="font-serif text-2xl">Pagina: Over Ons</h2>
+              </div>
 
-            <div className="space-y-8">
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-8">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Kleine Tag (boven titel)</Label>
+                    <Input 
+                      value={content.about?.tag || ""} 
+                      onChange={(e) => updateField("about", "tag", e.target.value)}
+                      className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Hoofdtitel</Label>
+                    <Input 
+                      value={content.about?.title || ""} 
+                      onChange={(e) => updateField("about", "title", e.target.value)}
+                      className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze"
+                    />
+                  </div>
+                </div>
+
                 <div className="space-y-2">
-                  <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Kleine Tag (boven titel)</Label>
-                  <Input 
-                    value={content.about?.tag || ""} 
-                    onChange={(e) => updateField("about", "tag", e.target.value)}
-                    className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze"
+                  <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Hoofdbeschrijving</Label>
+                  <Textarea 
+                    value={content.about?.description || ""} 
+                    onChange={(e) => updateField("about", "description", e.target.value)}
+                    className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze min-h-[120px]"
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Hoofdtitel</Label>
-                  <Input 
-                    value={content.about?.title || ""} 
-                    onChange={(e) => updateField("about", "title", e.target.value)}
-                    className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze"
-                  />
-                </div>
-              </div>
 
-              <div className="space-y-2">
-                <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Hoofdbeschrijving</Label>
-                <Textarea 
-                  value={content.about?.description || ""} 
-                  onChange={(e) => updateField("about", "description", e.target.value)}
-                  className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze min-h-[120px]"
-                />
-              </div>
+                <div className="grid md:grid-cols-3 gap-8 pt-4">
+                  <div className="space-y-4">
+                    <h4 className="font-serif text-lg border-b border-brand-dark/5 pb-2">Persoonlijk</h4>
+                    <div className="space-y-2">
+                      <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Titel</Label>
+                      <Input 
+                        value={content.about?.personal || ""} 
+                        onChange={(e) => updateField("about", "personal", e.target.value)}
+                        className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Tekst</Label>
+                      <Textarea 
+                        value={content.about?.personalDesc || ""} 
+                        onChange={(e) => updateField("about", "personalDesc", e.target.value)}
+                        className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze text-xs"
+                      />
+                    </div>
+                  </div>
 
-              <div className="grid md:grid-cols-3 gap-8 pt-4">
-                <div className="space-y-4">
-                  <h4 className="font-serif text-lg border-b border-brand-dark/5 pb-2">Persoonlijk</h4>
-                  <div className="space-y-2">
-                    <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Titel</Label>
-                    <Input 
-                      value={content.about?.personal || ""} 
-                      onChange={(e) => updateField("about", "personal", e.target.value)}
-                      className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze"
-                    />
+                  <div className="space-y-4">
+                    <h4 className="font-serif text-lg border-b border-brand-dark/5 pb-2">Pigmenten</h4>
+                    <div className="space-y-2">
+                      <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Titel</Label>
+                      <Input 
+                        value={content.about?.pigments || ""} 
+                        onChange={(e) => updateField("about", "pigments", e.target.value)}
+                        className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Tekst</Label>
+                      <Textarea 
+                        value={content.about?.pigmentsDesc || ""} 
+                        onChange={(e) => updateField("about", "pigmentsDesc", e.target.value)}
+                        className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze text-xs"
+                      />
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Tekst</Label>
-                    <Textarea 
-                      value={content.about?.personalDesc || ""} 
-                      onChange={(e) => updateField("about", "personalDesc", e.target.value)}
-                      className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze text-xs"
-                    />
-                  </div>
-                </div>
 
-                <div className="space-y-4">
-                  <h4 className="font-serif text-lg border-b border-brand-dark/5 pb-2">Pigmenten</h4>
-                  <div className="space-y-2">
-                    <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Titel</Label>
-                    <Input 
-                      value={content.about?.pigments || ""} 
-                      onChange={(e) => updateField("about", "pigments", e.target.value)}
-                      className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Tekst</Label>
-                    <Textarea 
-                      value={content.about?.pigmentsDesc || ""} 
-                      onChange={(e) => updateField("about", "pigmentsDesc", e.target.value)}
-                      className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze text-xs"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <h4 className="font-serif text-lg border-b border-brand-dark/5 pb-2">Bescherming</h4>
-                  <div className="space-y-2">
-                    <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Titel</Label>
-                    <Input 
-                      value={content.about?.protection || ""} 
-                      onChange={(e) => updateField("about", "protection", e.target.value)}
-                      className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Tekst</Label>
-                    <Textarea 
-                      value={content.about?.protectionDesc || ""} 
-                      onChange={(e) => updateField("about", "protectionDesc", e.target.value)}
-                      className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze text-xs"
-                    />
+                  <div className="space-y-4">
+                    <h4 className="font-serif text-lg border-b border-brand-dark/5 pb-2">Bescherming</h4>
+                    <div className="space-y-2">
+                      <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Titel</Label>
+                      <Input 
+                        value={content.about?.protection || ""} 
+                        onChange={(e) => updateField("about", "protection", e.target.value)}
+                        className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Tekst</Label>
+                      <Textarea 
+                        value={content.about?.protectionDesc || ""} 
+                        onChange={(e) => updateField("about", "protectionDesc", e.target.value)}
+                        className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze text-xs"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </section>
+            </section>
+          )}
         </div>
       </main>
     </div>
