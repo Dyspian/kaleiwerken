@@ -28,6 +28,20 @@ export const EditLeadDialog = ({
 }: EditLeadDialogProps) => {
   if (!editingLead) return null;
 
+  const handleSave = () => {
+    // Validate required fields
+    if (!editingLead.name.trim() || !editingLead.email.trim()) {
+      alert('Naam en email zijn verplichte velden');
+      return;
+    }
+    
+    // Call the parent save function
+    onSave();
+    
+    // Close the dialog
+    onOpenChange(false);
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[90vw] md:max-w-[80vw] lg:max-w-[1000px] max-h-[90vh] p-0 bg-brand-white border-brand-dark/5 rounded-none overflow-hidden">
@@ -209,7 +223,7 @@ export const EditLeadDialog = ({
             Annuleren
           </Button>
           <Button 
-            onClick={onSave} 
+            onClick={handleSave} 
             className="bg-brand-dark text-white rounded-none hover:bg-brand-bronze transition-colors"
           >
             <Save size={16} className="mr-2" /> Wijzigingen Opslaan

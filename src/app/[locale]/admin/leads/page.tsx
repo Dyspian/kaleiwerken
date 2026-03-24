@@ -58,6 +58,7 @@ export default function AdminLeadsPage() {
       const success = await saveLead(editingLead);
       if (success) {
         setIsEditDialogOpen(false);
+        setEditingLead(null);
       }
     }
   };
@@ -132,7 +133,7 @@ export default function AdminLeadsPage() {
           isOpen={isEditDialogOpen}
           onOpenChange={setIsEditDialogOpen}
           editingLead={editingLead}
-          setEditingLead={(lead: Lead) => setEditingLead(lead)}
+          setEditingLead={setEditingLead}
           onSave={handleSaveEdit}
         />
 
