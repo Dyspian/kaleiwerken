@@ -5,7 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { AdminSidebar } from '@/components/admin/admin-sidebar';
 import { supabase } from '@/integrations/supabase/client';
-import { FolderKanban, MessageSquare, TrendingUp, Clock } from 'lucide-react';
+import { FolderKanban, MessageSquare, Clock } from 'lucide-react';
 import { format } from 'date-fns';
 import { nl } from 'date-fns/locale';
 
@@ -15,7 +15,7 @@ export default function AdminDashboard() {
   const params = useParams();
   const locale = params.locale || 'nl';
   
-  const [stats, setStats] = useState({ projects: 0, leads: 0, chatbotConversations: 0, recentLeads: [] as any[] });
+  const [stats, setStats] = useState({ projects: 0, leads: 0, recentLeads: [] as any[] });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -28,17 +28,15 @@ export default function AdminDashboard() {
 
   const fetchStats = async () => {
     setLoading(true);
-    const [projectsRes, leadsRes, chatbotRes, recentLeadsRes] = await Promise.all([
+    const [projectsRes, leadsRes, recentLeadsRes] = await Promise.all([
       supabase.from('projects').select('id', { count: 'exact', head: true }),
       supabase.from('leads').select('id', { count: 'exact', head: true }),
-      supabase.from('chatbot_conversations').select('id', { count: 'exact', head: true }), // Fetch chatbot conversations count
       supabase.from('leads').select('*').order('created_at', { ascending: false }).limit(3)
     ]);
 
     setStats({
       projects: projectsRes.count || 0,
       leads: leadsRes.count || 0,
-      chatbotConversations: chatbotRes.count || 0, // Set chatbot conversations count
       recentLeads: recentLeadsRes.data || []
     });
     setLoading(false);
@@ -56,7 +54,7 @@ export default function AdminDashboard() {
           <p className="text-brand-dark/60">Welkom terug. Hier is een overzicht van uw website.</p>
         </header>
 
-        <div className="grid md:grid-cols-3 gap-8 mb-12">
+        <div className="grid md:grid-cols-2 gap-8 mb-12">
           <div className="bg-white p-8 border border-brand-dark/5 shadow-sm">
             <div className="flex items-center gap-4 mb-4">
                 <div className="w-12 h-12 bg-brand-stone flex items-center justify-center text-brand-bronze">
@@ -77,18 +75,6 @@ export default function AdminDashboard() {
                 <div>
                     <span className="text-[10px] uppercase tracking-widest text-brand-dark/40 block">Aanvragen</span>
                     <span className="text-3xl font-serif">{stats.leads}</span>
-                </div>
-            </div>
-          </div>
-
-          <div className="bg-white p-8 border border-brand-dark/5 shadow-sm">
-            <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 bg-brand-stone flex items-center justify-center text-brand-bronze">
-                    <MessageSquare size={24} />
-                </div>
-                <div>
-                    <span className="text-[10px] uppercase tracking-widest text-brand-dark/40 block">Chatbot Conversaties</span>
-                    <span className="text-3xl font-serif">{stats.chatbotConversations}</span>
                 </div>
             </div>
           </div>
@@ -135,10 +121,6 @@ export default function AdminDashboard() {
                     <button onClick={() => router.push(`/${locale}/admin/leads`)} className="border border-white/10 p-4 text-left hover:bg-white/5 transition-colors">
                         <span className="text-[10px] uppercase tracking-widest block mb-2">Aanvragen</span>
                         <span className="font-serif text-lg">Bekijken</span>
-                    </button>
-                    <button onClick={() => router.push(`/${locale}/admin/chatbot`)} className="border border-white/10 p-4 text-left hover:bg-white/5 transition-colors">
-                        <span className="text-[10px] uppercase tracking-widest block mb-2">Chatbot</span>
-                        <span className="font-serif text-lg">Inbox</span>
                     </button>
                 </div>
             </div>

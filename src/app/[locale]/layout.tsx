@@ -1,7 +1,6 @@
 import { SmoothScroll } from "@/components/layout/smooth-scroll";
 import { ScrollProgress } from "@/components/layout/scroll-progress";
 import { AuthProvider } from "@/components/auth/auth-provider";
-import { ChatbotButton } from "@/components/chatbot/chatbot-button";
 import { CookieConsent } from "@/components/layout/cookie-consent";
 import { getDictionary } from "@/lib/get-dictionary";
 import { Locale } from "@/lib/i18n-config";
@@ -23,7 +22,6 @@ export default async function LocaleLayout({
       <SmoothScroll>
           {children}
       </SmoothScroll>
-      <ChatbotButton />
       <CookieConsent dict={dict} locale={locale} />
     </AuthProvider>
   );
