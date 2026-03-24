@@ -1,0 +1,24 @@
+{
+  "name": "Van Roey Kaleiwerken",
+  "short_name": "Van Roey",
+  "description": "Specialist in authentieke kaleiwerken voor binnen- en buitengevels",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#E6E4DD",
+  "theme_color": "#1A1917",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon.png", 
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["construction", "home improvement"],
+  "lang": "nl-BE",
+  "dir": "ltr"
+}
