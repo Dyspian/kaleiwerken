@@ -9,6 +9,8 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
   const { locale } = await params;
   const dict = await getDictionary(locale) as any;
 
+  const aboutImage = dict.about.imageUrl || "https://sjfosmcpbekkokmedwil.supabase.co/storage/v1/object/public/about%20us/Kaleiwerk-buitengevel-Pulle-Vincent-Van-Roey-Schilderwerken-3.jpg";
+
   return (
     <main className="min-h-screen bg-brand-stone text-brand-dark font-sans selection:bg-brand-bronze/30">
       <Header dict={dict} />
@@ -38,11 +40,11 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
             </div>
             <div className="relative aspect-[4/5] bg-brand-dark/5 overflow-hidden">
                 <Image 
-                    src="https://sjfosmcpbekkokmedwil.supabase.co/storage/v1/object/public/about%20us/Kaleiwerk-buitengevel-Pulle-Vincent-Van-Roey-Schilderwerken-3.jpg" 
+                    src={aboutImage} 
                     alt="Vakmanschap in actie" 
                     fill 
                     className="object-cover"
-                    unoptimized
+                    unoptimized={aboutImage.includes('supabase.co')}
                 />
             </div>
         </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/components/auth/auth-provider";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Save, Globe, Info, User, Layout } from "lucide-react";
+import { Loader2, Save, Globe, Info, User, Layout, Image as ImageIcon, Upload, X } from "lucide-react";
 import { toast } from "sonner";
 import { useParams } from "next/navigation";
 import { Locale } from "@/lib/i18n-config";
@@ -23,7 +23,9 @@ export default function AdminContentPage() {
   
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [activeTab, setActiveTab] = useState<ContentTab>("hero");
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [content, setContent] = useState<any>({
     hero: { title1: "", title2: "", subtitle: "" },
@@ -31,6 +33,7 @@ export default function AdminContentPage() {
       tag: "", 
       title: "", 
       description: "",
+      imageUrl: "",
       personal: "",
       personalDesc: "",
       pigments: "",
@@ -76,6 +79,37 @@ export default function AdminContentPage() {
     setSaving(false);
   };
 
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `about-${currentLocale}-${Date.now()}.${fileExt}`;
+      const filePath = `cms/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('portfolio-images')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: signedData, error: signedError } = await supabase.storage
+        .from('portfolio-images')
+        .createSignedUrl(filePath, 315360000);
+
+      if (signedError) throw signedError;
+
+      updateField("about", "imageUrl", signedData.signedUrl);
+      toast.success("Afbeelding geüpload");
+    } catch (error: any) {
+      toast.error("Fout bij uploaden: " + error.message);
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const updateField = (section: string, key: string, value: string) => {
     setContent((prev: any) => ({
       ...prev,
@@ -90,6 +124,8 @@ export default function AdminContentPage() {
       </div>
     );
   }
+
+  const defaultAboutImage = "https://sjfosmcpbekkokmedwil.supabase.co/storage/v1/object/public/about%20us/Kaleiwerk-buitengevel-Pulle-Vincent-Van-Roey-Schilderwerken-3.jpg";
 
   return (
     <div className="min-h-screen bg-brand-stone flex">
@@ -192,35 +228,66 @@ export default function AdminContentPage() {
               </div>
 
               <div className="space-y-8">
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Kleine Tag (boven titel)</Label>
-                    <Input 
-                      value={content.about?.tag || ""} 
-                      onChange={(e) => updateField("about", "tag", e.target.value)}
-                      className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze"
-                    />
+                <div className="grid md:grid-cols-2 gap-12">
+                  <div className="space-y-6">
+                    <div className="space-y-2">
+                      <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Kleine Tag (boven titel)</Label>
+                      <Input 
+                        value={content.about?.tag || ""} 
+                        onChange={(e) => updateField("about", "tag", e.target.value)}
+                        className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Hoofdtitel</Label>
+                      <Input 
+                        value={content.about?.title || ""} 
+                        onChange={(e) => updateField("about", "title", e.target.value)}
+                        className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Hoofdbeschrijving</Label>
+                      <Textarea 
+                        value={content.about?.description || ""} 
+                        onChange={(e) => updateField("about", "description", e.target.value)}
+                        className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze min-h-[120px]"
+                      />
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Hoofdtitel</Label>
-                    <Input 
-                      value={content.about?.title || ""} 
-                      onChange={(e) => updateField("about", "title", e.target.value)}
-                      className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze"
+
+                  <div className="space-y-4">
+                    <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40 block mb-2">Hoofdfoto</Label>
+                    <div className="relative aspect-[4/5] bg-brand-stone border border-brand-dark/5 overflow-hidden group">
+                      <img 
+                        src={content.about?.imageUrl || defaultAboutImage} 
+                        alt="Over ons preview" 
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-brand-dark/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <Button 
+                          type="button" 
+                          variant="outline" 
+                          onClick={() => fileInputRef.current?.click()}
+                          disabled={uploading}
+                          className="bg-white text-brand-dark border-none rounded-none uppercase text-[10px] tracking-widest"
+                        >
+                          {uploading ? <Loader2 className="animate-spin mr-2" size={14} /> : <Upload className="mr-2" size={14} />}
+                          Foto Wijzigen
+                        </Button>
+                      </div>
+                    </div>
+                    <input 
+                      type="file" 
+                      ref={fileInputRef} 
+                      onChange={handleImageUpload} 
+                      className="hidden" 
+                      accept="image/*" 
                     />
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Hoofdbeschrijving</Label>
-                  <Textarea 
-                    value={content.about?.description || ""} 
-                    onChange={(e) => updateField("about", "description", e.target.value)}
-                    className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze min-h-[120px]"
-                  />
-                </div>
-
-                <div className="grid md:grid-cols-3 gap-8 pt-4">
+                <div className="grid md:grid-cols-3 gap-8 pt-8 border-t border-brand-dark/5">
                   <div className="space-y-4">
                     <h4 className="font-serif text-lg border-b border-brand-dark/5 pb-2">Persoonlijk</h4>
                     <div className="space-y-2">
