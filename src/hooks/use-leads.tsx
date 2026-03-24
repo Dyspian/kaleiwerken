@@ -11,14 +11,14 @@ export interface Lead {
   email: string;
   phone?: string;
   postal_code?: string;
-  city?: string; // Nieuwe kolom
+  city?: string;
   project_type: string;
-  surface_area?: string; // Made optional since we're replacing it
+  surface_area?: string;
   surface_type: string;
   timing: string;
   status: 'nieuw' | 'gecontacteerd' | 'offerte_verzonden' | 'gearchiveerd' | 'afgewezen';
   notes?: string;
-  comment?: string; // Added comment field
+  comment?: string;
   created_at: string;
 }
 
@@ -27,13 +27,28 @@ const LEADS_PER_PAGE = 10;
 export const useLeads = (user: User | null, authLoading: boolean) => {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  // Local input state for fluid typing
+  const [inputValue, setInputValue] = useState("");
+  // Actual search query used for fetching
   const [searchQuery, setSearchQuery] = useState("");
+  
   const [filterStatus, setFilterStatus] = useState<Lead['status'] | 'all'>('all');
   const [sortBy, setSortBy] = useState<keyof Lead>('created_at');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalLeadsCount, setTotalLeadsCount] = useState(0);
   const [selectedLeads, setSelectedLeads] = useState<Set<string>>(new Set());
+
+  // Debounce logic: update searchQuery 300ms after typing stops
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearchQuery(inputValue);
+      setCurrentPage(1);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [inputValue]);
 
   const totalPages = useMemo(() => Math.ceil(totalLeadsCount / LEADS_PER_PAGE), [totalLeadsCount]);
 
@@ -130,7 +145,7 @@ export const useLeads = (user: User | null, authLoading: boolean) => {
         surface_area: updatedLead.surface_area,
         surface_type: updatedLead.surface_type,
         timing: updatedLead.timing,
-        comment: updatedLead.comment, // Added comment field
+        comment: updatedLead.comment,
       })
       .eq("id", updatedLead.id);
 
@@ -212,8 +227,8 @@ export const useLeads = (user: User | null, authLoading: boolean) => {
   return {
     leads,
     loading,
-    searchQuery,
-    setSearchQuery,
+    searchQuery: inputValue, // Return inputValue as searchQuery for the UI
+    setSearchQuery: setInputValue, // Return setInputValue as setSearchQuery for the UI
     filterStatus,
     setFilterStatus,
     sortBy,

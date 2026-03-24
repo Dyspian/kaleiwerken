@@ -26,9 +26,9 @@ interface Project {
   stats?: any;
   created_at: string;
   user_id: string;
-  start_date?: string; // Nieuw
-  end_date?: string;   // Nieuw
-  planning_status?: 'pending' | 'in_progress' | 'completed' | 'cancelled'; // Nieuw
+  start_date?: string;
+  end_date?: string;
+  planning_status?: 'pending' | 'in_progress' | 'completed' | 'cancelled';
 }
 
 const PROJECTS_PER_PAGE = 9;
@@ -38,15 +38,29 @@ export default function AdminProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Local input state for fluid typing
+  const [inputValue, setInputValue] = useState("");
+  // Actual search query used for fetching
   const [searchQuery, setSearchQuery] = useState("");
+  
   const [filterCategory, setFilterCategory] = useState<string | 'all'>('all');
   const [sortBy, setSortBy] = useState<keyof Project>('created_at');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalProjectsCount, setTotalProjectsCount] = useState(0);
   const [categories, setCategories] = useState<string[]>([]);
+  const [selectedProjects, setSelectedProjects] = useState<Set<string>>(new Set());
 
-  const [selectedProjects, setSelectedProjects] = useState<Set<string>>(new Set()); // Fix 1 & 2
+  // Debounce logic: update searchQuery 300ms after typing stops
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearchQuery(inputValue);
+      setCurrentPage(1);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [inputValue]);
+
   const isAllSelected = useMemo(() => {
     const currentProjectsOnPage = projects.filter(project => {
       const matchesSearch = searchQuery ? (project.title.toLowerCase().includes(searchQuery.toLowerCase()) || (project.location?.toLowerCase().includes(searchQuery.toLowerCase())) || (project.category?.toLowerCase().includes(searchQuery.toLowerCase()))) : true;
@@ -55,8 +69,8 @@ export default function AdminProjectsPage() {
     });
     return currentProjectsOnPage.length > 0 && currentProjectsOnPage.every(project => selectedProjects.has(project.id));
   }, [projects, selectedProjects, searchQuery, filterCategory]);
+  
   const isAnySelected = selectedProjects.size > 0;
-
 
   useEffect(() => {
     if (!authLoading && user) {
@@ -117,18 +131,18 @@ export default function AdminProjectsPage() {
     } else {
       toast.success("Project verwijderd");
       setProjects(projects.filter((p) => p.id !== id));
-      setTotalProjectsCount((prev: number) => prev - 1); // Fix 3
-      setSelectedProjects((prev: Set<string>) => { // Fix 4
+      setTotalProjectsCount((prev: number) => prev - 1);
+      setSelectedProjects((prev: Set<string>) => {
         const newSet = new Set(prev);
         newSet.delete(id);
         return newSet;
       });
-      fetchCategories(); // Refresh categories after deletion
+      fetchCategories();
     }
   };
 
   const handleSelectProject = (id: string, checked: boolean) => {
-    setSelectedProjects((prev: Set<string>) => { // Fix 4
+    setSelectedProjects((prev: Set<string>) => {
       const newSet = new Set(prev);
       if (checked) {
         newSet.add(id);
@@ -196,17 +210,13 @@ export default function AdminProjectsPage() {
           </Button>
         </div>
 
-        {/* Search, Filter, Sort Controls */}
         <div className="bg-white p-6 border border-brand-dark/5 shadow-sm mb-8 flex flex-wrap items-center gap-4">
           <div className="relative flex-1 min-w-[200px]">
             <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-dark/40" />
             <Input
               placeholder="Zoek op titel, locatie of categorie..."
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                setCurrentPage(1);
-              }}
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
               className="pl-10 rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze"
             />
           </div>
@@ -248,7 +258,6 @@ export default function AdminProjectsPage() {
           </Button>
         </div>
 
-        {/* Bulk Actions */}
         {isAnySelected && (
           <div className="bg-white p-6 border border-brand-dark/5 shadow-sm mb-8 flex flex-wrap items-center gap-4">
             <span className="text-sm text-brand-dark/60">{selectedProjects.size} geselecteerd</span>
@@ -265,7 +274,7 @@ export default function AdminProjectsPage() {
         <div className="grid gap-6">
           {projects.length === 0 && !loading ? (
             <div className="bg-white p-12 text-center border border-brand-dark/5">
-              <p className="text-brand-dark/40 italic">Nog geen projecten toegevoegd.</p>
+              <p className="text-brand-dark/40 italic">Geen projecten gevonden.</p>
             </div>
           ) : (
             <>
