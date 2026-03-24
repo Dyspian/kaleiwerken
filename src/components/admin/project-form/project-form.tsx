@@ -11,10 +11,11 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
-import { FormField, FormRow } from "./form-fields";
+import { FormField, FormRow, FormSection } from "./form-fields";
 import { ImageUploadSection } from "./image-upload-section";
 import { PlanningSection } from "./planning-section";
 import { SpecificationsSection } from "./specifications-section";
+import { MessageSquare, ShieldCheck, Info } from "lucide-react";
 
 export const projectSchema = z.object({
   title: z.string().min(2, "Titel is verplicht"),
@@ -32,6 +33,9 @@ export const projectSchema = z.object({
   start_date: z.date().nullable().optional(),
   end_date: z.date().nullable().optional(),
   planning_status: z.enum(['pending', 'in_progress', 'completed', 'cancelled']),
+  challenge_text: z.string().nullable().optional(),
+  result_text: z.string().nullable().optional(),
+  quote_text: z.string().nullable().optional(),
 });
 
 export type ProjectFormValues = z.infer<typeof projectSchema>;
@@ -55,6 +59,9 @@ export interface InitialProjectData {
   start_date?: string | null;
   end_date?: string | null;
   planning_status?: 'pending' | 'in_progress' | 'completed' | 'cancelled';
+  challenge_text?: string | null;
+  result_text?: string | null;
+  quote_text?: string | null;
 }
 
 interface ProjectFormProps {
@@ -84,6 +91,9 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
       start_date: initialData?.start_date ? new Date(initialData.start_date) : null,
       end_date: initialData?.end_date ? new Date(initialData.end_date) : null,
       planning_status: initialData?.planning_status ?? 'pending',
+      challenge_text: initialData?.challenge_text ?? "",
+      result_text: initialData?.result_text ?? "",
+      quote_text: initialData?.quote_text ?? "",
     }
   });
 
@@ -140,6 +150,9 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
       start_date: data.start_date ? format(data.start_date, 'yyyy-MM-dd') : null,
       end_date: data.end_date ? format(data.end_date, 'yyyy-MM-dd') : null,
       planning_status: data.planning_status,
+      challenge_text: data.challenge_text,
+      result_text: data.result_text,
+      quote_text: data.quote_text,
     };
 
     try {
@@ -227,6 +240,38 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
           />
         </div>
       </div>
+
+      <FormSection title="Project Verhaal" icon={<MessageSquare size={16} className="text-brand-bronze" />}>
+        <div className="grid md:grid-cols-2 gap-8">
+          <FormField 
+            name="challenge_text" 
+            label="De Uitdaging" 
+            placeholder="Beschrijf de uitdaging van dit project..."
+            register={register} 
+            errors={errors}
+            type="textarea"
+            className="min-h-[120px]"
+          />
+          <FormField 
+            name="result_text" 
+            label="Het Resultaat" 
+            placeholder="Beschrijf het resultaat van dit project..."
+            register={register} 
+            errors={errors}
+            type="textarea"
+            className="min-h-[120px]"
+          />
+        </div>
+        <FormField 
+          name="quote_text" 
+          label="Quote / Samenvatting" 
+          placeholder="Een pakkende quote over het project..."
+          register={register} 
+          errors={errors}
+          type="textarea"
+          className="min-h-[80px]"
+        />
+      </FormSection>
 
       <PlanningSection watch={watch} setValue={setValue} />
 

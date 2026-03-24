@@ -50,6 +50,11 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
   const pigment = stats.pigment || "Mineraal";
   const team = stats.team || "Vast team (2)";
 
+  // Fallback texts if not provided in DB
+  const challengeText = project.challenge_text || dict.projects.challengeDesc;
+  const resultText = project.result_text || dict.projects.resultDesc;
+  const quoteText = project.quote_text || "Dit project is een perfect voorbeeld van hoe kalei een woning niet alleen beschermt, maar ook een volledig nieuwe ziel geeft.";
+
   return (
     <main className="min-h-screen bg-brand-stone text-brand-dark font-sans selection:bg-brand-bronze/30">
       <Header dict={dict} />
@@ -137,7 +142,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                                 <h4 className="uppercase text-xs tracking-widest font-bold">{dict.projects.challenge}</h4>
                             </div>
                             <p className="text-brand-dark/60 text-sm leading-relaxed">
-                                {dict.projects.challengeDesc}
+                                {challengeText}
                             </p>
                         </div>
                         <div className="space-y-4">
@@ -146,7 +151,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                                 <h4 className="uppercase text-xs tracking-widest font-bold">{dict.projects.result}</h4>
                             </div>
                             <p className="text-brand-dark/60 text-sm leading-relaxed">
-                                {dict.projects.resultDesc}
+                                {resultText}
                             </p>
                         </div>
                     </div>
@@ -178,7 +183,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
 
                         <div className="pt-8">
                             <p className="text-sm text-white/60 italic font-serif mb-8">
-                                "Dit project is een perfect voorbeeld van hoe kalei een woning niet alleen beschermt, maar ook een volledig nieuwe ziel geeft."
+                                "{quoteText}"
                             </p>
                             <Link 
                                 href={`/${locale}/offerte`} 
