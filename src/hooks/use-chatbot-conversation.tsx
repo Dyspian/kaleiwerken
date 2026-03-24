@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ChatbotFormValues, chatbotFormSchema } from '@/components/chatbot/chatbot-schema';
@@ -45,6 +45,7 @@ export const useChatbotConversation = (dict: any) => {
   const [isComplete, setIsComplete] = useState(false);
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [userConversations, setUserConversations] = useState<UserConversation[]>([]);
+  const isInitialized = useRef(false);
 
   // Form management
   const { register, handleSubmit, formState: { errors }, watch, setValue, getValues, reset } = useForm<ChatbotFormValues>({
@@ -67,7 +68,7 @@ export const useChatbotConversation = (dict: any) => {
 
   // Core message management
   const addMessage = useCallback((text: string, sender: 'user' | 'bot') => {
-    setMessages((prev) => [...prev, { id: prev.length + 1, text, sender }]);
+    setMessages((prev) => [...prev, { id: Date.now() + Math.random(), text, sender }]);
   }, []);
 
   // Conversation lifecycle management
@@ -85,38 +86,41 @@ export const useChatbotConversation = (dict: any) => {
     }
   }, [addMessage, dict, reset, user]);
 
-  // User conversations management with proper error handling
+  // User conversations management
   const fetchUserConversations = useCallback(async () => {
     if (!user?.id) {
       setUserConversations([]);
-      return;
+      return [];
     }
 
     try {
-      // Create a new request with proper error handling
       const { data, error } = await supabase
         .from('chatbot_conversations')
         .select('id, initial_question, created_at, updated_at')
         .eq('user_id', user.id)
         .order('updated_at', { ascending: false })
-        .limit(10); // Limit to prevent timeout
+        .limit(10);
 
       if (error) {
         console.warn("Error fetching user conversations:", error);
-        // Don't show toast for minor fetch errors
         setUserConversations([]);
+        return [];
       } else {
-        setUserConversations(data || []);
+        const convs = data || [];
+        setUserConversations(convs);
+        return convs;
       }
     } catch (error: any) {
       console.warn("Network error fetching conversations:", error);
-      // Don't show toast for network errors, just set empty array
       setUserConversations([]);
+      return [];
     }
   }, [user?.id]);
 
-  // Load specific conversation with better error handling
+  // Load specific conversation
   const loadConversation = useCallback(async (conversationId: string) => {
+    if (!conversationId) return;
+    
     setCurrentConversationId(conversationId);
     setIsComplete(false);
     setCurrentStep(0);
@@ -127,12 +131,11 @@ export const useChatbotConversation = (dict: any) => {
         .select('*')
         .eq('conversation_id', conversationId)
         .order('created_at', { ascending: true })
-        .limit(50); // Limit messages to prevent timeout
+        .limit(50);
 
       if (error) {
         console.warn("Error fetching messages for conversation:", error);
-        // Don't reset chat on minor errors, just show empty messages
-        setMessages([{ id: 0, text: dict.chatbot.welcome, sender: 'bot' }]);
+        setMessages([{ id: 0, text: dict?.chatbot?.welcome || "Hallo!", sender: 'bot' }]);
         return;
       }
 
@@ -143,11 +146,10 @@ export const useChatbotConversation = (dict: any) => {
       }));
       
       setMessages([
-        { id: 0, text: dict.chatbot.welcome, sender: 'bot' },
+        { id: 0, text: dict?.chatbot?.welcome || "Hallo!", sender: 'bot' },
         ...loadedMessages
       ]);
 
-      // If the last message is from admin, it's "complete" from user's perspective
       if (loadedMessages.length > 0 && loadedMessages[loadedMessages.length - 1].sender === 'bot') {
         setIsComplete(true);
       } else {
@@ -155,37 +157,37 @@ export const useChatbotConversation = (dict: any) => {
       }
     } catch (error: any) {
       console.warn("Network error loading conversation:", error);
-      // Don't reset chat on network errors
-      setMessages([{ id: 0, text: dict.chatbot.welcome, sender: 'bot' }]);
+      setMessages([{ id: 0, text: dict?.chatbot?.welcome || "Hallo!", sender: 'bot' }]);
     }
   }, [dict]);
 
-  // Initialize chat or load existing conversation
+  // Initialization Effect - Runs only when auth state is ready or user changes
   useEffect(() => {
-    if (authLoading) return;
+    if (authLoading || !dict?.chatbot) return;
 
-    if (user) { // Logged-in user
-      fetchUserConversations();
-      // If no current conversation is selected, or if the selected one doesn't belong to this user,
-      // start a new one or load the most recent one.
-      if (!currentConversationId || !userConversations.some(conv => conv.id === currentConversationId)) {
-        if (userConversations.length > 0) {
-          loadConversation(userConversations[0].id); // Load most recent conversation
-        } else {
-          resetChat(); // Start fresh if no conversations
+    const init = async () => {
+      if (user) {
+        const convs = await fetchUserConversations();
+        if (convs.length > 0 && !currentConversationId) {
+          await loadConversation(convs[0].id);
+        } else if (convs.length === 0) {
+          resetChat();
+        }
+      } else {
+        const storedId = localStorage.getItem(CONVERSATION_ID_KEY);
+        if (storedId && !currentConversationId) {
+          await loadConversation(storedId);
+        } else if (!currentConversationId) {
+          resetChat();
         }
       }
-    } else { // Anonymous user
-      const storedConversationId = localStorage.getItem(CONVERSATION_ID_KEY);
-      if (storedConversationId) {
-        loadConversation(storedConversationId);
-      } else {
-        resetChat();
-      }
-    }
-  }, [authLoading, user, currentConversationId, userConversations, fetchUserConversations, loadConversation, resetChat]);
+      isInitialized.current = true;
+    };
 
-  // Real-time subscription for new messages with better error handling
+    init();
+  }, [authLoading, user?.id, dict?.chatbot]); // Only depend on core auth state and dict availability
+
+  // Real-time subscription
   useEffect(() => {
     if (!currentConversationId) return;
 
@@ -198,18 +200,23 @@ export const useChatbotConversation = (dict: any) => {
         filter: `conversation_id=eq.${currentConversationId}`
       }, (payload) => {
         const newMessage = payload.new as any;
-        if (!messages.some(msg => msg.id === newMessage.id)) {
-          addMessage(newMessage.message_text, (newMessage.sender === 'admin' ? 'bot' : 'user') as Message['sender']);
-          setIsComplete(true); // Mark as complete after receiving a new message
-          fetchUserConversations(); // Refresh user conversations list
-        }
+        setMessages(prev => {
+          if (prev.some(msg => msg.id === newMessage.id)) return prev;
+          return [...prev, {
+            id: newMessage.id,
+            text: newMessage.message_text,
+            sender: (newMessage.sender === 'admin' ? 'bot' : 'user') as Message['sender']
+          }];
+        });
+        setIsComplete(true);
+        fetchUserConversations();
       })
       .subscribe();
 
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [currentConversationId, addMessage, messages, fetchUserConversations]);
+  }, [currentConversationId, fetchUserConversations]);
 
   // Form submission handlers
   const handleOfferSubmission = async (data: ChatbotFormValues) => {
@@ -228,7 +235,6 @@ export const useChatbotConversation = (dict: any) => {
     };
 
     const { error } = await supabase.from("leads").insert(leadData);
-
     if (error) throw error;
 
     addMessage(dict.chatbot.thankYou, 'bot');
@@ -240,12 +246,10 @@ export const useChatbotConversation = (dict: any) => {
     let conversationIdToUse = currentConversationId;
 
     if (!conversationIdToUse) {
-      const userId = user?.id || null;
-
       const { data: conversationData, error: conversationError } = await supabase
         .from("chatbot_conversations")
         .insert({
-          user_id: userId,
+          user_id: user?.id || null,
           name: data.name,
           email: data.email,
           phone: data.phone || null,
@@ -258,8 +262,8 @@ export const useChatbotConversation = (dict: any) => {
       if (conversationError) throw conversationError;
       conversationIdToUse = conversationData.id;
       setCurrentConversationId(conversationIdToUse);
-      if (!user && conversationIdToUse) {
-        localStorage.setItem(CONVERSATION_ID_KEY, conversationIdToUse);
+      if (!user) {
+        localStorage.setItem(CONVERSATION_ID_KEY, conversationIdToUse!);
       }
       fetchUserConversations();
     }
@@ -279,7 +283,6 @@ export const useChatbotConversation = (dict: any) => {
     toast.success(dict.chatbot.successSubmit);
   };
 
-  // Main form submission
   const onSubmit = async (data: ChatbotFormValues) => {
     setIsSubmitting(true);
     const userMessageText = data.questionText || data.name;
@@ -299,18 +302,12 @@ export const useChatbotConversation = (dict: any) => {
     }
   };
 
-  // Generate conversation steps using modular creators
   const generateConversationSteps = useCallback((values: ChatbotFormValues): ConversationStep[] => {
-    if (!dict || !dict.chatbot || !dict.quote) {
-      return [];
-    }
+    if (!dict?.chatbot || !dict?.quote) return [];
 
-    // Create a wrapper for setValue to handle the type mismatch
-    const setValueWrapper = (name: string, value: any) => {
-      setValue(name as any, value);
-    };
+    const setValueWrapper = (name: string, value: any) => setValue(name as any, value);
 
-    const steps = [
+    return [
       createWelcomeStep(dict, setValueWrapper, setCurrentStep, addMessage),
       ...(values.type === 'offer' ? [
         createProjectTypeStep(dict, setValueWrapper, setCurrentStep, addMessage),
@@ -323,20 +320,20 @@ export const useChatbotConversation = (dict: any) => {
         createQuestionStep(dict, register, errors, handleSubmit, onSubmit, isSubmitting),
       ] : []),
     ].filter(Boolean) as ConversationStep[];
-    
-    return steps;
-  }, [dict, errors, getValues, handleSubmit, isSubmitting, register, setValue, addMessage, onSubmit, toast]);
+  }, [dict, errors, getValues, handleSubmit, isSubmitting, register, setValue, addMessage, onSubmit]);
 
-  const currentConversationStep = generateConversationSteps(formValues)[currentStep];
+  const steps = generateConversationSteps(formValues);
+  const currentConversationStep = steps[currentStep];
 
-  // Update messages when step changes
+  // Step progression message effect
   useEffect(() => {
-    if (currentConversationStep?.botMessage && messages.length === 0) {
-      addMessage(currentConversationStep.botMessage, 'bot');
-    } else if (currentConversationStep?.botMessage && messages[messages.length - 1]?.sender === 'user') {
+    if (!currentConversationStep?.botMessage || messages.length === 0) return;
+    
+    const lastMessage = messages[messages.length - 1];
+    if (lastMessage.sender === 'user') {
       addMessage(currentConversationStep.botMessage, 'bot');
     }
-  }, [currentConversationStep, messages, addMessage]);
+  }, [currentStep, currentConversationStep?.botMessage, addMessage]);
 
   return {
     messages,
