@@ -8,23 +8,32 @@ const dictionaries = {
   de: () => import('@/dictionaries/de.json').then((module) => module.default),
 };
 
-// Deep merge helper
+// Verbeterde deep merge helper die lege strings/nulls uit de bron negeert
 function deepMerge(target: any, source: any) {
+  if (!source) return target;
+  
   for (const key in source) {
-    if (source[key] instanceof Object && key in target) {
-      Object.assign(source[key], deepMerge(target[key], source[key]));
+    const sourceValue = source[key];
+    
+    // Als het een object is (en geen array), recursief samenvoegen
+    if (sourceValue && typeof sourceValue === 'object' && !Array.isArray(sourceValue)) {
+      if (!target[key]) target[key] = {};
+      deepMerge(target[key], sourceValue);
+    } 
+    // Alleen overschrijven als de bron een waarde heeft die niet leeg is
+    else if (sourceValue !== undefined && sourceValue !== null && sourceValue !== "") {
+      target[key] = sourceValue;
     }
   }
-  Object.assign(target || {}, source);
   return target;
 }
 
 export const getDictionary = async (locale: Locale) => {
-  // Load local file
+  // Laad lokaal bestand
   const localDict = await (dictionaries[locale]?.() ?? dictionaries.nl());
   
   try {
-    // Fetch database overrides
+    // Haal database overrides op
     const { data, error } = await supabase
       .from('site_settings')
       .select('content')
@@ -32,8 +41,9 @@ export const getDictionary = async (locale: Locale) => {
       .maybeSingle();
 
     if (data?.content && !error) {
-      // Merge database content over local content
-      return deepMerge({ ...localDict }, data.content);
+      // Voeg database content samen met lokale content, behoud defaults voor lege velden
+      // We gebruiken een kloon van localDict om mutatie van de module te voorkomen
+      return deepMerge(JSON.parse(JSON.stringify(localDict)), data.content);
     }
   } catch (e) {
     console.error("Error fetching dictionary from DB:", e);
