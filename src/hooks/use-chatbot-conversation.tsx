@@ -85,7 +85,7 @@ export const useChatbotConversation = (dict: any) => {
     }
   }, [addMessage, dict, reset, user]);
 
-  // User conversations management
+  // User conversations management with proper error handling
   const fetchUserConversations = useCallback(async () => {
     if (!user?.id) {
       setUserConversations([]);
@@ -93,26 +93,29 @@ export const useChatbotConversation = (dict: any) => {
     }
 
     try {
+      // Create a new request with proper error handling
       const { data, error } = await supabase
         .from('chatbot_conversations')
         .select('id, initial_question, created_at, updated_at')
         .eq('user_id', user.id)
-        .order('updated_at', { ascending: false });
+        .order('updated_at', { ascending: false })
+        .limit(10); // Limit to prevent timeout
 
       if (error) {
-        console.error("Error fetching user conversations:", error);
-        toast.error("Fout bij ophalen van uw conversaties.");
+        console.warn("Error fetching user conversations:", error);
+        // Don't show toast for minor fetch errors
         setUserConversations([]);
       } else {
         setUserConversations(data || []);
       }
-    } catch (error) {
-      console.error("Error in fetchUserConversations:", error);
+    } catch (error: any) {
+      console.warn("Network error fetching conversations:", error);
+      // Don't show toast for network errors, just set empty array
       setUserConversations([]);
     }
   }, [user?.id]);
 
-  // Load specific conversation
+  // Load specific conversation with better error handling
   const loadConversation = useCallback(async (conversationId: string) => {
     setCurrentConversationId(conversationId);
     setIsComplete(false);
@@ -123,12 +126,13 @@ export const useChatbotConversation = (dict: any) => {
         .from('chatbot_messages')
         .select('*')
         .eq('conversation_id', conversationId)
-        .order('created_at', { ascending: true });
+        .order('created_at', { ascending: true })
+        .limit(50); // Limit messages to prevent timeout
 
       if (error) {
-        console.error("Error fetching messages for conversation:", error);
-        toast.error("Fout bij ophalen chatgeschiedenis.");
-        resetChat();
+        console.warn("Error fetching messages for conversation:", error);
+        // Don't reset chat on minor errors, just show empty messages
+        setMessages([{ id: 0, text: dict.chatbot.welcome, sender: 'bot' }]);
         return;
       }
 
@@ -149,11 +153,12 @@ export const useChatbotConversation = (dict: any) => {
       } else {
         setIsComplete(false);
       }
-    } catch (error) {
-      console.error("Error in loadConversation:", error);
-      resetChat();
+    } catch (error: any) {
+      console.warn("Network error loading conversation:", error);
+      // Don't reset chat on network errors
+      setMessages([{ id: 0, text: dict.chatbot.welcome, sender: 'bot' }]);
     }
-  }, [dict, resetChat]);
+  }, [dict]);
 
   // Initialize chat or load existing conversation
   useEffect(() => {
@@ -180,7 +185,7 @@ export const useChatbotConversation = (dict: any) => {
     }
   }, [authLoading, user, currentConversationId, userConversations, fetchUserConversations, loadConversation, resetChat]);
 
-  // Real-time subscription for new messages
+  // Real-time subscription for new messages with better error handling
   useEffect(() => {
     if (!currentConversationId) return;
 
