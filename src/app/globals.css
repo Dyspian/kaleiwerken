@@ -97,103 +97,63 @@
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 
-/* Rich Text Editor Styles */
-.rich-text-editor .ql-container {
-  font-family: inherit;
-  font-size: 16px;
+/* Markdown Editor Styles */
+.markdown-editor {
+  @apply border border-brand-dark/10 rounded-none bg-white;
 }
 
-.rich-text-editor .ql-editor {
-  min-height: 200px;
-  padding: 16px;
+.markdown-editor .toolbar {
+  @apply flex gap-2 p-3 border-b border-brand-dark/10 bg-brand-stone/30;
 }
 
-.rich-text-editor .ql-toolbar {
-  border-bottom: 1px solid #e5e7eb;
-  background-color: #f9fafb;
+.markdown-editor .toolbar button {
+  @apply px-3 py-1 text-xs border border-brand-dark/10 hover:bg-brand-bronze hover:text-white transition-colors;
 }
 
-.rich-text-editor .ql-toolbar .ql-stroke {
-  stroke: #6b7280;
+.markdown-editor .editor-container {
+  @apply flex;
 }
 
-.rich-text-editor .ql-toolbar .ql-fill {
-  fill: #6b7280;
+.markdown-editor .editor-textarea {
+  @apply w-full p-4 min-h-[300px] border-none resize-none focus:outline-none focus:ring-0 font-sans leading-relaxed;
 }
 
-.rich-text-editor .ql-toolbar button:hover .ql-stroke,
-.rich-text-editor .ql-toolbar button:hover .ql-fill {
-  stroke: #8c7b6c;
-  fill: #8c7b6c;
+.markdown-editor .preview-panel {
+  @apply flex-1 p-4 bg-brand-stone/20 overflow-y-auto min-h-[300px];
 }
 
-.rich-text-editor .ql-toolbar .ql-active .ql-stroke,
-.rich-text-editor .ql-toolbar .ql-active .ql-fill {
-  stroke: #8c7b6c;
-  fill: #8c7b6c;
+.markdown-editor .preview-content {
+  @apply text-sm leading-relaxed prose prose-sm max-w-none;
 }
 
-.rich-text-editor .ql-editor h1,
-.rich-text-editor .ql-editor h2,
-.rich-text-editor .ql-editor h3,
-.rich-text-editor .ql-editor h4,
-.rich-text-editor .ql-editor h5,
-.rich-text-editor .ql-editor h6 {
-  font-family: var(--font-playfair), Georgia, serif;
-  font-weight: 600;
-  margin-bottom: 1rem;
+.markdown-editor .preview-content h2 {
+  @apply font-serif text-xl font-semibold mt-6 mb-3;
 }
 
-.rich-text-editor .ql-editor h1 { font-size: 2.25rem; line-height: 2.5rem; }
-.rich-text-editor .ql-editor h2 { font-size: 1.875rem; line-height: 2.25rem; }
-.rich-text-editor .ql-editor h3 { font-size: 1.5rem; line-height: 2rem; }
-.rich-text-editor .ql-editor h4 { font-size: 1.25rem; line-height: 1.75rem; }
-.rich-text-editor .ql-editor h5 { font-size: 1.125rem; line-height: 1.75rem; }
-.rich-text-editor .ql-editor h6 { font-size: 1rem; line-height: 1.5rem; }
-
-.rich-text-editor .ql-editor p {
-  margin-bottom: 1rem;
-  line-height: 1.75;
+.markdown-editor .preview-content h3 {
+  @apply font-serif text-lg font-semibold mt-4 mb-2;
 }
 
-.rich-text-editor .ql-editor ul,
-.rich-text-editor .ql-editor ol {
-  margin-bottom: 1rem;
-  padding-left: 1.5rem;
+.markdown-editor .preview-content strong {
+  @apply font-bold;
 }
 
-.rich-text-editor .ql-editor li {
-  margin-bottom: 0.5rem;
+.markdown-editor .preview-content em {
+  @apply italic;
 }
 
-.rich-text-editor .ql-editor blockquote {
-  border-left: 4px solid #8c7b6c;
-  padding-left: 1rem;
-  margin: 1rem 0;
-  font-style: italic;
-  color: #6b7280;
+.markdown-editor .preview-content li {
+  @apply ml-4 mb-1;
 }
 
-.rich-text-editor .ql-editor code {
-  background-color: #f3f4f6;
-  padding: 0.125rem 0.25rem;
-  border-radius: 0.25rem;
-  font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular;
+.markdown-editor .preview-content a {
+  @apply text-brand-bronze hover:underline;
 }
 
-.rich-text-editor .ql-editor pre {
-  background-color: #f3f4f6;
-  padding: 1rem;
-  border-radius: 0.5rem;
-  margin: 1rem 0;
-  overflow-x: auto;
+.markdown-editor .preview-content p {
+  @apply mb-4;
 }
 
-.rich-text-editor .ql-editor a {
-  color: #8c7b6c;
-  text-decoration: underline;
-}
-
-.rich-text-editor .ql-editor a:hover {
-  color: #1a1917;
+.markdown-editor .help-text {
+  @apply mt-2 text-xs text-brand-dark/50;
 }
