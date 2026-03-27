@@ -8,19 +8,36 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Save, Globe, Info, User, Layout, Image as ImageIcon, Upload, X, FileText, Shield } from "lucide-react";
+import { Loader2, Save, Globe, Info, User, Layout, Image as ImageIcon, Upload, Shield, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { useParams } from "next/navigation";
-import { Locale } from "@/lib/i18n-config";
 import { cn } from "@/lib/utils";
 import { RichTextEditor } from "@/components/admin/content/rich-text-editor";
 
 type ContentTab = "hero" | "about" | "privacy" | "terms";
 
+interface ContentState {
+  hero: { title1: string; title2: string; subtitle: string };
+  about: { 
+    tag: string; 
+    title: string; 
+    description: string;
+    imageUrl: string;
+    personal: string;
+    personalDesc: string;
+    pigments: string;
+    pigmentsDesc: string;
+    protection: string;
+    protectionDesc: string;
+  };
+  privacy: { title: string; content: string };
+  terms: { title: string; content: string };
+}
+
 export default function AdminContentPage() {
   const { user, loading: authLoading } = useAuth();
   const params = useParams();
-  const currentLocale = (params.locale as Locale) || 'nl';
+  const currentLocale = (params.locale as string) || 'nl';
   
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -28,7 +45,7 @@ export default function AdminContentPage() {
   const [activeTab, setActiveTab] = useState<ContentTab>("hero");
   const fileInputRef = useRef<HTMLInputElement>(null);
   
-  const [content, setContent] = useState<any>({
+  const [content, setContent] = useState<ContentState>({
     hero: { title1: "", title2: "", subtitle: "" },
     about: { 
       tag: "", 
@@ -52,34 +69,50 @@ export default function AdminContentPage() {
 
   const fetchContent = async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from('site_settings')
-      .select('content')
-      .eq('locale', currentLocale)
-      .maybeSingle();
+    try {
+      const { data, error } = await supabase
+        .from('site_settings')
+        .select('content')
+        .eq('locale', currentLocale)
+        .maybeSingle();
 
-    if (data?.content) {
-      setContent(data.content);
+      if (error) {
+        console.error("Error fetching content:", error);
+        toast.error("Fout bij ophalen content: " + error.message);
+      } else if (data?.content) {
+        setContent(data.content);
+      }
+    } catch (error: any) {
+      console.error("Exception fetching content:", error);
+      toast.error("Fout bij ophalen content: " + error.message);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleSave = async () => {
     setSaving(true);
-    const { error } = await supabase
-      .from('site_settings')
-      .upsert({ 
-        locale: currentLocale, 
-        content: content,
-        updated_at: new Date().toISOString()
-      }, { onConflict: 'locale' });
+    try {
+      const { error } = await supabase
+        .from('site_settings')
+        .upsert({ 
+          locale: currentLocale, 
+          content: content,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'locale' });
 
-    if (error) {
+      if (error) {
+        console.error("Error saving content:", error);
+        throw error;
+      }
+
+      toast.success("Content succesvol bijgewerkt! Vernieuw de website om de wijzigingen te zien.");
+    } catch (error: any) {
+      console.error("Exception saving content:", error);
       toast.error("Fout bij opslaan: " + error.message);
-    } else {
-      toast.success("Content bijgewerkt! Vernieuw de website om de wijzigingen te zien.");
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
   };
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -104,7 +137,10 @@ export default function AdminContentPage() {
 
       if (signedError) throw signedError;
 
-      updateField("about", "imageUrl", signedData.signedUrl);
+      setContent(prev => ({
+        ...prev,
+        about: { ...prev.about, imageUrl: signedData.signedUrl }
+      }));
       toast.success("Afbeelding geüpload");
     } catch (error: any) {
       toast.error("Fout bij uploaden: " + error.message);
@@ -113,8 +149,8 @@ export default function AdminContentPage() {
     }
   };
 
-  const updateField = (section: string, key: string, value: string) => {
-    setContent((prev: any) => ({
+  const updateField = (section: keyof ContentState, key: string, value: string) => {
+    setContent(prev => ({
       ...prev,
       [section]: { ...prev[section], [key]: value }
     }));
@@ -203,178 +239,6 @@ export default function AdminContentPage() {
         </div>
 
         <div className="max-w-4xl pb-24">
-          {/* Hero Section */}
-          {activeTab === "hero" && (
-            <section className="bg-white p-8 border border-brand-dark/5 shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-500">
-              <div className="flex items-center gap-3 mb-8 border-b border-brand-dark/5 pb-4">
-                <Globe size={20} className="text-brand-bronze" />
-                <h2 className="font-serif text-2xl">Home: Hero Sectie</h2>
-              </div>
-
-              <div className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Titel Regel 1</Label>
-                    <Input 
-                      value={content.hero?.title1 || ""} 
-                      onChange={(e) => updateField("hero", "title1", e.target.value)}
-                      className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Titel Regel 2 (Italic)</Label>
-                    <Input 
-                      value={content.hero?.title2 || ""} 
-                      onChange={(e) => updateField("hero", "title2", e.target.value)}
-                      className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze italic"
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Subtitel</Label>
-                  <Textarea 
-                    value={content.hero?.subtitle || ""} 
-                    onChange={(e) => updateField("hero", "subtitle", e.target.value)}
-                    className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze min-h-[100px]"
-                  />
-                </div>
-              </div>
-            </section>
-          )}
-
-          {/* About Us Section */}
-          {activeTab === "about" && (
-            <section className="bg-white p-8 border border-brand-dark/5 shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-500">
-              <div className="flex items-center gap-3 mb-8 border-b border-brand-dark/5 pb-4">
-                <User size={20} className="text-brand-bronze" />
-                <h2 className="font-serif text-2xl">Pagina: Over Ons</h2>
-              </div>
-
-              <div className="space-y-8">
-                <div className="grid md:grid-cols-2 gap-12">
-                  <div className="space-y-6">
-                    <div className="space-y-2">
-                      <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Kleine Tag (boven titel)</Label>
-                      <Input 
-                        value={content.about?.tag || ""} 
-                        onChange={(e) => updateField("about", "tag", e.target.value)}
-                        className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Hoofdtitel</Label>
-                      <Input 
-                        value={content.about?.title || ""} 
-                        onChange={(e) => updateField("about", "title", e.target.value)}
-                        className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Hoofdbeschrijving</Label>
-                      <Textarea 
-                        value={content.about?.description || ""} 
-                        onChange={(e) => updateField("about", "description", e.target.value)}
-                        className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze min-h-[120px]"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40 block mb-2">Hoofdfoto</Label>
-                    <div className="relative aspect-[4/5] bg-brand-stone border border-brand-dark/5 overflow-hidden group">
-                      <img 
-                        src={content.about?.imageUrl || defaultAboutImage} 
-                        alt="Over ons preview" 
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-brand-dark/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <Button 
-                          type="button" 
-                          variant="outline" 
-                          onClick={() => fileInputRef.current?.click()}
-                          disabled={uploading}
-                          className="bg-white text-brand-dark border-none rounded-none uppercase text-[10px] tracking-widest"
-                        >
-                          {uploading ? <Loader2 className="animate-spin mr-2" size={14} /> : <Upload className="mr-2" size={14} />}
-                          Foto Wijzigen
-                        </Button>
-                      </div>
-                    </div>
-                    <input 
-                      type="file" 
-                      ref={fileInputRef} 
-                      onChange={handleImageUpload} 
-                      className="hidden" 
-                      accept="image/*" 
-                    />
-                  </div>
-                </div>
-
-                <div className="grid md:grid-cols-3 gap-8 pt-8 border-t border-brand-dark/5">
-                  <div className="space-y-4">
-                    <h4 className="font-serif text-lg border-b border-brand-dark/5 pb-2">Persoonlijk</h4>
-                    <div className="space-y-2">
-                      <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Titel</Label>
-                      <Input 
-                        value={content.about?.personal || ""} 
-                        onChange={(e) => updateField("about", "personal", e.target.value)}
-                        className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Tekst</Label>
-                      <Textarea 
-                        value={content.about?.personalDesc || ""} 
-                        onChange={(e) => updateField("about", "personalDesc", e.target.value)}
-                        className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze text-xs"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <h4 className="font-serif text-lg border-b border-brand-dark/5 pb-2">Pigmenten</h4>
-                    <div className="space-y-2">
-                      <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Titel</Label>
-                      <Input 
-                        value={content.about?.pigments || ""} 
-                        onChange={(e) => updateField("about", "pigments", e.target.value)}
-                        className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Tekst</Label>
-                      <Textarea 
-                        value={content.about?.pigmentsDesc || ""} 
-                        onChange={(e) => updateField("about", "pigmentsDesc", e.target.value)}
-                        className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze text-xs"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <h4 className="font-serif text-lg border-b border-brand-dark/5 pb-2">Bescherming</h4>
-                    <div className="space-y-2">
-                      <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Titel</Label>
-                      <Input 
-                        value={content.about?.protection || ""} 
-                        onChange={(e) => updateField("about", "protection", e.target.value)}
-                        className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Tekst</Label>
-                      <Textarea 
-                        value={content.about?.protectionDesc || ""} 
-                        onChange={(e) => updateField("about", "protectionDesc", e.target.value)}
-                        className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze text-xs"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
-          )}
-
           {/* Privacy Policy Section */}
           {activeTab === "privacy" && (
             <section className="bg-white p-8 border border-brand-dark/5 shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-500">
@@ -387,7 +251,7 @@ export default function AdminContentPage() {
                 <div className="space-y-2">
                   <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Pagina Titel</Label>
                   <Input 
-                    value={content.privacy?.title || ""} 
+                    value={content.privacy.title} 
                     onChange={(e) => updateField("privacy", "title", e.target.value)}
                     className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze"
                     placeholder="Privacybeleid"
@@ -396,7 +260,7 @@ export default function AdminContentPage() {
                 <div className="space-y-2">
                   <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Privacy Beleid Inhoud</Label>
                   <RichTextEditor
-                    value={content.privacy?.content || ""}
+                    value={content.privacy.content}
                     onChange={(value) => updateField("privacy", "content", value)}
                     placeholder="Typ hier uw privacy beleid..."
                     className="min-h-[400px]"
@@ -418,7 +282,7 @@ export default function AdminContentPage() {
                 <div className="space-y-2">
                   <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Pagina Titel</Label>
                   <Input 
-                    value={content.terms?.title || ""} 
+                    value={content.terms.title} 
                     onChange={(e) => updateField("terms", "title", e.target.value)}
                     className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze"
                     placeholder="Algemene Voorwaarden"
@@ -427,7 +291,7 @@ export default function AdminContentPage() {
                 <div className="space-y-2">
                   <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Algemene Voorwaarden Inhoud</Label>
                   <RichTextEditor
-                    value={content.terms?.content || ""}
+                    value={content.terms.content}
                     onChange={(value) => updateField("terms", "content", value)}
                     placeholder="Typ hier uw algemene voorwaarden..."
                     className="min-h-[400px]"
