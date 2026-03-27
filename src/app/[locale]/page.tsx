@@ -7,7 +7,6 @@ import { BeforeAfter } from "@/components/home/before-after";
 import { Process } from "@/components/home/process";
 import { QuoteWizard } from "@/components/quote/quote-wizard";
 import { Toaster } from "@/components/ui/sonner";
-import { Loader } from "@/components/layout/loader";
 import Script from "next/script";
 import { getDictionary } from "@/lib/get-dictionary";
 import { Locale } from "@/lib/i18n-config";
@@ -20,7 +19,6 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
   const heroDict = dict?.hero || {};
   const quoteDict = dict?.quote || {};
   const commonDict = dict?.common || {};
-  const loaderWords = dict?.loader?.words || [];
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -69,7 +67,6 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <Loader words={loaderWords} />
       <Header dict={dict} />
       
       <Hero dict={heroDict} />
