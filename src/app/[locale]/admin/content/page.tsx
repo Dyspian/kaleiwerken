@@ -8,13 +8,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Save, Globe, Info, User, Layout, Image as ImageIcon, Upload, X } from "lucide-react";
+import { Loader2, Save, Globe, Info, User, Layout, Image as ImageIcon, Upload, X, FileText, Shield } from "lucide-react";
 import { toast } from "sonner";
 import { useParams } from "next/navigation";
 import { Locale } from "@/lib/i18n-config";
 import { cn } from "@/lib/utils";
+import { RichTextEditor } from "@/components/admin/content/rich-text-editor";
 
-type ContentTab = "hero" | "about";
+type ContentTab = "hero" | "about" | "privacy" | "terms";
 
 export default function AdminContentPage() {
   const { user, loading: authLoading } = useAuth();
@@ -40,7 +41,9 @@ export default function AdminContentPage() {
       pigmentsDesc: "",
       protection: "",
       protectionDesc: ""
-    }
+    },
+    privacy: { title: "", content: "" },
+    terms: { title: "", content: "" }
   });
 
   useEffect(() => {
@@ -176,6 +179,26 @@ export default function AdminContentPage() {
             )}
           >
             <User size={14} className="mr-2" /> Over Ons
+          </Button>
+          <Button 
+            variant="ghost" 
+            onClick={() => setActiveTab("privacy")}
+            className={cn(
+              "rounded-none uppercase text-[10px] tracking-widest px-6 py-4 h-auto border-b-2 transition-all",
+              activeTab === "privacy" ? "border-brand-bronze text-brand-bronze bg-brand-bronze/5" : "border-transparent text-brand-dark/40 hover:text-brand-dark"
+            )}
+          >
+            <Shield size={14} className="mr-2" /> Privacy Beleid
+          </Button>
+          <Button 
+            variant="ghost" 
+            onClick={() => setActiveTab("terms")}
+            className={cn(
+              "rounded-none uppercase text-[10px] tracking-widest px-6 py-4 h-auto border-b-2 transition-all",
+              activeTab === "terms" ? "border-brand-bronze text-brand-bronze bg-brand-bronze/5" : "border-transparent text-brand-dark/40 hover:text-brand-dark"
+            )}
+          >
+            <FileText size={14} className="mr-2" /> Algemene Voorwaarden
           </Button>
         </div>
 
@@ -347,6 +370,68 @@ export default function AdminContentPage() {
                       />
                     </div>
                   </div>
+                </div>
+              </div>
+            </section>
+          )}
+
+          {/* Privacy Policy Section */}
+          {activeTab === "privacy" && (
+            <section className="bg-white p-8 border border-brand-dark/5 shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-500">
+              <div className="flex items-center gap-3 mb-8 border-b border-brand-dark/5 pb-4">
+                <Shield size={20} className="text-brand-bronze" />
+                <h2 className="font-serif text-2xl">Privacy Beleid</h2>
+              </div>
+
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Pagina Titel</Label>
+                  <Input 
+                    value={content.privacy?.title || ""} 
+                    onChange={(e) => updateField("privacy", "title", e.target.value)}
+                    className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze"
+                    placeholder="Privacybeleid"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Privacy Beleid Inhoud</Label>
+                  <RichTextEditor
+                    value={content.privacy?.content || ""}
+                    onChange={(value) => updateField("privacy", "content", value)}
+                    placeholder="Typ hier uw privacy beleid..."
+                    className="min-h-[400px]"
+                  />
+                </div>
+              </div>
+            </section>
+          )}
+
+          {/* Terms & Conditions Section */}
+          {activeTab === "terms" && (
+            <section className="bg-white p-8 border border-brand-dark/5 shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-500">
+              <div className="flex items-center gap-3 mb-8 border-b border-brand-dark/5 pb-4">
+                <FileText size={20} className="text-brand-bronze" />
+                <h2 className="font-serif text-2xl">Algemene Voorwaarden</h2>
+              </div>
+
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Pagina Titel</Label>
+                  <Input 
+                    value={content.terms?.title || ""} 
+                    onChange={(e) => updateField("terms", "title", e.target.value)}
+                    className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze"
+                    placeholder="Algemene Voorwaarden"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Algemene Voorwaarden Inhoud</Label>
+                  <RichTextEditor
+                    value={content.terms?.content || ""}
+                    onChange={(value) => updateField("terms", "content", value)}
+                    placeholder="Typ hier uw algemene voorwaarden..."
+                    className="min-h-[400px]"
+                  />
                 </div>
               </div>
             </section>
