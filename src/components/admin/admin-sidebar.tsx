@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useParams } from "next/navigation";
-import { LayoutDashboard, FolderKanban, LogOut, User, MessageSquare, ExternalLink, FileText } from "lucide-react";
+import { LayoutDashboard, FolderKanban, LogOut, User, MessageSquare, ExternalLink, FileText, Shield, Edit3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/components/auth/auth-provider";
 import { cn } from "@/lib/utils";
@@ -21,7 +21,7 @@ export const AdminSidebar = () => {
     { href: `/${locale}/admin`, label: "Overzicht", icon: LayoutDashboard },
     { href: `/${locale}/admin/projects`, label: "Projecten", icon: FolderKanban },
     { href: `/${locale}/admin/leads`, label: "Aanvragen", icon: MessageSquare },
-    { href: `/${locale}/admin/content`, label: "Website Teksten", icon: FileText },
+    { href: `/${locale}/admin/content`, label: "Website Teksten", icon: Edit3 },
   ];
 
   return (

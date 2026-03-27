@@ -198,5 +198,13 @@
     "errorSurfaceArea": "Voer een geldige oppervlakte in.",
     "errorSubmit": "Er is iets misgegaan bij het verzenden van uw aanvraag.",
     "successSubmit": "Anvraag succesvol verzonden!"
+  },
+  "privacy": {
+    "title": "Privacybeleid",
+    "content": "<h2>1. Gegevensverzameling</h2>\n<p>Wanneer u een offerte aanvraagt via onze website, verzamelen we uw naam, e-mailadres, telefoonnummer en projectdetails. Deze gegevens zijn noodzakelijk om u een nauwkeurige offerte te kunnen bezorgen.</p>\n\n<h2>2. Gebruik van gegevens</h2>\n<p>Uw gegevens worden uitsluitend gebruikt voor communicatie over uw aanvraag en de uitvoering van eventuele werken. Wij verkopen uw gegevens nooit aan derden.</p>\n\n<h2>3. Bewaartermijn</h2>\n<p>Wij bewaren uw gegevens niet langer dan nodig is voor de doeleinden waarvoor ze zijn verzameld, tenzij er een wettelijke verplichting is om deze langer te bewaren.</p>\n\n<h2>4. Uw rechten</h2>\n<p>U heeft het recht om uw gegevens in te zien, te corrigeren of te laten verwijderen. Neem hiervoor contact met ons op via info@vanroey-kalei.be.</p>"
+  },
+  "terms": {
+    "title": "Algemene Voorwaarden",
+    "content": "<h2>1. Toepasselijkheid</h2>\n<p>Deze voorwaarden zijn van toepassing op alle offertes en overeenkomsten van Van Roey Kaleiwerken.</p>\n\n<h2>2. Offertes</h2>\n<p>Onze offertes zijn vrijblijvend en 30 dagen geldig, tenzij anders vermeld. Een overeenkomst komt pas tot stand na schriftelijke bevestiging.</p>\n\n<h2>3. Uitvoering</h2>\n<p>Wij voeren de werken uit naar best vermogen en volgens de regels van de kunst. De klant zorgt voor een vrije toegang tot de werf en de nodige nutsvoorzieningen (water/elektriciteit).</p>\n\n<h2>4. Betaling</h2>\n<p>Facturen zijn betaalbaar binnen 14 dagen na factuurdatum. Bij niet-tijdige betaling zijn verwijlinteresten verschuldigd.</p>"
   }
 }
