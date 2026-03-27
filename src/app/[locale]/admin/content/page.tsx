@@ -1,20 +1,20 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/components/auth/auth-provider";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Save, Globe, Info, User, Layout, Image as ImageIcon, Upload, Shield, FileText } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useParams } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { RichTextEditor } from "@/components/admin/content/rich-text-editor";
-
-type ContentTab = "hero" | "about" | "privacy" | "terms";
+import { Locale } from "@/lib/i18n-config";
+import { ContentHeader } from "@/components/admin/content/content-header";
+import { ContentTip } from "@/components/admin/content/content-tip";
+import { ContentTabs } from "@/components/admin/content/content-tabs";
+import { HeroSection } from "@/components/admin/content/hero-section";
+import { AboutSection } from "@/components/admin/content/about-section";
+import { LegalSection } from "@/components/admin/content/legal-section";
+import { Shield, FileText } from "lucide-react";
 
 interface ContentState {
   hero: { title1: string; title2: string; subtitle: string };
@@ -42,8 +42,7 @@ export default function AdminContentPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [activeTab, setActiveTab] = useState<ContentTab>("hero");
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [activeTab, setActiveTab] = useState<keyof ContentState>("hero");
   
   const [content, setContent] = useState<ContentState>({
     hero: { title1: "", title2: "", subtitle: "" },
@@ -115,10 +114,7 @@ export default function AdminContentPage() {
     }
   };
 
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
+  const handleImageUpload = async (file: File) => {
     setUploading(true);
     try {
       const fileExt = file.name.split('.').pop();
@@ -149,10 +145,17 @@ export default function AdminContentPage() {
     }
   };
 
-  const updateField = (section: keyof ContentState, key: string, value: string) => {
+  const updateField = (section: keyof ContentState, field: string, value: string) => {
     setContent(prev => ({
       ...prev,
-      [section]: { ...prev[section], [key]: value }
+      [section]: { ...prev[section], [field]: value }
+    }));
+  };
+
+  const updateLegalField = (section: "privacy" | "terms", field: "title" | "content", value: string) => {
+    setContent(prev => ({
+      ...prev,
+      [section]: { ...prev[section], [field]: value }
     }));
   };
 
@@ -164,142 +167,55 @@ export default function AdminContentPage() {
     );
   }
 
-  const defaultAboutImage = "https://sjfosmcpbekkokmedwil.supabase.co/storage/v1/object/public/about%20us/Kaleiwerk-buitengevel-Pulle-Vincent-Van-Roey-Schilderwerken-3.jpg";
+  const renderActiveSection = () => {
+    switch (activeTab) {
+      case "hero":
+        return <HeroSection content={content.hero} onUpdate={(field, value) => updateField("hero", field, value)} />;
+      case "about":
+        return (
+          <AboutSection 
+            content={content.about} 
+            onUpdate={(field, value) => updateField("about", field, value)}
+            onImageUpload={handleImageUpload}
+            uploading={uploading}
+          />
+        );
+      case "privacy":
+        return (
+          <LegalSection
+            title={content.privacy.title}
+            content={content.privacy.content}
+            onUpdate={(field, value) => updateLegalField("privacy", field, value)}
+            icon={<Shield size={20} className="text-brand-bronze" />}
+            sectionTitle="Privacy Beleid"
+          />
+        );
+      case "terms":
+        return (
+          <LegalSection
+            title={content.terms.title}
+            content={content.terms.content}
+            onUpdate={(field, value) => updateLegalField("terms", field, value)}
+            icon={<FileText size={20} className="text-brand-bronze" />}
+            sectionTitle="Algemene Voorwaarden"
+          />
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="min-h-screen bg-brand-stone flex">
       <AdminSidebar />
 
       <main className="flex-1 p-12">
-        <header className="mb-8 flex justify-between items-end">
-          <div>
-            <h1 className="font-serif text-4xl mb-2">Website Content</h1>
-            <p className="text-brand-dark/60">Beheer de teksten voor: <span className="font-bold uppercase">{currentLocale}</span></p>
-          </div>
-          <Button onClick={handleSave} disabled={saving} className="bg-brand-dark text-white rounded-none px-8 py-6 uppercase text-xs tracking-widest hover:bg-brand-bronze transition-all duration-500">
-            {saving ? <Loader2 className="animate-spin mr-2" size={16} /> : <Save className="mr-2" size={16} />}
-            Wijzigingen Opslaan
-          </Button>
-        </header>
-
-        {/* Tip Section */}
-        <div className="mb-8 p-6 bg-brand-bronze/10 border border-brand-bronze/20 flex items-start gap-4">
-          <Info className="text-brand-bronze shrink-0 mt-0.5" size={20} />
-          <div>
-            <h4 className="font-bold text-brand-dark text-sm mb-1">Belangrijke Tip</h4>
-            <p className="text-xs text-brand-dark/70 leading-relaxed">
-              Velden die u leeg laat zullen automatisch de standaardtekst uit de taalbestanden gebruiken. 
-              U hoeft dus alleen de velden in te vullen die u daadwerkelijk wilt aanpassen.
-            </p>
-          </div>
-        </div>
-
-        {/* Tab Navigation */}
-        <div className="flex gap-4 mb-8 border-b border-brand-dark/5 pb-4">
-          <Button 
-            variant="ghost" 
-            onClick={() => setActiveTab("hero")}
-            className={cn(
-              "rounded-none uppercase text-[10px] tracking-widest px-6 py-4 h-auto border-b-2 transition-all",
-              activeTab === "hero" ? "border-brand-bronze text-brand-bronze bg-brand-bronze/5" : "border-transparent text-brand-dark/40 hover:text-brand-dark"
-            )}
-          >
-            <Layout size={14} className="mr-2" /> Home (Hero)
-          </Button>
-          <Button 
-            variant="ghost" 
-            onClick={() => setActiveTab("about")}
-            className={cn(
-              "rounded-none uppercase text-[10px] tracking-widest px-6 py-4 h-auto border-b-2 transition-all",
-              activeTab === "about" ? "border-brand-bronze text-brand-bronze bg-brand-bronze/5" : "border-transparent text-brand-dark/40 hover:text-brand-dark"
-            )}
-          >
-            <User size={14} className="mr-2" /> Over Ons
-          </Button>
-          <Button 
-            variant="ghost" 
-            onClick={() => setActiveTab("privacy")}
-            className={cn(
-              "rounded-none uppercase text-[10px] tracking-widest px-6 py-4 h-auto border-b-2 transition-all",
-              activeTab === "privacy" ? "border-brand-bronze text-brand-bronze bg-brand-bronze/5" : "border-transparent text-brand-dark/40 hover:text-brand-dark"
-            )}
-          >
-            <Shield size={14} className="mr-2" /> Privacy Beleid
-          </Button>
-          <Button 
-            variant="ghost" 
-            onClick={() => setActiveTab("terms")}
-            className={cn(
-              "rounded-none uppercase text-[10px] tracking-widest px-6 py-4 h-auto border-b-2 transition-all",
-              activeTab === "terms" ? "border-brand-bronze text-brand-bronze bg-brand-bronze/5" : "border-transparent text-brand-dark/40 hover:text-brand-dark"
-            )}
-          >
-            <FileText size={14} className="mr-2" /> Algemene Voorwaarden
-          </Button>
-        </div>
-
+        <ContentHeader locale={currentLocale} onSave={handleSave} saving={saving} />
+        <ContentTip />
+        <ContentTabs activeTab={activeTab} onTabChange={setActiveTab} />
+        
         <div className="max-w-4xl pb-24">
-          {/* Privacy Policy Section */}
-          {activeTab === "privacy" && (
-            <section className="bg-white p-8 border border-brand-dark/5 shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-500">
-              <div className="flex items-center gap-3 mb-8 border-b border-brand-dark/5 pb-4">
-                <Shield size={20} className="text-brand-bronze" />
-                <h2 className="font-serif text-2xl">Privacy Beleid</h2>
-              </div>
-
-              <div className="space-y-6">
-                <div className="space-y-2">
-                  <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Pagina Titel</Label>
-                  <Input 
-                    value={content.privacy.title} 
-                    onChange={(e) => updateField("privacy", "title", e.target.value)}
-                    className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze"
-                    placeholder="Privacybeleid"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Privacy Beleid Inhoud</Label>
-                  <RichTextEditor
-                    value={content.privacy.content}
-                    onChange={(value) => updateField("privacy", "content", value)}
-                    placeholder="Typ hier uw privacy beleid..."
-                    className="min-h-[400px]"
-                  />
-                </div>
-              </div>
-            </section>
-          )}
-
-          {/* Terms & Conditions Section */}
-          {activeTab === "terms" && (
-            <section className="bg-white p-8 border border-brand-dark/5 shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-500">
-              <div className="flex items-center gap-3 mb-8 border-b border-brand-dark/5 pb-4">
-                <FileText size={20} className="text-brand-bronze" />
-                <h2 className="font-serif text-2xl">Algemene Voorwaarden</h2>
-              </div>
-
-              <div className="space-y-6">
-                <div className="space-y-2">
-                  <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Pagina Titel</Label>
-                  <Input 
-                    value={content.terms.title} 
-                    onChange={(e) => updateField("terms", "title", e.target.value)}
-                    className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze"
-                    placeholder="Algemene Voorwaarden"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Algemene Voorwaarden Inhoud</Label>
-                  <RichTextEditor
-                    value={content.terms.content}
-                    onChange={(value) => updateField("terms", "content", value)}
-                    placeholder="Typ hier uw algemene voorwaarden..."
-                    className="min-h-[400px]"
-                  />
-                </div>
-              </div>
-            </section>
-          )}
+          {renderActiveSection()}
         </div>
       </main>
     </div>
