@@ -1,74 +1,40 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { motion, AnimatePresence } from "framer-motion";
-import { Check, ChevronLeft, Loader2, ArrowRight, Home, Building, Wrench, Paintbrush } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
+import { Check, Loader2, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 const formSchema = z.object({
-  projectType: z.enum(["gevel", "binnen", "totaal", "renovatie"]),
-  surfaceType: z.enum(["baksteen", "crepi", "onbekend"]),
-  timing: z.enum(["asap", "1-3_maanden", "later"]),
   name: z.string().min(2, "Naam is te kort"),
   email: z.string().email("Ongeldig emailadres"),
   phone: z.string().min(9, "Ongeldig telefoonnummer"),
   postalCode: z.string().min(4, "Ongeldige postcode"),
   city: z.string().optional(),
-  comment: z.string().optional(), // Added comment field
+  comment: z.string().min(5, "Beschrijf a.u.b. kort uw project"),
 });
 
 export type FormValues = z.infer<typeof formSchema>;
 
-const projectTypeIcons = {
-  gevel: Home,
-  binnen: Building,
-  totaal: Paintbrush,
-  renovatie: Wrench,
-};
-
 interface QuoteWizardProps {
-  onFormChange?: (data: FormValues, currentStep: number) => void;
   dict: any;
 }
 
-export const QuoteWizard = ({ onFormChange, dict }: QuoteWizardProps) => {
-  const [step, setStep] = useState(1);
+export const QuoteWizard = ({ dict }: QuoteWizardProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const lastSyncedRef = useRef<string>("");
 
-  const { register, handleSubmit, formState: { errors }, watch, setValue, getValues } = useForm<FormValues>({
+  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      projectType: "gevel",
-      surfaceType: "baksteen",
-      timing: "1-3_maanden",
-    }
   });
-
-  const formValues = watch();
-
-  // Sync form state with parent, but only if something actually changed
-  // to prevent infinite re-render loops
-  useEffect(() => {
-    if (onFormChange) {
-      const currentDataStr = JSON.stringify({ data: formValues, step });
-      if (currentDataStr !== lastSyncedRef.current) {
-        lastSyncedRef.current = currentDataStr;
-        onFormChange(formValues, step);
-      }
-    }
-  }, [formValues, step, onFormChange]);
 
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
@@ -76,15 +42,15 @@ export const QuoteWizard = ({ onFormChange, dict }: QuoteWizardProps) => {
     const { error } = await supabase
       .from("leads")
       .insert({
-        project_type: data.projectType,
-        surface_type: data.surfaceType,
-        timing: data.timing,
         name: data.name,
         email: data.email,
         phone: data.phone,
         postal_code: data.postalCode,
         city: data.city || "",
-        comment: data.comment || "", // Added comment field
+        comment: data.comment,
+        project_type: "Algemene aanvraag", // Default value since we removed the selection
+        surface_type: "Onbekend",
+        timing: "Nader te bepalen"
       });
 
     if (error) {
@@ -95,9 +61,6 @@ export const QuoteWizard = ({ onFormChange, dict }: QuoteWizardProps) => {
     }
     setIsSubmitting(false);
   };
-
-  const nextStep = () => setStep(s => Math.min(s + 1, 3));
-  const prevStep = () => setStep(s => Math.max(s - 1, 1));
 
   if (isSuccess) {
     return (
@@ -123,157 +86,59 @@ export const QuoteWizard = ({ onFormChange, dict }: QuoteWizardProps) => {
 
   return (
     <div className="w-full h-full bg-white p-8 md:p-12 lg:p-16 shadow-2xl border border-brand-dark/5 relative flex flex-col">
-      <div className="absolute top-0 left-0 w-full h-[2px] bg-brand-stone">
-        <motion.div 
-            className="h-full bg-brand-bronze"
-            initial={{ width: "33%" }}
-            animate={{ width: `${(step / 3) * 100}%` }}
-            transition={{ duration: 0.5, ease: "easeInOut" }}
-        />
-      </div>
-
-      <div className="flex justify-between items-end mb-16 border-b border-brand-dark/5 pb-4">
+      <div className="flex justify-between items-end mb-12 border-b border-brand-dark/5 pb-4">
         <span className="font-serif text-3xl italic text-brand-dark">
-            {step === 1 ? dict.step1 : step === 2 ? dict.step2 : dict.step3}
+            Uw Aanvraag
         </span>
-        <span className="text-xs uppercase tracking-widest text-brand-dark/30 font-mono">0{step} / 03</span>
+        <span className="text-xs uppercase tracking-widest text-brand-dark/30 font-mono">Direct contact</span>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="flex-1 flex flex-col justify-between">
-        <AnimatePresence mode="wait">
-            
-          {step === 1 && (
-            <motion.div 
-                key="step1"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-8"
-            >
-              <h3 className="text-brand-dark/50 font-light text-lg mb-8">{dict.question1}</h3>
-              <div className="grid grid-cols-2 gap-6">
-                {['gevel', 'binnen', 'totaal', 'renovatie'].map((type) => {
-                    const Icon = projectTypeIcons[type as keyof typeof projectTypeIcons];
-                    return (
-                        <label key={type} className={cn(
-                            "cursor-pointer border p-8 hover:border-brand-bronze transition-all group relative overflow-hidden aspect-square flex flex-col justify-between",
-                            watch('projectType') === type ? 'border-brand-bronze bg-brand-stone/30' : 'border-brand-dark/10 bg-transparent'
-                        )}>
-                            <input type="radio" value={type} {...register('projectType')} className="sr-only" />
-                            <div className="w-10 h-10 rounded-full bg-brand-stone/50 flex items-center justify-center mb-auto border border-brand-dark/10 group-hover:border-brand-bronze group-hover:bg-brand-bronze/10 transition-all duration-500">
-                                <Icon className="w-5 h-5 text-brand-dark/60 group-hover:text-brand-bronze transition-colors" />
-                            </div>
-                            <div>
-                                <div className="relative z-10 capitalize font-serif text-2xl mb-2 group-hover:translate-x-1 transition-transform">
-                                    {dict.types[type]}
-                                </div>
-                            </div>
-                        </label>
-                    );
-                })}
-              </div>
-            </motion.div>
-          )}
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+        <div className="grid md:grid-cols-2 gap-8">
+            <div className="space-y-2">
+                <Label className="uppercase text-[10px] tracking-[0.2em] text-brand-dark/40 block">{dict.name}</Label>
+                <Input {...register('name')} className="border-0 border-b border-brand-dark/10 rounded-none px-0 py-4 text-xl font-serif focus-visible:ring-0 focus-visible:border-brand-bronze bg-transparent" placeholder="Uw volledige naam" />
+                {errors.name && <p className="text-red-500 text-[10px] uppercase">{errors.name.message}</p>}
+            </div>
+            <div className="space-y-2">
+                <Label className="uppercase text-[10px] tracking-[0.2em] text-brand-dark/40 block">{dict.phone}</Label>
+                <Input {...register('phone')} className="border-0 border-b border-brand-dark/10 rounded-none px-0 py-4 text-xl font-serif focus-visible:ring-0 focus-visible:border-brand-bronze bg-transparent" placeholder="0400 00 00 00" />
+                {errors.phone && <p className="text-red-500 text-[10px] uppercase">{errors.phone.message}</p>}
+            </div>
+        </div>
 
-          {step === 2 && (
-            <motion.div 
-                key="step2"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-12"
-            >
-              <div className="space-y-8">
-                <div className="group relative">
-                    <Label className="uppercase text-[10px] tracking-[0.2em] text-brand-dark/40 mb-4 block">{dict.surfaceType}</Label>
-                    <RadioGroup defaultValue="baksteen" onValueChange={(val) => setValue('surfaceType', val as any)} className="flex gap-8 border-b border-brand-dark/10 pb-6">
-                        {['baksteen', 'crepi', 'onbekend'].map((val) => (
-                            <div key={val} className="flex items-center space-x-3 cursor-pointer">
-                                <RadioGroupItem value={val} id={val} className="text-brand-bronze border-brand-dark/20 w-4 h-4" />
-                                <Label htmlFor={val} className="capitalize text-lg font-light text-brand-dark/60 cursor-pointer">{dict.surfaces[val]}</Label>
-                            </div>
-                        ))}
-                    </RadioGroup>
-                </div>
+        <div className="space-y-2">
+            <Label className="uppercase text-[10px] tracking-[0.2em] text-brand-dark/40 block">{dict.email}</Label>
+            <Input {...register('email')} className="border-0 border-b border-brand-dark/10 rounded-none px-0 py-4 text-xl font-serif focus-visible:ring-0 focus-visible:border-brand-bronze bg-transparent" placeholder="email@voorbeeld.be" />
+            {errors.email && <p className="text-red-500 text-[10px] uppercase">{errors.email.message}</p>}
+        </div>
 
-                <div className="group relative">
-                    <Label className="uppercase text-[10px] tracking-[0.2em] text-brand-dark/40 mb-3 block">{dict.timing}</Label>
-                    <select {...register('timing')} className="w-full border-b border-brand-dark/10 rounded-none py-4 bg-transparent text-2xl font-serif focus:outline-none focus:border-brand-bronze appearance-none cursor-pointer">
-                        <option value="asap">{dict.timings.asap}</option>
-                        <option value="1-3_maanden">{dict.timings['1-3_maanden']}</option>
-                        <option value="later">{dict.timings.later}</option>
-                    </select>
-                </div>
+        <div className="grid md:grid-cols-2 gap-8">
+            <div className="space-y-2">
+                <Label className="uppercase text-[10px] tracking-[0.2em] text-brand-dark/40 block">{dict.postalCode}</Label>
+                <Input {...register('postalCode')} className="border-0 border-b border-brand-dark/10 rounded-none px-0 py-4 text-xl font-serif focus-visible:ring-0 focus-visible:border-brand-bronze bg-transparent" placeholder="2000" />
+                {errors.postalCode && <p className="text-red-500 text-[10px] uppercase">{errors.postalCode.message}</p>}
+            </div>
+            <div className="space-y-2">
+                <Label className="uppercase text-[10px] tracking-[0.2em] text-brand-dark/40 block">{dict.city}</Label>
+                <Input {...register('city')} className="border-0 border-b border-brand-dark/10 rounded-none px-0 py-4 text-xl font-serif focus-visible:ring-0 focus-visible:border-brand-bronze bg-transparent" placeholder="Antwerpen" />
+            </div>
+        </div>
 
-                <div className="group relative">
-                    <Label className="uppercase text-[10px] tracking-[0.2em] text-brand-dark/40 mb-2 block">Opmerkingen</Label>
-                    <Textarea 
-                        {...register('comment')}
-                        placeholder="Heeft u specifieke wensen of opmerkingen voor dit project?"
-                        className="bg-white rounded-none border-brand-dark/10 min-h-[100px] focus-visible:ring-brand-bronze"
-                        rows={4}
-                    />
-                </div>
-              </div>
-            </motion.div>
-          )}
+        <div className="space-y-2">
+            <Label className="uppercase text-[10px] tracking-[0.2em] text-brand-dark/40 block">Projectomschrijving & Opmerkingen</Label>
+            <Textarea 
+                {...register('comment')}
+                placeholder="Vertel ons meer over uw project (bijv. oppervlakte, gewenste kleur, binnen of buiten...)"
+                className="bg-brand-stone/20 rounded-none border-brand-dark/10 min-h-[150px] focus-visible:ring-brand-bronze p-4 text-lg font-light"
+            />
+            {errors.comment && <p className="text-red-500 text-[10px] uppercase">{errors.comment.message}</p>}
+        </div>
 
-          {step === 3 && (
-            <motion.div 
-                key="step3"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-8"
-            >
-              <h3 className="text-brand-dark/50 font-light text-lg mb-8">{dict.question3}</h3>
-              <div className="grid gap-12">
-                <div className="grid md:grid-cols-2 gap-12">
-                    <div className="group relative">
-                        <Label className="uppercase text-[10px] tracking-[0.2em] text-brand-dark/40 mb-2 block">{dict.name}</Label>
-                        <Input {...register('name')} className="border-0 border-b border-brand-dark/10 rounded-none px-0 py-4 text-xl font-serif focus-visible:ring-0 focus-visible:border-brand-bronze bg-transparent" />
-                    </div>
-                    <div className="group relative">
-                        <Label className="uppercase text-[10px] tracking-[0.2em] text-brand-dark/40 mb-2 block">{dict.phone}</Label>
-                        <Input {...register('phone')} className="border-0 border-b border-brand-dark/10 rounded-none px-0 py-4 text-xl font-serif focus-visible:ring-0 focus-visible:border-brand-bronze bg-transparent" />
-                    </div>
-                </div>
-                <div className="group relative">
-                    <Label className="uppercase text-[10px] tracking-[0.2em] text-brand-dark/40 mb-2 block">{dict.email}</Label>
-                    <Input {...register('email')} className="border-0 border-b border-brand-dark/10 rounded-none px-0 py-4 text-xl font-serif focus-visible:ring-0 focus-visible:border-brand-bronze bg-transparent" />
-                </div>
-                <div className="grid md:grid-cols-2 gap-12">
-                    <div className="group relative">
-                        <Label className="uppercase text-[10px] tracking-[0.2em] text-brand-dark/40 mb-2 block">{dict.postalCode}</Label>
-                        <Input {...register('postalCode')} className="border-0 border-b border-brand-dark/10 rounded-none px-0 py-4 text-xl font-serif focus-visible:ring-0 focus-visible:border-brand-bronze bg-transparent" />
-                    </div>
-                    <div className="group relative">
-                        <Label className="uppercase text-[10px] tracking-[0.2em] text-brand-dark/40 mb-2 block">{dict.city}</Label>
-                        <Input {...register('city')} className="border-0 border-b border-brand-dark/10 rounded-none px-0 py-4 text-xl font-serif focus-visible:ring-0 focus-visible:border-brand-bronze bg-transparent" />
-                    </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
-
-        </AnimatePresence>
-        
-        <div className="flex justify-between items-center pt-16 mt-auto">
-            {step > 1 ? (
-                 <Button type="button" variant="ghost" onClick={prevStep} className="hover:bg-transparent text-brand-dark/40 hover:text-brand-dark px-0 uppercase text-[10px] tracking-widest">
-                 <ChevronLeft className="mr-2 w-3 h-3" /> {dict.prev}
-               </Button>
-            ) : <div/>}
-           
-           {step < 3 ? (
-             <Button type="button" onClick={nextStep} className="bg-brand-dark text-white rounded-none px-10 py-7 uppercase text-[10px] tracking-widest hover:bg-brand-bronze transition-all duration-500 group">
-               {dict.next} <ArrowRight className="ml-2 w-3 h-3 group-hover:translate-x-1 transition-transform" />
-             </Button>
-           ) : (
-            <Button type="submit" disabled={isSubmitting} className="bg-brand-bronze text-white rounded-none px-12 py-7 uppercase text-[10px] tracking-widest hover:bg-brand-dark transition-all duration-500 shadow-xl group">
-            {isSubmitting ? <><Loader2 className="mr-2 h-3 w-3 animate-spin" /> ...</> : <>{dict.submit} <ArrowRight className="ml-2 w-3 h-3 group-hover:translate-x-1 transition-transform" /></>}
-          </Button>
-           )}
+        <div className="pt-8">
+            <Button type="submit" disabled={isSubmitting} className="w-full bg-brand-dark text-white rounded-none py-8 uppercase text-xs tracking-[0.2em] hover:bg-brand-bronze transition-all duration-500 shadow-xl group">
+                {isSubmitting ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Bezig met verzenden...</> : <>{dict.submit} <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" /></>}
+            </Button>
         </div>
       </form>
     </div>
