@@ -5,17 +5,18 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
-import { Loader2, Save } from "lucide-react";
-import Link from "next/link";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { FormField, FormRow, FormSection } from "./form-fields";
 import { ImageUploadSection } from "./image-upload-section";
-import { PlanningSection } from "./planning-section";
 import { SpecificationsSection } from "./specifications-section";
-import { MessageSquare, ShieldCheck, Info } from "lucide-react";
+import { MessageSquare, ShieldCheck, Info, Loader2, Save } from "lucide-react";
+import Link from "next/link";
 
 export const projectSchema = z.object({
   title: z.string().min(2, "Titel is verplicht"),
@@ -30,9 +31,6 @@ export const projectSchema = z.object({
   finishing: z.string().optional(),
   pigment: z.string().optional(),
   team: z.string().optional(),
-  start_date: z.date().nullable().optional(),
-  end_date: z.date().nullable().optional(),
-  planning_status: z.enum(['pending', 'in_progress', 'completed', 'cancelled']),
   challenge_text: z.string().nullable().optional(),
   result_text: z.string().nullable().optional(),
   quote_text: z.string().nullable().optional(),
@@ -56,9 +54,6 @@ export interface InitialProjectData {
     pigment?: string;
     team?: string;
   };
-  start_date?: string | null;
-  end_date?: string | null;
-  planning_status?: 'pending' | 'in_progress' | 'completed' | 'cancelled';
   challenge_text?: string | null;
   result_text?: string | null;
   quote_text?: string | null;
@@ -88,9 +83,6 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
       finishing: initialData?.stats?.finishing ?? "Hydrofuge",
       pigment: initialData?.stats?.pigment ?? "Mineraal",
       team: initialData?.stats?.team ?? "Vast team (2)",
-      start_date: initialData?.start_date ? new Date(initialData.start_date) : null,
-      end_date: initialData?.end_date ? new Date(initialData.end_date) : null,
-      planning_status: initialData?.planning_status ?? 'pending',
       challenge_text: initialData?.challenge_text ?? "",
       result_text: initialData?.result_text ?? "",
       quote_text: initialData?.quote_text ?? "",
@@ -147,9 +139,6 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
       image_url: data.image_url || (data.images.length > 0 ? data.images[0] : null),
       user_id: user.id,
       stats: stats,
-      start_date: data.start_date ? format(data.start_date, 'yyyy-MM-dd') : null,
-      end_date: data.end_date ? format(data.end_date, 'yyyy-MM-dd') : null,
-      planning_status: data.planning_status,
       challenge_text: data.challenge_text,
       result_text: data.result_text,
       quote_text: data.quote_text,
@@ -186,58 +175,42 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-12">
       <div className="grid md:grid-cols-2 gap-12">
         <div className="space-y-6">
-          <FormField 
-            name="title" 
-            label="Project Titel" 
-            placeholder="Bijv. Villa Berchem"
-            register={register} 
-            errors={errors}
-            className="text-xl font-serif"
-          />
+          <div className="space-y-2">
+            <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Project Titel</Label>
+            <Input {...register("title")} className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze text-xl font-serif" placeholder="Bijv. Villa Berchem" />
+            {errors.title && <p className="text-red-500 text-xs">{errors.title.message}</p>}
+          </div>
           
-          <FormRow>
-            <FormField 
-              name="category" 
-              label="Categorie" 
-              placeholder="Bijv. Gevelrenovatie"
-              register={register} 
-              errors={errors}
-            />
-            <FormField 
-              name="year" 
-              label="Jaar" 
-              placeholder="2024"
-              register={register} 
-              errors={errors}
-            />
-          </FormRow>
+          <div className="grid grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Categorie</Label>
+              <Input {...register("category")} className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze" placeholder="Bijv. Gevelrenovatie" />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Jaar</Label>
+              <Input {...register("year")} className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze" placeholder="2024" />
+            </div>
+          </div>
 
-          <FormField 
-            name="location" 
-            label="Locatie" 
-            placeholder="Bijv. Antwerpen"
-            register={register} 
-            errors={errors}
-          />
+          <div className="space-y-2">
+            <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Locatie</Label>
+            <Input {...register("location")} className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze" placeholder="Bijv. Antwerpen" />
+          </div>
         </div>
 
         <div className="space-y-6">
-          <FormField 
-            name="subtitle" 
-            label="Korte samenvatting" 
-            placeholder="Korte beschrijving voor de lijst"
-            register={register} 
-            errors={errors}
-          />
-          <FormField 
-            name="description" 
-            label="Uitgebreide beschrijving" 
-            placeholder="Beschrijf het project in detail..."
-            register={register} 
-            errors={errors}
-            type="textarea"
-            className="min-h-[200px]"
-          />
+          <div className="space-y-2">
+            <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Korte samenvatting</Label>
+            <Input {...register("subtitle")} className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze" placeholder="Korte beschrijving voor de lijst" />
+          </div>
+          <div className="space-y-2">
+            <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40 mb-2 block">Uitgebreide beschrijving</Label>
+            <Textarea 
+              {...register("description")}
+              className="bg-white rounded-none border-brand-dark/10 min-h-[200px] focus-visible:ring-brand-bronze"
+              placeholder="Beschrijf het project in detail..."
+            />
+          </div>
         </div>
       </div>
 
@@ -272,8 +245,6 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
           className="min-h-[80px]"
         />
       </FormSection>
-
-      <PlanningSection watch={watch} setValue={setValue} />
 
       <SpecificationsSection register={register} />
 
