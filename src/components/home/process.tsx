@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 export const Process = ({ dict }: { dict?: any }) => {
   const steps = dict?.process?.steps || [
@@ -10,22 +11,42 @@ export const Process = ({ dict }: { dict?: any }) => {
     { title: "Oplevering", desc: "Een grondige check-up garandeert een perfect resultaat." }
   ];
 
+  const imageUrl = dict?.process?.imageUrl;
+
   return (
-    <section className="py-32 bg-brand-dark text-brand-stone relative">
+    <section className="py-32 bg-brand-dark text-brand-stone relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-[1px] bg-white/10"></div>
         
         <div className="container mx-auto px-6 md:px-12">
-            <div className="grid lg:grid-cols-12 gap-16">
-                <div className="lg:col-span-4">
+            <div className="grid lg:grid-cols-12 gap-16 items-start">
+                <div className="lg:col-span-4 lg:sticky lg:top-32">
                     <span className="uppercase text-xs tracking-[0.3em] text-brand-bronze font-medium mb-6 block">
                         {dict?.process?.subtitle || "Werkwijze"}
                     </span>
                     <h2 className="font-serif text-5xl md:text-6xl mb-8 leading-tight">
                         {dict?.process?.title || "Transparant van begin tot eind."}
                     </h2>
-                    <p className="text-brand-stone/60 max-w-sm font-light leading-relaxed">
+                    <p className="text-brand-stone/60 max-w-sm font-light leading-relaxed mb-12">
                         {dict?.process?.desc || "Wij geloven in duidelijke communicatie en een strakke planning. Zo weet u altijd waar u aan toe bent."}
                     </p>
+
+                    {imageUrl && (
+                        <motion.div 
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+                            className="relative aspect-[4/5] w-full bg-white/5 overflow-hidden hidden lg:block"
+                        >
+                            <Image 
+                                src={imageUrl} 
+                                alt="Werkwijze" 
+                                fill 
+                                className="object-cover grayscale hover:grayscale-0 transition-all duration-1000"
+                                unoptimized
+                            />
+                        </motion.div>
+                    )}
                 </div>
 
                 <div className="lg:col-span-8 grid sm:grid-cols-2 gap-x-12 gap-y-16">
@@ -47,6 +68,20 @@ export const Process = ({ dict }: { dict?: any }) => {
                             </div>
                         </motion.div>
                     ))}
+
+                    {imageUrl && (
+                        <div className="col-span-full lg:hidden mt-8">
+                            <div className="relative aspect-video w-full bg-white/5 overflow-hidden">
+                                <Image 
+                                    src={imageUrl} 
+                                    alt="Werkwijze" 
+                                    fill 
+                                    className="object-cover grayscale"
+                                    unoptimized
+                                />
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

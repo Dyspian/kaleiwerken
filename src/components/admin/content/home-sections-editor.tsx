@@ -1,18 +1,23 @@
 "use client";
 
+import { useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { LayoutGrid, CheckCircle2, Zap, ListChecks, ArrowLeftRight } from "lucide-react";
+import { LayoutGrid, CheckCircle2, Zap, ListChecks, ArrowLeftRight, Upload, Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2 } from "lucide-react";
 
 interface HomeSectionsEditorProps {
   content: any;
   onUpdate: (section: string, field: string, value: any) => void;
+  onImageUpload: (file: File, section: string) => Promise<void>;
+  uploading: boolean;
 }
 
-export const HomeSectionsEditor = ({ content, onUpdate }: HomeSectionsEditorProps) => {
+export const HomeSectionsEditor = ({ content, onUpdate, onImageUpload, uploading }: HomeSectionsEditorProps) => {
+  const processFileInputRef = useRef<HTMLInputElement>(null);
+
   // Helper to update arrays
   const updateArrayItem = (section: string, field: string, index: number, subfield: string, value: string) => {
     const newArray = [...(content[section][field] || [])];
@@ -32,6 +37,13 @@ export const HomeSectionsEditor = ({ content, onUpdate }: HomeSectionsEditorProp
   const removeArrayItem = (section: string, field: string, index: number) => {
     const newArray = [...(content[section][field] || [])].filter((_, i) => i !== index);
     onUpdate(section, field, newArray);
+  };
+
+  const handleProcessFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      await onImageUpload(file, "process");
+    }
   };
 
   return (
@@ -97,12 +109,54 @@ export const HomeSectionsEditor = ({ content, onUpdate }: HomeSectionsEditorProp
           <ListChecks size={20} className="text-brand-bronze" />
           <h2 className="font-serif text-2xl">Werkwijze (Stappenplan)</h2>
         </div>
-        <div className="grid gap-6 mb-8">
-          <div className="space-y-2">
-            <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Sectie Titel</Label>
-            <Input value={content.process?.title} onChange={(e) => onUpdate("process", "title", e.target.value)} className="rounded-none border-brand-dark/10" />
+        
+        <div className="grid md:grid-cols-2 gap-12 mb-12">
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Sectie Titel</Label>
+              <Input value={content.process?.title} onChange={(e) => onUpdate("process", "title", e.target.value)} className="rounded-none border-brand-dark/10" />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Sectie Beschrijving</Label>
+              <Textarea value={content.process?.desc} onChange={(e) => onUpdate("process", "desc", e.target.value)} className="rounded-none border-brand-dark/10 min-h-[100px]" />
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40 block mb-2">Sectie Foto</Label>
+            <div className="relative aspect-video bg-brand-stone border border-brand-dark/5 overflow-hidden group">
+              {content.process?.imageUrl ? (
+                <img src={content.process.imageUrl} alt="Werkwijze preview" className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-brand-dark/20 text-xs uppercase tracking-widest">Geen foto</div>
+              )}
+              <div className="absolute inset-0 bg-brand-dark/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={() => processFileInputRef.current?.click()}
+                  disabled={uploading}
+                  className="bg-white text-brand-dark border-none rounded-none uppercase text-[10px] tracking-widest"
+                >
+                  {uploading ? <Loader2 className="animate-spin mr-2" size={14} /> : <Upload className="mr-2" size={14} />}
+                  Foto Wijzigen
+                </Button>
+                {content.process?.imageUrl && (
+                  <Button 
+                    type="button" 
+                    variant="destructive" 
+                    onClick={() => onUpdate("process", "imageUrl", "")}
+                    className="rounded-none uppercase text-[10px] tracking-widest"
+                  >
+                    <X className="mr-2" size={14} /> Verwijderen
+                  </Button>
+                )}
+              </div>
+            </div>
+            <input type="file" ref={processFileInputRef} onChange={handleProcessFileChange} className="hidden" accept="image/*" />
           </div>
         </div>
+
         <div className="space-y-6">
           {content.process?.steps?.map((step: any, idx: number) => (
             <div key={idx} className="p-4 border border-brand-dark/5 bg-brand-stone/10 space-y-4">

@@ -35,7 +35,7 @@ const initialState: ContentState = {
   hero: { title1: "", title2: "", subtitle: "" },
   socialProof: { items: [] },
   features: { title: "", subtitle: "", items: [] },
-  process: { title: "", steps: [] },
+  process: { title: "", desc: "", imageUrl: "", steps: [] },
   beforeAfter: { tag: "", title: "", instruction: "" },
   about: { 
     tag: "", title: "", description: "", imageUrl: "",
@@ -134,7 +134,7 @@ export default function AdminContentPage() {
         ...prev,
         [targetSection]: { 
           ...prev[targetSection as keyof ContentState], 
-          [targetSection === "about" ? "imageUrl" : "heroImage"]: signedData.signedUrl 
+          [targetSection === "about" ? "imageUrl" : targetSection === "process" ? "imageUrl" : "heroImage"]: signedData.signedUrl 
         }
       }));
       toast.success("Afbeelding geüpload");
@@ -170,7 +170,14 @@ export default function AdminContentPage() {
       case "hero":
         return <HeroSection content={content.hero} onUpdate={(field, value) => updateField("hero", field, value)} />;
       case "home_sections":
-        return <HomeSectionsEditor content={content} onUpdate={updateField} />;
+        return (
+          <HomeSectionsEditor 
+            content={content} 
+            onUpdate={updateField} 
+            onImageUpload={(file, section) => handleImageUpload(file, section as keyof ContentState)}
+            uploading={uploading}
+          />
+        );
       case "about":
         return (
           <AboutSection 

@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Award, Upload, Loader2 } from "lucide-react";
+import { Award, Upload, Loader2, X } from "lucide-react";
 import { RichTextEditor } from "./rich-text-editor";
 
 interface CraftsmanshipSectionProps {
@@ -65,9 +65,9 @@ export const CraftsmanshipSection = ({ content, onUpdate, onImageUpload, uploadi
             {content.heroImage ? (
               <img src={content.heroImage} alt="Vakmanschap preview" className="w-full h-full object-cover" />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-brand-dark/20">Geen afbeelding</div>
+              <div className="w-full h-full flex items-center justify-center text-brand-dark/20 text-xs uppercase tracking-widest">Geen afbeelding</div>
             )}
-            <div className="absolute inset-0 bg-brand-dark/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+            <div className="absolute inset-0 bg-brand-dark/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
               <Button 
                 type="button" 
                 variant="outline" 
@@ -78,6 +78,16 @@ export const CraftsmanshipSection = ({ content, onUpdate, onImageUpload, uploadi
                 {uploading ? <Loader2 className="animate-spin mr-2" size={14} /> : <Upload className="mr-2" size={14} />}
                 Foto Wijzigen
               </Button>
+              {content.heroImage && (
+                <Button 
+                  type="button" 
+                  variant="destructive" 
+                  onClick={() => onUpdate("heroImage", "")}
+                  className="rounded-none uppercase text-[10px] tracking-widest"
+                >
+                  <X className="mr-2" size={14} /> Verwijderen
+                </Button>
+              )}
             </div>
           </div>
           <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*" />
