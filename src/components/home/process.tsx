@@ -3,8 +3,12 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 
-export const Process = ({ dict }: { dict?: any }) => {
-  const steps = dict?.process?.steps || [
+export const Process = ({ dict }: { dict: any }) => {
+  const title = dict?.title || "Transparant van begin tot eind.";
+  const subtitle = dict?.subtitle || "Werkwijze";
+  const desc = dict?.desc || "Wij geloven in duidelijke communicatie en een strakke planning. Zo weet u altijd waar u aan toe bent.";
+  
+  const steps = dict?.steps || [
     { title: "Opmeting", desc: "We komen ter plaatse voor een nauwkeurige analyse van de gevel." },
     { title: "Advies", desc: "Samen kiezen we de juiste techniek en kleur voor uw woning." },
     { title: "Uitvoering", desc: "Onze vakmannen brengen de kalei aan met oog voor elk detail." },
@@ -12,23 +16,23 @@ export const Process = ({ dict }: { dict?: any }) => {
   ];
 
   // Use CMS process image if available
-  const processImage = dict?.process?.imageUrl;
+  const processImage = dict?.imageUrl;
 
   return (
     <section className="py-32 bg-brand-dark text-brand-stone relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-[1px] bg-white/10"></div>
         
         <div className="container mx-auto px-6 md:px-12">
-            <div className="grid lg:grid-cols-12 gap-16 items-start">
+            <div className="grid lg:grid-cols-12 gap-24 items-start">
                 <div className="lg:col-span-4 lg:sticky lg:top-32">
                     <span className="uppercase text-xs tracking-[0.3em] text-brand-bronze font-medium mb-6 block">
-                        {dict?.process?.subtitle || "Werkwijze"}
+                        {subtitle}
                     </span>
                     <h2 className="font-serif text-5xl md:text-6xl mb-8 leading-tight">
-                        {dict?.process?.title || "Transparant van begin tot eind."}
+                        {title}
                     </h2>
                     <p className="text-brand-stone/60 max-w-sm font-light leading-relaxed mb-12">
-                        {dict?.process?.desc || "Wij geloven in duidelijke communicatie en een strakke planning. Zo weet u altijd waar u aan toe bent."}
+                        {desc}
                     </p>
 
                     {processImage && (
@@ -50,7 +54,7 @@ export const Process = ({ dict }: { dict?: any }) => {
                     )}
                 </div>
 
-                <div className="lg:col-span-8 grid sm:grid-cols-2 gap-x-12 gap-y-16">
+                <div className="lg:col-span-8 grid sm:grid-cols-2 gap-8">
                     {steps.map((s: any, i: number) => (
                         <motion.div 
                             key={i} 
