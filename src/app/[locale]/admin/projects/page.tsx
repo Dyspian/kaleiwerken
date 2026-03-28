@@ -58,6 +58,7 @@ export default function AdminProjectsPage() {
     isReordering,
     orderedProjects,
     hasChanges,
+    isSaving,
     toggleReordering,
     handleReorder,
     saveOrder,
@@ -251,6 +252,7 @@ export default function AdminProjectsPage() {
           onSaveOrder={handleSaveOrder}
           onResetOrder={resetOrder}
           hasChanges={hasChanges}
+          isSaving={isSaving}
         />
 
         {!isReordering && (

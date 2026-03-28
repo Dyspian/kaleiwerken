@@ -8,6 +8,7 @@ export const useProjectOrdering = <T extends { id: string; sort_order?: number }
   const [isReordering, setIsReordering] = useState(false);
   const [orderedProjects, setOrderedProjects] = useState<T[]>([]);
   const [hasChanges, setHasChanges] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (!isReordering) {
@@ -29,6 +30,7 @@ export const useProjectOrdering = <T extends { id: string; sort_order?: number }
   };
 
   const saveOrder = async () => {
+    setIsSaving(true);
     try {
       // Get current user for RLS policies
       const { data: { user } } = await supabase.auth.getUser();
@@ -36,19 +38,30 @@ export const useProjectOrdering = <T extends { id: string; sort_order?: number }
         throw new Error("Geen gebruiker gevonden");
       }
 
+      // Create updates for each project with sort_order
       const updates = orderedProjects.map((project, index) => ({
         id: project.id,
         sort_order: index,
         user_id: user.id // Required for RLS policies
       }));
 
-      const { error } = await supabase
-        .from('projects')
-        .upsert(updates, { onConflict: 'id' });
+      console.log("Saving project order updates:", updates);
 
-      if (error) {
-        console.error("Supabase error details:", error);
-        throw new Error(`Database error: ${error.message}`);
+      // Use a transaction-like approach with individual updates
+      // This is more reliable for RLS policies
+      for (const update of updates) {
+        const { error } = await supabase
+          .from('projects')
+          .update({ 
+            sort_order: update.sort_order,
+            user_id: update.user_id 
+          })
+          .eq('id', update.id);
+
+        if (error) {
+          console.error(`Error updating project ${update.id}:`, error);
+          throw new Error(`Fout bij updaten project ${update.id}: ${error.message}`);
+        }
       }
 
       toast.success("Volgorde succesvol opgeslagen!");
@@ -60,6 +73,8 @@ export const useProjectOrdering = <T extends { id: string; sort_order?: number }
       const errorMessage = error.message || "Onbekende fout bij opslaan";
       toast.error(`Fout bij opslaan volgorde: ${errorMessage}`);
       return false;
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -72,6 +87,7 @@ export const useProjectOrdering = <T extends { id: string; sort_order?: number }
     isReordering,
     orderedProjects,
     hasChanges,
+    isSaving,
     toggleReordering,
     handleReorder,
     saveOrder,
