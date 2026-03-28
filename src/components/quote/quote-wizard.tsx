@@ -39,27 +39,35 @@ export const QuoteWizard = ({ dict }: QuoteWizardProps) => {
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
     
-    const { error } = await supabase
-      .from("leads")
-      .insert({
-        name: data.name,
-        email: data.email,
-        phone: data.phone,
-        postal_code: data.postalCode,
-        city: data.city || "",
-        comment: data.comment,
-        project_type: "Algemene aanvraag", // Default value since we removed the selection
-        surface_type: "Onbekend",
-        timing: "Nader te bepalen"
-      });
+    try {
+      const { error } = await supabase
+        .from("leads")
+        .insert({
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+          postal_code: data.postalCode,
+          city: data.city || "",
+          comment: data.comment,
+          project_type: "Algemene aanvraag",
+          surface_type: "Onbekend",
+          timing: "Nader te bepalen",
+          status: "nieuw"
+        });
 
-    if (error) {
-      toast.error("Er is iets misgegaan bij het verzenden.");
-    } else {
-      setIsSuccess(true);
-      toast.success(dict.success);
+      if (error) {
+        console.error("Supabase error:", error);
+        toast.error("Er is iets misgegaan bij het verzenden.");
+      } else {
+        setIsSuccess(true);
+        toast.success(dict.success || "Bedankt!");
+      }
+    } catch (err) {
+      console.error("Submission error:", err);
+      toast.error("Er is een onverwachte fout opgetreden.");
+    } finally {
+      setIsSubmitting(false);
     }
-    setIsSubmitting(false);
   };
 
   if (isSuccess) {
