@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useState } from "react";
 
 interface RichTextEditorProps {
   value: string;
@@ -11,7 +11,6 @@ interface RichTextEditorProps {
 
 export const RichTextEditor = ({ value, onChange, placeholder, className = "" }: RichTextEditorProps) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const [isEditing, setIsEditing] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     onChange(e.target.value);
@@ -50,14 +49,21 @@ export const RichTextEditor = ({ value, onChange, placeholder, className = "" }:
         newCursorPos = start + 3 + (selectedText ? selectedText.length : 4);
         break;
       case 'link':
-        newText = value.substring(0, start) + `[${selectedText || 'link tekst'}](url)` + value.substring(end);
-        newCursorPos = start + 1 + (selectedText ? selectedText.length : 9);
+        const url = window.prompt("Voer de URL in (bijv. https://...):", "https://");
+        if (url === null) return; // Gebruiker heeft geannuleerd
+
+        const linkText = window.prompt("Voer de tekst voor de link in:", selectedText || "Klik hier");
+        if (linkText === null) return; // Gebruiker heeft geannuleerd
+
+        const markdownLink = `[${linkText}](${url})`;
+        newText = value.substring(0, start) + markdownLink + value.substring(end);
+        newCursorPos = start + markdownLink.length;
         break;
     }
     
     onChange(newText);
     
-    // Restore cursor position
+    // Herstel focus en cursor positie
     setTimeout(() => {
       if (textarea) {
         textarea.focus();
@@ -73,7 +79,7 @@ export const RichTextEditor = ({ value, onChange, placeholder, className = "" }:
       .replace(/\*\*(.*)\*\*/g, '<strong class="font-bold">$1</strong>')
       .replace(/\*(.*)\*/g, '<em class="italic">$1</em>')
       .replace(/^- (.*$)/gim, '<li class="ml-4 mb-1">$1</li>')
-      .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" class="text-brand-bronze hover:underline">$1</a>')
+      .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" class="text-brand-bronze hover:underline">$1</a>')
       .replace(/\n\n/g, '</p><p class="mb-4">')
       .replace(/\n/g, '<br>');
   };
@@ -126,13 +132,13 @@ export const RichTextEditor = ({ value, onChange, placeholder, className = "" }:
             type="button"
             onClick={() => insertTag('link')}
             className="px-3 py-1 text-xs border border-brand-dark/10 hover:bg-brand-bronze hover:text-white transition-colors"
-            title="Link"
+            title="Link invoegen"
           >
             Link
           </button>
         </div>
         
-        <div className="flex">
+        <div className="flex flex-col md:flex-row">
           <div className="flex-1">
             <textarea
               ref={textareaRef}
@@ -143,7 +149,7 @@ export const RichTextEditor = ({ value, onChange, placeholder, className = "" }:
             />
           </div>
           
-          <div className="w-px bg-brand-dark/10"></div>
+          <div className="w-px bg-brand-dark/10 hidden md:block"></div>
           
           <div className="flex-1 p-4 bg-brand-stone/20 overflow-y-auto min-h-[300px]">
             <div className="text-sm leading-relaxed prose prose-sm max-w-none">
