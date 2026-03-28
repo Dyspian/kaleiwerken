@@ -33,6 +33,10 @@ export const NavigationEditor = ({ content, onUpdate }: NavigationEditorProps) =
             <Input value={content.header?.about} onChange={(e) => updateSubfield("header", "about", e.target.value)} className="rounded-none border-brand-dark/10" />
           </div>
           <div className="space-y-2">
+            <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Vakmanschap</Label>
+            <Input value={content.header?.craftsmanship} onChange={(e) => updateSubfield("header", "craftsmanship", e.target.value)} className="rounded-none border-brand-dark/10" />
+          </div>
+          <div className="space-y-2">
             <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Realisaties</Label>
             <Input value={content.header?.projects} onChange={(e) => updateSubfield("header", "projects", e.target.value)} className="rounded-none border-brand-dark/10" />
           </div>

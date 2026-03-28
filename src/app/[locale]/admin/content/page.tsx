@@ -15,16 +15,18 @@ import { AboutSection } from "@/components/admin/content/about-section";
 import { LegalSection } from "@/components/admin/content/legal-section";
 import { HomeSectionsEditor } from "@/components/admin/content/home-sections-editor";
 import { NavigationEditor } from "@/components/admin/content/navigation-editor";
-import { Shield, FileText } from "lucide-react";
+import { CraftsmanshipSection } from "@/components/admin/content/craftsmanship-section";
+import { Shield, FileText, Award } from "lucide-react";
 
 interface ContentState {
   hero: any;
-  home_sections?: any; // Virtual section for UI
+  home_sections?: any;
   socialProof: any;
   features: any;
   process: any;
   beforeAfter: any;
   about: any;
+  craftsmanship: any;
   header: any;
   footer: any;
   projects: any;
@@ -42,7 +44,8 @@ const initialState: ContentState = {
     tag: "", title: "", description: "", imageUrl: "",
     personal: "", personalDesc: "", pigments: "", pigmentsDesc: "", protection: "", protectionDesc: ""
   },
-  header: { home: "", about: "", projects: "", quote: "" },
+  craftsmanship: { title: "", subtitle: "", heroImage: "", mainContent: "" },
+  header: { home: "", about: "", projects: "", quote: "", craftsmanship: "" },
   footer: { desc: "", contact: "", menu: "", socials: "" },
   projects: { tag: "", title: "", subtitle: "" },
   privacy: { title: "", content: "" },
@@ -78,7 +81,6 @@ export default function AdminContentPage() {
         console.error("Error fetching content:", error);
         toast.error("Fout bij ophalen content");
       } else if (data?.content) {
-        // Deep merge with initial state
         const merged = { ...initialState };
         Object.keys(initialState).forEach(key => {
           if (data.content[key]) {
@@ -114,11 +116,11 @@ export default function AdminContentPage() {
     }
   };
 
-  const handleImageUpload = async (file: File) => {
+  const handleImageUpload = async (file: File, targetSection: keyof ContentState = "about") => {
     setUploading(true);
     try {
       const fileExt = file.name.split('.').pop();
-      const fileName = `about-${currentLocale}-${Date.now()}.${fileExt}`;
+      const fileName = `${targetSection}-${currentLocale}-${Date.now()}.${fileExt}`;
       const filePath = `cms/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
@@ -135,7 +137,10 @@ export default function AdminContentPage() {
 
       setContent(prev => ({
         ...prev,
-        about: { ...prev.about, imageUrl: signedData.signedUrl }
+        [targetSection]: { 
+          ...prev[targetSection as keyof ContentState], 
+          [targetSection === "about" ? "imageUrl" : "heroImage"]: signedData.signedUrl 
+        }
       }));
       toast.success("Afbeelding geüpload");
     } catch (error: any) {
@@ -176,7 +181,16 @@ export default function AdminContentPage() {
           <AboutSection 
             content={content.about} 
             onUpdate={(field, value) => updateField("about", field, value)}
-            onImageUpload={handleImageUpload}
+            onImageUpload={(file) => handleImageUpload(file, "about")}
+            uploading={uploading}
+          />
+        );
+      case "craftsmanship":
+        return (
+          <CraftsmanshipSection
+            content={content.craftsmanship}
+            onUpdate={(field, value) => updateField("craftsmanship", field, value)}
+            onImageUpload={(file) => handleImageUpload(file, "craftsmanship")}
             uploading={uploading}
           />
         );

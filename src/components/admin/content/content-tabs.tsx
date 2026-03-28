@@ -2,9 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Layout, User, Shield, FileText, Home, Navigation } from "lucide-react";
+import { Layout, User, Shield, FileText, Home, Navigation, Award } from "lucide-react";
 
-export type ContentTab = "hero" | "home_sections" | "about" | "navigation" | "privacy" | "terms";
+export type ContentTab = "hero" | "home_sections" | "about" | "craftsmanship" | "navigation" | "privacy" | "terms";
 
 interface ContentTabsProps {
   activeTab: ContentTab;
@@ -16,6 +16,7 @@ export const ContentTabs = ({ activeTab, onTabChange }: ContentTabsProps) => {
     { id: "hero" as ContentTab, label: "Hero", icon: Layout },
     { id: "home_sections" as ContentTab, label: "Home Secties", icon: Home },
     { id: "about" as ContentTab, label: "Over Ons", icon: User },
+    { id: "craftsmanship" as ContentTab, label: "Vakmanschap", icon: Award },
     { id: "navigation" as ContentTab, label: "Navigatie & Footer", icon: Navigation },
     { id: "privacy" as ContentTab, label: "Privacy", icon: Shield },
     { id: "terms" as ContentTab, label: "Voorwaarden", icon: FileText },

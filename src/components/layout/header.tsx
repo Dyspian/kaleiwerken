@@ -29,6 +29,7 @@ export const Header = ({ dict }: { dict?: any }) => {
   const navLinks = [
     { href: `/${locale}`, label: dict?.header?.home || "Home" },
     { href: `/${locale}/over-ons`, label: dict?.header?.about || "Over Ons" },
+    { href: `/${locale}/ons-vakmanschap`, label: dict?.header?.craftsmanship || "Vakmanschap" },
     { href: `/${locale}/projecten`, label: dict?.header?.projects || "Realisaties" },
     { href: `/${locale}/offerte`, label: dict?.header?.quote || "Offerte", primary: true },
   ];
