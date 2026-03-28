@@ -14,9 +14,8 @@ import { HeroSection } from "@/components/admin/content/hero-section";
 import { AboutSection } from "@/components/admin/content/about-section";
 import { LegalSection } from "@/components/admin/content/legal-section";
 import { HomeSectionsEditor } from "@/components/admin/content/home-sections-editor";
-import { NavigationEditor } from "@/components/admin/content/navigation-editor";
 import { CraftsmanshipSection } from "@/components/admin/content/craftsmanship-section";
-import { Shield, FileText, Award } from "lucide-react";
+import { Shield, FileText } from "lucide-react";
 
 interface ContentState {
   hero: any;
@@ -27,8 +26,6 @@ interface ContentState {
   beforeAfter: any;
   about: any;
   craftsmanship: any;
-  header: any;
-  footer: any;
   projects: any;
   privacy: any;
   terms: any;
@@ -45,8 +42,6 @@ const initialState: ContentState = {
     personal: "", personalDesc: "", pigments: "", pigmentsDesc: "", protection: "", protectionDesc: ""
   },
   craftsmanship: { title: "", subtitle: "", heroImage: "", mainContent: "" },
-  header: { home: "", about: "", projects: "", quote: "", craftsmanship: "" },
-  footer: { desc: "", contact: "", menu: "", socials: "" },
   projects: { tag: "", title: "", subtitle: "" },
   privacy: { title: "", content: "" },
   terms: { title: "", content: "" }
@@ -194,8 +189,6 @@ export default function AdminContentPage() {
             uploading={uploading}
           />
         );
-      case "navigation":
-        return <NavigationEditor content={content} onUpdate={updateField} />;
       case "privacy":
         return (
           <LegalSection
