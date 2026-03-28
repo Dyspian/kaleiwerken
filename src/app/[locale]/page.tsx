@@ -16,12 +16,25 @@ import { Check } from "lucide-react";
 
 export default async function Home({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params;
-  const dict = await getDictionary(locale) as any;
+  
+  // Debug: log the locale and dictionary loading
+  console.log("Home page locale:", locale);
+  
+  let dict: any = {};
+  try {
+    dict = await getDictionary(locale) as any;
+    console.log("Dictionary loaded:", dict);
+  } catch (error) {
+    console.error("Error loading dictionary:", error);
+  }
 
   // Fallback to prevent crashes if dict is not fully loaded
-  const heroDict = dict?.hero || {};
-  const quoteDict = dict?.quote || {};
-  const commonDict = dict?.common || {};
+  const heroDict = dict?.hero || ({} as any);
+  const quoteDict = dict?.quote || ({} as any);
+  const commonDict = dict?.common || ({} as any);
+
+  console.log("Hero dict:", heroDict);
+  console.log("Quote dict:", quoteDict);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -77,7 +90,7 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
       
       <div className="bg-brand-stone">
         <BeforeAfter dict={dict} />
-        <Features dict={dict?.features} />
+        <Features dict={dict?.features || ({} as any)} />
         <Process dict={dict} />
 
         <section id="offerte" className="py-32 bg-brand-white relative overflow-hidden">

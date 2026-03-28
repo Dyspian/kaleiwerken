@@ -29,8 +29,17 @@ function deepMerge(target: any, source: any) {
 }
 
 export const getDictionary = async (locale: Locale) => {
+  console.log("getDictionary called with locale:", locale);
+  
   // Laad lokaal bestand
-  const localDict = await (dictionaries[locale]?.() ?? dictionaries.nl());
+  let localDict = {};
+  try {
+    localDict = await (dictionaries[locale]?.() ?? dictionaries.nl());
+    console.log("Local dictionary loaded:", localDict);
+  } catch (error) {
+    console.error("Error loading local dictionary:", error);
+    localDict = await dictionaries.nl(); // Fallback to Dutch
+  }
   
   try {
     // Haal database overrides op
@@ -40,14 +49,19 @@ export const getDictionary = async (locale: Locale) => {
       .eq('locale', locale)
       .maybeSingle();
 
+    console.log("Database content result:", { data, error });
+
     if (data?.content && !error) {
       // Voeg database content samen met lokale content, behoud defaults voor lege velden
       // We gebruiken een kloon van localDict om mutatie van de module te voorkomen
-      return deepMerge(JSON.parse(JSON.stringify(localDict)), data.content);
+      const merged = deepMerge(JSON.parse(JSON.stringify(localDict)), data.content);
+      console.log("Merged dictionary:", merged);
+      return merged;
     }
   } catch (e) {
     console.error("Error fetching dictionary from DB:", e);
   }
 
+  console.log("Returning local dictionary:", localDict);
   return localDict;
 };

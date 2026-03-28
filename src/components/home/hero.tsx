@@ -21,6 +21,14 @@ export const Hero = ({ dict }: { dict: any }) => {
     const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
     const scale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
 
+    // Debug: log the dict object
+    console.log("Hero component received dict:", dict);
+    console.log("Dict keys:", Object.keys(dict || {}));
+    console.log("Dict.hero:", dict?.hero);
+    console.log("Dict.title1:", dict?.title1);
+    console.log("Dict.title2:", dict?.title2);
+    console.log("Dict.subtitle:", dict?.subtitle);
+
     // Use default values if dict is empty or undefined
     const title1 = dict?.title1 || "Authentieke";
     const title2 = dict?.title2 || "Kaleiwerken.";
@@ -31,6 +39,8 @@ export const Hero = ({ dict }: { dict: any }) => {
 
     // Use CMS hero image if available, otherwise fallback to default
     const heroImage = dict?.heroImage || "https://sjfosmcpbekkokmedwil.supabase.co/storage/v1/object/public/hero/hero.jpeg";
+
+    console.log("Final hero values:", { title1, title2, subtitle, ctaPrimary, ctaSecondary, est });
 
     return (
         <section ref={containerRef} className="relative h-screen w-full flex items-center justify-center overflow-hidden">
