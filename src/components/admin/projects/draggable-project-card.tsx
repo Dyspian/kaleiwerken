@@ -24,7 +24,6 @@ interface Project {
   start_date?: string;
   end_date?: string;
   planning_status?: 'pending' | 'in_progress' | 'completed' | 'cancelled';
-  sort_order?: number;
 }
 
 interface DraggableProjectCardProps {

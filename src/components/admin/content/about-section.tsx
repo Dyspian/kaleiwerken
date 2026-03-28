@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { User, Image as ImageIcon, Upload, Loader2, X } from "lucide-react";
+import { User, Image as ImageIcon, Upload, Loader2 } from "lucide-react";
 
 interface AboutSectionProps {
   content: {
@@ -21,7 +21,7 @@ interface AboutSectionProps {
     protectionDesc: string;
   };
   onUpdate: (field: string, value: string) => void;
-  onImageUpload: (file: File) => Promise<string | null>;
+  onImageUpload: (file: File) => Promise<void>;
   uploading: boolean;
 }
 
@@ -80,7 +80,7 @@ export const AboutSection = ({ content, onUpdate, onImageUpload, uploading }: Ab
                 alt="Over ons preview" 
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-brand-dark/20 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
+              <div className="absolute inset-0 bg-brand-dark/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                 <Button 
                   type="button" 
                   variant="outline" 
@@ -91,19 +91,15 @@ export const AboutSection = ({ content, onUpdate, onImageUpload, uploading }: Ab
                   {uploading ? <Loader2 className="animate-spin mr-2" size={14} /> : <Upload className="mr-2" size={14} />}
                   Foto Wijzigen
                 </Button>
-                {content.imageUrl && (
-                  <Button 
-                    type="button" 
-                    variant="destructive" 
-                    onClick={() => onUpdate("imageUrl", "")}
-                    className="rounded-none uppercase text-[10px] tracking-widest"
-                  >
-                    <X className="mr-2" size={14} /> Verwijderen
-                  </Button>
-                )}
               </div>
             </div>
-            <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="hidden" />
+            <input 
+              type="file" 
+              ref={fileInputRef} 
+              onChange={handleFileChange} 
+              className="hidden" 
+              accept="image/*" 
+            />
           </div>
         </div>
 

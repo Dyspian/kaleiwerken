@@ -40,8 +40,7 @@
     "subtitle": "Al 10 jaar specialist in authentieke kaleiwerken voor binnen en buiten. Actief in heel België en internationaal. Een vast team van twee vakmensen voor een persoonlijke aanpak.",
     "ctaPrimary": "Vraag offerte aan",
     "ctaSecondary": "Bekijk realisaties",
-    "est": "Sinds 2015",
-    "heroImage": ""
+    "est": "Sinds 2015"
   },
   "socialProof": {
     "items": [
@@ -55,9 +54,7 @@
   "beforeAfter": {
     "tag": "Transformatie",
     "title": "Het verschil in detail",
-    "instruction": "Sleep om het resultaat te onthullen",
-    "beforeImage": "",
-    "afterImage": ""
+    "instruction": "Sleep om het resultaat te onthullen"
   },
   "features": {
     "title": "De kunst van kalei.",
@@ -93,8 +90,7 @@
     "pigments": "Eigen Pigmenten",
     "pigmentsDesc": "Geen standaardkleuren uit een pot. Wij mengen onze kalei zelf met minerale pigmenten voor een resultaat dat perfect past bij de lichtinval van uw woning.",
     "protection": "Duurzame Bescherming",
-    "protectionDesc": "Een gevel moet niet alleen mooi zijn, maar ook beschermd. Onze hydrofuge behandeling zorgt ervoor dat uw kalei jarenlang bestand is tegen weer en wind.",
-    "imageUrl": ""
+    "protectionDesc": "Een gevel moet niet alleen mooi zijn, maar ook beschermd. Onze hydrofuge behandeling zorgt ervoor dat uw kalei jarenlang bestand is tegen weer en wind."
   },
   "process": {
     "title": "Transparant van begin tot eind.",
@@ -105,8 +101,7 @@
       { "title": "Advies", "desc": "Samen kiezen we de juiste techniek en kleur voor uw woning." },
       { "title": "Uitvoering", "desc": "Onze vakmannen brengen de kalei aan met oog voor elk detail." },
       { "title": "Oplevering", "desc": "Een grondige check-up garandeert een perfect resultaat." }
-    ],
-    "imageUrl": ""
+    ]
   },
   "quote": {
     "title": "Klaar voor een nieuwe uitstraling?",

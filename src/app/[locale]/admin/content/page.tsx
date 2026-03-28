@@ -32,11 +32,11 @@ interface ContentState {
 }
 
 const initialState: ContentState = {
-  hero: { title1: "", title2: "", subtitle: "", heroImage: "" },
+  hero: { title1: "", title2: "", subtitle: "" },
   socialProof: { items: [] },
   features: { title: "", subtitle: "", items: [] },
   process: { title: "", desc: "", imageUrl: "", steps: [] },
-  beforeAfter: { tag: "", title: "", instruction: "", beforeImage: "", afterImage: "" },
+  beforeAfter: { tag: "", title: "", instruction: "" },
   about: { 
     tag: "", title: "", description: "", imageUrl: "",
     personal: "", personalDesc: "", pigments: "", pigmentsDesc: "", protection: "", protectionDesc: ""
@@ -111,7 +111,7 @@ export default function AdminContentPage() {
     }
   };
 
-  const handleImageUpload = async (file: File, targetSection: keyof ContentState = "about"): Promise<string | null> => {
+  const handleImageUpload = async (file: File, targetSection: keyof ContentState = "about") => {
     setUploading(true);
     try {
       const fileExt = file.name.split('.').pop();
@@ -130,28 +130,16 @@ export default function AdminContentPage() {
 
       if (signedError) throw signedError;
 
-      // Update the specific image field based on section
-      let imageField = "imageUrl";
-      if (targetSection === "hero") imageField = "heroImage";
-      if (targetSection === "beforeAfter") {
-        // For beforeAfter, we need to determine which image (before or after)
-        // This will be handled by the specific component
-        return signedData.signedUrl;
-      }
-      if (targetSection === "craftsmanship") imageField = "heroImage";
-
       setContent(prev => ({
         ...prev,
         [targetSection]: { 
           ...prev[targetSection as keyof ContentState], 
-          [imageField]: signedData.signedUrl 
+          [targetSection === "about" ? "imageUrl" : targetSection === "process" ? "imageUrl" : "heroImage"]: signedData.signedUrl 
         }
       }));
       toast.success("Afbeelding geüpload");
-      return signedData.signedUrl;
     } catch (error: any) {
       toast.error("Fout bij uploaden: " + error.message);
-      return null;
     } finally {
       setUploading(false);
     }
@@ -180,7 +168,7 @@ export default function AdminContentPage() {
   const renderActiveSection = () => {
     switch (activeTab) {
       case "hero":
-        return <HeroSection content={content.hero} onUpdate={(field, value) => updateField("hero", field, value)} onImageUpload={(file) => handleImageUpload(file, "hero")} uploading={uploading} />;
+        return <HeroSection content={content.hero} onUpdate={(field, value) => updateField("hero", field, value)} />;
       case "home_sections":
         return (
           <HomeSectionsEditor 

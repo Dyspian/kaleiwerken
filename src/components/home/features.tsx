@@ -6,24 +6,7 @@ import { motion } from "framer-motion";
 const icons = [ShieldCheck, Clock, Wind];
 
 export const Features = ({ dict }: { dict: any }) => {
-  // Use default values if dict is empty or undefined
-  const title = dict?.title || "De kunst van kalei.";
-  const subtitle = dict?.subtitle || "Een eeuwenoude techniek met moderne voordelen. De perfecte balans tussen esthetiek en functionaliteit.";
-  
-  const items = dict?.items || [
-    {
-      title: "Ademende bescherming",
-      desc: "Kalei geeft een authentieke look en laat muren ademen, wat vochtproblemen voorkomt."
-    },
-    {
-      title: "Minerale pigmenten", 
-      desc: "Wij mengen onze kleuren zelf met minerale pigmenten voor een unieke, natuurlijke uitstraling."
-    },
-    {
-      title: "Hydrofuge afwerking",
-      desc: "Optionele waterafstotende behandeling voor extra bescherming tegen vocht en vuil."
-    }
-  ];
+  if (!dict || !dict.title) return null;
 
   return (
     <section className="py-32 bg-brand-stone relative overflow-hidden">
@@ -32,17 +15,17 @@ export const Features = ({ dict }: { dict: any }) => {
       <div className="container mx-auto px-6 md:px-12 relative z-10">
         <div className="mb-24 md:flex justify-between items-end border-b border-brand-dark/10 pb-12">
             <h2 className="font-serif text-5xl md:text-7xl text-brand-dark max-w-xl leading-[0.9]">
-                {title.split(' ').map((word: string, i: number) => (
+                {dict.title.split(' ').map((word: string, i: number) => (
                     word.toLowerCase() === 'kalei.' ? <span key={i} className="italic text-brand-bronze"> {word}</span> : <span key={i}> {word}</span>
                 ))}
             </h2>
             <p className="text-brand-dark/60 mt-8 md:mt-0 max-w-sm text-sm leading-relaxed text-balance">
-                {subtitle}
+                {dict.subtitle}
             </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-12 lg:gap-24">
-          {items.map((benefit: any, idx: number) => {
+          {dict.items?.map((benefit: any, idx: number) => {
             const Icon = icons[idx] || ShieldCheck;
             return (
               <motion.div 
