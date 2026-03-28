@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useAuth } from "@/components/auth/auth-provider";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,10 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
+import { DraggableProjectCard } from "@/components/admin/projects/draggable-project-card";
+import { DragDropProvider } from "@/components/admin/projects/drag-drop-provider";
+import { ReorderControls } from "@/components/admin/projects/reorder-controls";
+import { useProjectOrdering } from "@/hooks/use-project-ordering";
 
 interface Project {
   id: string;
@@ -29,6 +33,7 @@ interface Project {
   start_date?: string;
   end_date?: string;
   planning_status?: 'pending' | 'in_progress' | 'completed' | 'cancelled';
+  sort_order?: number;
 }
 
 const PROJECTS_PER_PAGE = 9;
@@ -50,6 +55,17 @@ export default function AdminProjectsPage() {
   const [totalProjectsCount, setTotalProjectsCount] = useState(0);
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedProjects, setSelectedProjects] = useState<Set<string>>(new Set());
+
+  // Project ordering state
+  const {
+    isReordering,
+    orderedProjects,
+    hasChanges,
+    toggleReordering,
+    handleReorder,
+    saveOrder,
+    resetOrder
+  } = useProjectOrdering(projects);
 
   // Debounce logic: update searchQuery 300ms after typing stops
   useEffect(() => {
@@ -93,7 +109,12 @@ export default function AdminProjectsPage() {
       query = query.eq("category", filterCategory);
     }
 
-    query = query.order(sortBy, { ascending: sortOrder === 'asc' });
+    // When reordering, sort by sort_order instead of the selected sort option
+    if (isReordering) {
+      query = query.order('sort_order', { ascending: true });
+    } else {
+      query = query.order(sortBy, { ascending: sortOrder === 'asc' });
+    }
 
     const from = (currentPage - 1) * PROJECTS_PER_PAGE;
     const to = from + PROJECTS_PER_PAGE - 1;
@@ -118,8 +139,6 @@ export default function AdminProjectsPage() {
       setCategories(uniqueCategories);
     }
   };
-
-  const totalPages = Math.ceil(totalProjectsCount / PROJECTS_PER_PAGE);
 
   const deleteProject = async (id: string) => {
     if (!confirm("Weet je zeker dat je dit project wilt verwijderen?")) return;
@@ -185,6 +204,8 @@ export default function AdminProjectsPage() {
     setLoading(false);
   };
 
+  const totalPages = Math.ceil(totalProjectsCount / PROJECTS_PER_PAGE);
+
   if (authLoading || loading) {
     return (
       <div className="min-h-screen bg-brand-stone flex items-center justify-center">
@@ -209,6 +230,15 @@ export default function AdminProjectsPage() {
             </Link>
           </Button>
         </div>
+
+        {/* Reordering Controls */}
+        <ReorderControls
+          isReordering={isReordering}
+          onToggleReorder={toggleReordering}
+          onSaveOrder={saveOrder}
+          onResetOrder={resetOrder}
+          hasChanges={hasChanges}
+        />
 
         <div className="bg-white p-6 border border-brand-dark/5 shadow-sm mb-8 flex flex-wrap items-center gap-4">
           <div className="relative flex-1 min-w-[200px]">
@@ -258,7 +288,7 @@ export default function AdminProjectsPage() {
           </Button>
         </div>
 
-        {isAnySelected && (
+        {isAnySelected && !isReordering && (
           <div className="bg-white p-6 border border-brand-dark/5 shadow-sm mb-8 flex flex-wrap items-center gap-4">
             <span className="text-sm text-brand-dark/60">{selectedProjects.size} geselecteerd</span>
             <Button
@@ -272,64 +302,43 @@ export default function AdminProjectsPage() {
         )}
 
         <div className="grid gap-6">
-          {projects.length === 0 && !loading ? (
+          {orderedProjects.length === 0 && !loading ? (
             <div className="bg-white p-12 text-center border border-brand-dark/5">
               <p className="text-brand-dark/40 italic">Geen projecten gevonden.</p>
             </div>
           ) : (
             <>
-              <div className="bg-white p-4 border border-brand-dark/5 flex items-center gap-4">
-                <Checkbox
-                  checked={isAllSelected}
-                  onCheckedChange={(checked) => handleSelectAllProjects(!!checked)}
-                  className="border-brand-dark/20 data-[state=checked]:bg-brand-bronze data-[state=checked]:text-white"
-                />
-                <span className="text-xs uppercase tracking-widest text-brand-dark/40">Selecteer alles op deze pagina</span>
-              </div>
-
-              {projects.map((project) => (
-                <div key={project.id} className="bg-white p-6 border border-brand-dark/5 flex items-center justify-between group hover:shadow-md transition-shadow">
-                  <div className="flex items-center gap-6">
-                    <Checkbox
-                      checked={selectedProjects.has(project.id)}
-                      onCheckedChange={(checked) => handleSelectProject(project.id, !!checked)}
-                      className="border-brand-dark/20 data-[state=checked]:bg-brand-bronze data-[state=checked]:text-white"
-                    />
-                    <div className="w-20 h-20 bg-brand-stone flex items-center justify-center overflow-hidden">
-                      {project.image_url ? (
-                        <img src={project.image_url} alt={project.title} className="w-full h-full object-cover" />
-                      ) : (
-                        <span className="text-[10px] uppercase tracking-widest text-brand-dark/20">Geen foto</span>
-                      )}
-                    </div>
-                    <div>
-                      <h3 className="font-serif text-xl">{project.title}</h3>
-                      <p className="text-sm text-brand-dark/40">{project.category} — {project.year}</p>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-2">
-                    <Button variant="outline" size="icon" asChild className="rounded-none border-brand-dark/10 hover:bg-brand-stone">
-                      <Link href={`/projecten/${project.id}`} target="_blank">
-                        <ExternalLink size={16} />
-                      </Link>
-                    </Button>
-                    <Button variant="outline" size="icon" asChild className="rounded-none border-brand-dark/10 hover:bg-brand-stone">
-                      <Link href={`/admin/projects/${project.id}/edit`}>
-                        <Edit size={16} />
-                      </Link>
-                    </Button>
-                    <Button variant="outline" size="icon" onClick={() => deleteProject(project.id)} className="rounded-none border-brand-dark/10 hover:bg-red-50 hover:text-red-600">
-                      <Trash2 size={16} />
-                    </Button>
-                  </div>
+              {!isReordering && (
+                <div className="bg-white p-4 border border-brand-dark/5 flex items-center gap-4">
+                  <Checkbox
+                    checked={isAllSelected}
+                    onCheckedChange={(checked) => handleSelectAllProjects(!!checked)}
+                    className="border-brand-dark/20 data-[state=checked]:bg-brand-bronze data-[state=checked]:text-white"
+                  />
+                  <span className="text-xs uppercase tracking-widest text-brand-dark/40">Selecteer alles op deze pagina</span>
                 </div>
-              ))}
+              )}
+
+              <DragDropProvider items={orderedProjects.map(p => p.id)} onReorder={(newOrder) => {
+                const reorderedProjects = newOrder.map(id => orderedProjects.find(p => p.id === id)!);
+                handleReorder(reorderedProjects);
+              }}>
+                {orderedProjects.map((project) => (
+                  <DraggableProjectCard
+                    key={project.id}
+                    project={project}
+                    onEdit={() => {}} // Add edit functionality if needed
+                    onDelete={deleteProject}
+                    isSelected={selectedProjects.has(project.id)}
+                    onSelect={handleSelectProject}
+                  />
+                ))}
+              </DragDropProvider>
             </>
           )}
         </div>
 
-        {totalPages > 1 && (
+        {totalPages > 1 && !isReordering && (
           <div className="flex justify-center items-center gap-4 mt-12">
             <Button
               variant="outline"
