@@ -11,12 +11,13 @@ import { Plus, Trash2 } from "lucide-react";
 interface HomeSectionsEditorProps {
   content: any;
   onUpdate: (section: string, field: string, value: any) => void;
-  onImageUpload: (file: File, section: string) => Promise<void>;
+  onImageUpload: (file: File, section: string) => Promise<string | null>;
   uploading: boolean;
 }
 
 export const HomeSectionsEditor = ({ content, onUpdate, onImageUpload, uploading }: HomeSectionsEditorProps) => {
   const processFileInputRef = useRef<HTMLInputElement>(null);
+  const beforeAfterFileInputRef = useRef<HTMLInputElement>(null);
 
   // Helper to update arrays
   const updateArrayItem = (section: string, field: string, index: number, subfield: string, value: string) => {
@@ -43,6 +44,13 @@ export const HomeSectionsEditor = ({ content, onUpdate, onImageUpload, uploading
     const file = event.target.files?.[0];
     if (file) {
       await onImageUpload(file, "process");
+    }
+  };
+
+  const handleBeforeAfterFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      await onImageUpload(file, "beforeAfter");
     }
   };
 
@@ -185,6 +193,93 @@ export const HomeSectionsEditor = ({ content, onUpdate, onImageUpload, uploading
           <div className="space-y-2">
             <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Instructie tekst</Label>
             <Input value={content.beforeAfter?.instruction} onChange={(e) => onUpdate("beforeAfter", "instruction", e.target.value)} className="rounded-none border-brand-dark/10" />
+          </div>
+
+          {/* Before/After Images */}
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Voor Foto</Label>
+              <div className="relative aspect-[16/10] bg-brand-stone border border-brand-dark/5 overflow-hidden group">
+                {content.beforeAfter?.beforeImage ? (
+                  <img src={content.beforeAfter.beforeImage} alt="Voor foto" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-brand-dark/20 text-xs uppercase tracking-widest">Geen voor foto</div>
+                )}
+                <div className="absolute inset-0 bg-brand-dark/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={() => {
+                      const input = document.createElement('input');
+                      input.type = 'file';
+                      input.accept = 'image/*';
+                      input.onchange = (e) => {
+                        const file = (e.target as HTMLInputElement).files?.[0];
+                        if (file) onImageUpload(file, "beforeAfter");
+                      };
+                      input.click();
+                    }}
+                    disabled={uploading}
+                    className="bg-white text-brand-dark border-none rounded-none uppercase text-[10px] tracking-widest"
+                  >
+                    {uploading ? <Loader2 className="animate-spin mr-2" size={14} /> : <Upload className="mr-2" size={14} />}
+                    Foto Wijzigen
+                  </Button>
+                  {content.beforeAfter?.beforeImage && (
+                    <Button 
+                      type="button" 
+                      variant="destructive" 
+                      onClick={() => onUpdate("beforeAfter", "beforeImage", "")}
+                      className="rounded-none uppercase text-[10px] tracking-widest"
+                    >
+                      <X className="mr-2" size={14} /> Verwijderen
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Na Foto</Label>
+              <div className="relative aspect-[16/10] bg-brand-stone border border-brand-dark/5 overflow-hidden group">
+                {content.beforeAfter?.afterImage ? (
+                  <img src={content.beforeAfter.afterImage} alt="Na foto" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-brand-dark/20 text-xs uppercase tracking-widest">Geen na foto</div>
+                )}
+                <div className="absolute inset-0 bg-brand-dark/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={() => {
+                      const input = document.createElement('input');
+                      input.type = 'file';
+                      input.accept = 'image/*';
+                      input.onchange = (e) => {
+                        const file = (e.target as HTMLInputElement).files?.[0];
+                        if (file) onImageUpload(file, "beforeAfter");
+                      };
+                      input.click();
+                    }}
+                    disabled={uploading}
+                    className="bg-white text-brand-dark border-none rounded-none uppercase text-[10px] tracking-widest"
+                  >
+                    {uploading ? <Loader2 className="animate-spin mr-2" size={14} /> : <Upload className="mr-2" size={14} />}
+                    Foto Wijzigen
+                  </Button>
+                  {content.beforeAfter?.afterImage && (
+                    <Button 
+                      type="button" 
+                      variant="destructive" 
+                      onClick={() => onUpdate("beforeAfter", "afterImage", "")}
+                      className="rounded-none uppercase text-[10px] tracking-widest"
+                    >
+                      <X className="mr-2" size={14} /> Verwijderen
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

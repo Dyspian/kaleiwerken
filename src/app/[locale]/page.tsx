@@ -1,3 +1,5 @@
+"use client";
+
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { Hero } from "@/components/home/hero";
@@ -10,6 +12,7 @@ import { Toaster } from "@/components/ui/sonner";
 import Script from "next/script";
 import { getDictionary } from "@/lib/get-dictionary";
 import { Locale } from "@/lib/i18n-config";
+import { Check } from "lucide-react";
 
 export default async function Home({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params;
@@ -84,22 +87,29 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
                 <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-start">
                     <div className="lg:sticky lg:top-32">
                         <span className="uppercase text-xs tracking-[0.3em] text-brand-bronze font-medium mb-6 block">{commonDict.contact}</span>
-                        <h2 className="font-serif text-5xl md:text-7xl font-medium mb-8 leading-[0.9] text-brand-dark">
-                            {quoteDict.title}
+                        <h2 className="font-serif text-5xl md:text-7xl mb-8 leading-[0.9] text-brand-dark">
+                            Start uw <br/><span className="italic text-brand-bronze">project.</span>
                         </h2>
                         <p className="text-xl text-brand-dark/60 mb-12 max-w-md font-light leading-relaxed">
-                            {quoteDict.subtitle}
+                            Vul uw gegevens in en vertel ons kort wat uw wensen zijn. Wij analyseren uw aanvraag en nemen binnen 48u contact op voor een vrijblijvend adviesgesprek.
                         </p>
                         
-                        <div className="hidden lg:block space-y-6 pt-12 border-t border-brand-dark/5">
-                            <div>
-                                <h4 className="uppercase text-[10px] tracking-widest text-brand-dark/40 mb-2">{dict?.footer?.contact}</h4>
-                                <p className="font-serif text-2xl text-brand-dark">+32 470 12 34 56</p>
-                            </div>
-                            <div>
-                                <h4 className="uppercase text-[10px] tracking-widest text-brand-dark/40 mb-2">Email</h4>
-                                <p className="font-serif text-2xl text-brand-dark">info@vanroey-kalei.be</p>
-                            </div>
+                        <div className="space-y-6 pt-12 border-t border-brand-dark/10">
+                            <h3 className="uppercase text-[10px] tracking-widest text-brand-dark/40 mb-6">Waarom kiezen voor Van Roey?</h3>
+                            {[
+                                "Meer dan 10 jaar ervaring in kaleiwerken",
+                                "Gebruik van hoogwaardige, natuurlijke materialen",
+                                "Persoonlijke begeleiding van A tot Z",
+                                "Vrijblijvende offerte binnen 48 uur",
+                                "Eén aanspreekpunt tijdens de gehele uitvoering"
+                            ].map((item, idx) => (
+                                <div key={idx} className="flex items-start gap-4 group">
+                                    <div className="mt-1 min-w-[1.25rem] w-5 h-5 rounded-full border border-brand-dark/20 flex items-center justify-center group-hover:border-brand-bronze group-hover:bg-brand-bronze/10 transition-colors">
+                                        <Check className="w-3 h-3 text-brand-bronze opacity-0 group-hover:opacity-100 transition-opacity" strokeWidth={3} />
+                                    </div>
+                                    <span className="text-brand-dark/80 font-light leading-relaxed group-hover:text-brand-dark transition-colors">{item}</span>
+                                </div>
+                            ))}
                         </div>
                     </div>
                     

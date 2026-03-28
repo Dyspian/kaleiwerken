@@ -16,7 +16,7 @@ interface CraftsmanshipSectionProps {
     mainContent: string;
   };
   onUpdate: (field: string, value: string) => void;
-  onImageUpload: (file: File) => Promise<void>;
+  onImageUpload: (file: File) => Promise<string | null>;
   uploading: boolean;
 }
 

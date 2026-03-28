@@ -11,7 +11,8 @@ export const Process = ({ dict }: { dict?: any }) => {
     { title: "Oplevering", desc: "Een grondige check-up garandeert een perfect resultaat." }
   ];
 
-  const imageUrl = dict?.process?.imageUrl;
+  // Use CMS process image if available
+  const processImage = dict?.process?.imageUrl;
 
   return (
     <section className="py-32 bg-brand-dark text-brand-stone relative overflow-hidden">
@@ -30,7 +31,7 @@ export const Process = ({ dict }: { dict?: any }) => {
                         {dict?.process?.desc || "Wij geloven in duidelijke communicatie en een strakke planning. Zo weet u altijd waar u aan toe bent."}
                     </p>
 
-                    {imageUrl && (
+                    {processImage && (
                         <motion.div 
                             initial={{ opacity: 0, scale: 0.95 }}
                             whileInView={{ opacity: 1, scale: 1 }}
@@ -39,7 +40,7 @@ export const Process = ({ dict }: { dict?: any }) => {
                             className="relative aspect-[4/5] w-full bg-white/5 overflow-hidden hidden lg:block"
                         >
                             <Image 
-                                src={imageUrl} 
+                                src={processImage} 
                                 alt="Werkwijze" 
                                 fill 
                                 className="object-cover grayscale hover:grayscale-0 transition-all duration-1000"
@@ -69,11 +70,11 @@ export const Process = ({ dict }: { dict?: any }) => {
                         </motion.div>
                     ))}
 
-                    {imageUrl && (
+                    {processImage && (
                         <div className="col-span-full lg:hidden mt-8">
                             <div className="relative aspect-video w-full bg-white/5 overflow-hidden">
                                 <Image 
-                                    src={imageUrl} 
+                                    src={processImage} 
                                     alt="Werkwijze" 
                                     fill 
                                     className="object-cover grayscale"
