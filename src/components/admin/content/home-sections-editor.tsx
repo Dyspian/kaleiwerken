@@ -1,0 +1,139 @@
+"use client";
+
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { LayoutGrid, CheckCircle2, Zap, ListChecks, ArrowLeftRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Plus, Trash2 } from "lucide-react";
+
+interface HomeSectionsEditorProps {
+  content: any;
+  onUpdate: (section: string, field: string, value: any) => void;
+}
+
+export const HomeSectionsEditor = ({ content, onUpdate }: HomeSectionsEditorProps) => {
+  // Helper to update arrays
+  const updateArrayItem = (section: string, field: string, index: number, subfield: string, value: string) => {
+    const newArray = [...(content[section][field] || [])];
+    if (subfield) {
+      newArray[index] = { ...newArray[index], [subfield]: value };
+    } else {
+      newArray[index] = value;
+    }
+    onUpdate(section, field, newArray);
+  };
+
+  const addArrayItem = (section: string, field: string, defaultValue: any) => {
+    const newArray = [...(content[section][field] || []), defaultValue];
+    onUpdate(section, field, newArray);
+  };
+
+  const removeArrayItem = (section: string, field: string, index: number) => {
+    const newArray = [...(content[section][field] || [])].filter((_, i) => i !== index);
+    onUpdate(section, field, newArray);
+  };
+
+  return (
+    <div className="space-y-12 animate-in fade-in slide-in-from-bottom-2 duration-500">
+      {/* Social Proof */}
+      <section className="bg-white p-8 border border-brand-dark/5 shadow-sm">
+        <div className="flex items-center gap-3 mb-8 border-b border-brand-dark/5 pb-4">
+          <CheckCircle2 size={20} className="text-brand-bronze" />
+          <h2 className="font-serif text-2xl">Social Proof (Vinkjes)</h2>
+        </div>
+        <div className="space-y-4">
+          {content.socialProof?.items?.map((item: string, idx: number) => (
+            <div key={idx} className="flex gap-2">
+              <Input 
+                value={item} 
+                onChange={(e) => updateArrayItem("socialProof", "items", idx, "", e.target.value)}
+                className="rounded-none border-brand-dark/10"
+              />
+              <Button variant="outline" size="icon" onClick={() => removeArrayItem("socialProof", "items", idx)} className="shrink-0 rounded-none">
+                <Trash2 size={14} />
+              </Button>
+            </div>
+          ))}
+          <Button variant="outline" onClick={() => addArrayItem("socialProof", "items", "Nieuw item")} className="w-full rounded-none border-dashed">
+            <Plus size={14} className="mr-2" /> Item toevoegen
+          </Button>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="bg-white p-8 border border-brand-dark/5 shadow-sm">
+        <div className="flex items-center gap-3 mb-8 border-b border-brand-dark/5 pb-4">
+          <Zap size={20} className="text-brand-bronze" />
+          <h2 className="font-serif text-2xl">Features (De kunst van...)</h2>
+        </div>
+        <div className="grid gap-6 mb-8">
+          <div className="space-y-2">
+            <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Sectie Titel</Label>
+            <Input value={content.features?.title} onChange={(e) => onUpdate("features", "title", e.target.value)} className="rounded-none border-brand-dark/10" />
+          </div>
+          <div className="space-y-2">
+            <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Sectie Subtitel</Label>
+            <Textarea value={content.features?.subtitle} onChange={(e) => onUpdate("features", "subtitle", e.target.value)} className="rounded-none border-brand-dark/10" />
+          </div>
+        </div>
+        <div className="space-y-6">
+          {content.features?.items?.map((item: any, idx: number) => (
+            <div key={idx} className="p-4 border border-brand-dark/5 bg-brand-stone/10 space-y-4">
+              <div className="flex justify-between items-center">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-brand-bronze">Feature {idx + 1}</span>
+                <Button variant="ghost" size="sm" onClick={() => removeArrayItem("features", "items", idx)} className="h-6 text-red-500">Verwijder</Button>
+              </div>
+              <Input value={item.title} onChange={(e) => updateArrayItem("features", "items", idx, "title", e.target.value)} placeholder="Titel" className="rounded-none border-brand-dark/10" />
+              <Textarea value={item.desc} onChange={(e) => updateArrayItem("features", "items", idx, "desc", e.target.value)} placeholder="Beschrijving" className="rounded-none border-brand-dark/10 text-xs" />
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Process */}
+      <section className="bg-white p-8 border border-brand-dark/5 shadow-sm">
+        <div className="flex items-center gap-3 mb-8 border-b border-brand-dark/5 pb-4">
+          <ListChecks size={20} className="text-brand-bronze" />
+          <h2 className="font-serif text-2xl">Werkwijze (Stappenplan)</h2>
+        </div>
+        <div className="grid gap-6 mb-8">
+          <div className="space-y-2">
+            <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Sectie Titel</Label>
+            <Input value={content.process?.title} onChange={(e) => onUpdate("process", "title", e.target.value)} className="rounded-none border-brand-dark/10" />
+          </div>
+        </div>
+        <div className="space-y-6">
+          {content.process?.steps?.map((step: any, idx: number) => (
+            <div key={idx} className="p-4 border border-brand-dark/5 bg-brand-stone/10 space-y-4">
+              <Input value={step.title} onChange={(e) => updateArrayItem("process", "steps", idx, "title", e.target.value)} placeholder="Stap Titel" className="rounded-none border-brand-dark/10" />
+              <Textarea value={step.desc} onChange={(e) => updateArrayItem("process", "steps", idx, "desc", e.target.value)} placeholder="Stap Beschrijving" className="rounded-none border-brand-dark/10 text-xs" />
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Before/After */}
+      <section className="bg-white p-8 border border-brand-dark/5 shadow-sm">
+        <div className="flex items-center gap-3 mb-8 border-b border-brand-dark/5 pb-4">
+          <ArrowLeftRight size={20} className="text-brand-bronze" />
+          <h2 className="font-serif text-2xl">Voor / Na Sectie</h2>
+        </div>
+        <div className="grid gap-6">
+          <div className="space-y-2">
+            <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Kleine Tag</Label>
+            <Input value={content.beforeAfter?.tag} onChange={(e) => onUpdate("beforeAfter", "tag", e.target.value)} className="rounded-none border-brand-dark/10" />
+          </div>
+          <div className="space-y-2">
+            <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Titel</Label>
+            <Input value={content.beforeAfter?.title} onChange={(e) => onUpdate("beforeAfter", "title", e.target.value)} className="rounded-none border-brand-dark/10" />
+          </div>
+          <div className="space-y-2">
+            <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Instructie tekst</Label>
+            <Input value={content.beforeAfter?.instruction} onChange={(e) => onUpdate("beforeAfter", "instruction", e.target.value)} className="rounded-none border-brand-dark/10" />
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+};

@@ -9,44 +9,42 @@ import { toast } from "sonner";
 import { useParams } from "next/navigation";
 import { ContentHeader } from "@/components/admin/content/content-header";
 import { ContentTip } from "@/components/admin/content/content-tip";
-import { ContentTabs } from "@/components/admin/content/content-tabs";
+import { ContentTabs, ContentTab } from "@/components/admin/content/content-tabs";
 import { HeroSection } from "@/components/admin/content/hero-section";
 import { AboutSection } from "@/components/admin/content/about-section";
 import { LegalSection } from "@/components/admin/content/legal-section";
+import { HomeSectionsEditor } from "@/components/admin/content/home-sections-editor";
+import { NavigationEditor } from "@/components/admin/content/navigation-editor";
 import { Shield, FileText } from "lucide-react";
 
 interface ContentState {
-  hero: { title1: string; title2: string; subtitle: string };
-  about: { 
-    tag: string; 
-    title: string; 
-    description: string;
-    imageUrl: string;
-    personal: string;
-    personalDesc: string;
-    pigments: string;
-    pigmentsDesc: string;
-    protection: string;
-    protectionDesc: string;
-  };
-  privacy: { title: string; content: string };
-  terms: { title: string; content: string };
+  hero: any;
+  home_sections?: any; // Virtual section for UI
+  socialProof: any;
+  features: any;
+  process: any;
+  beforeAfter: any;
+  about: any;
+  header: any;
+  footer: any;
+  projects: any;
+  privacy: any;
+  terms: any;
 }
 
 const initialState: ContentState = {
   hero: { title1: "", title2: "", subtitle: "" },
+  socialProof: { items: [] },
+  features: { title: "", subtitle: "", items: [] },
+  process: { title: "", steps: [] },
+  beforeAfter: { tag: "", title: "", instruction: "" },
   about: { 
-    tag: "", 
-    title: "", 
-    description: "",
-    imageUrl: "",
-    personal: "",
-    personalDesc: "",
-    pigments: "",
-    pigmentsDesc: "",
-    protection: "",
-    protectionDesc: ""
+    tag: "", title: "", description: "", imageUrl: "",
+    personal: "", personalDesc: "", pigments: "", pigmentsDesc: "", protection: "", protectionDesc: ""
   },
+  header: { home: "", about: "", projects: "", quote: "" },
+  footer: { desc: "", contact: "", menu: "", socials: "" },
+  projects: { tag: "", title: "", subtitle: "" },
   privacy: { title: "", content: "" },
   terms: { title: "", content: "" }
 };
@@ -59,7 +57,7 @@ export default function AdminContentPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [activeTab, setActiveTab] = useState<keyof ContentState>("hero");
+  const [activeTab, setActiveTab] = useState<ContentTab>("hero");
   
   const [content, setContent] = useState<ContentState>(initialState);
 
@@ -78,19 +76,19 @@ export default function AdminContentPage() {
 
       if (error) {
         console.error("Error fetching content:", error);
-        toast.error("Fout bij ophalen content: " + error.message);
+        toast.error("Fout bij ophalen content");
       } else if (data?.content) {
-        // Merge fetched content with initial state to ensure all keys exist
-        setContent({
-          hero: { ...initialState.hero, ...(data.content.hero || {}) },
-          about: { ...initialState.about, ...(data.content.about || {}) },
-          privacy: { ...initialState.privacy, ...(data.content.privacy || {}) },
-          terms: { ...initialState.terms, ...(data.content.terms || {}) }
+        // Deep merge with initial state
+        const merged = { ...initialState };
+        Object.keys(initialState).forEach(key => {
+          if (data.content[key]) {
+            merged[key as keyof ContentState] = { ...initialState[key as keyof ContentState], ...data.content[key] };
+          }
         });
+        setContent(merged);
       }
     } catch (error: any) {
       console.error("Exception fetching content:", error);
-      toast.error("Fout bij ophalen content: " + error.message);
     } finally {
       setLoading(false);
     }
@@ -107,14 +105,9 @@ export default function AdminContentPage() {
           updated_at: new Date().toISOString()
         }, { onConflict: 'locale' });
 
-      if (error) {
-        console.error("Error saving content:", error);
-        throw error;
-      }
-
-      toast.success("Content succesvol bijgewerkt! Vernieuw de website om de wijzigingen te zien.");
+      if (error) throw error;
+      toast.success("Content succesvol bijgewerkt!");
     } catch (error: any) {
-      console.error("Exception saving content:", error);
       toast.error("Fout bij opslaan: " + error.message);
     } finally {
       setSaving(false);
@@ -152,18 +145,16 @@ export default function AdminContentPage() {
     }
   };
 
-  const updateField = (section: keyof ContentState, field: string, value: string) => {
-    setContent(prev => ({
-      ...prev,
-      [section]: { ...prev[section], [field]: value }
-    }));
-  };
-
-  const updateLegalField = (section: "privacy" | "terms", field: "title" | "content", value: string) => {
-    setContent(prev => ({
-      ...prev,
-      [section]: { ...prev[section], [field]: value }
-    }));
+  const updateField = (section: string, field: string, value: any) => {
+    setContent(prev => {
+      const s = section as keyof ContentState;
+      return {
+        ...prev,
+        [s]: typeof prev[s] === 'object' && prev[s] !== null && !Array.isArray(prev[s]) 
+          ? { ...prev[s], [field]: value }
+          : value
+      };
+    });
   };
 
   if (authLoading || loading) {
@@ -178,6 +169,8 @@ export default function AdminContentPage() {
     switch (activeTab) {
       case "hero":
         return <HeroSection content={content.hero} onUpdate={(field, value) => updateField("hero", field, value)} />;
+      case "home_sections":
+        return <HomeSectionsEditor content={content} onUpdate={updateField} />;
       case "about":
         return (
           <AboutSection 
@@ -187,12 +180,14 @@ export default function AdminContentPage() {
             uploading={uploading}
           />
         );
+      case "navigation":
+        return <NavigationEditor content={content} onUpdate={updateField} />;
       case "privacy":
         return (
           <LegalSection
             title={content.privacy?.title || ""}
             content={content.privacy?.content || ""}
-            onUpdate={(field, value) => updateLegalField("privacy", field, value)}
+            onUpdate={(field, value) => updateField("privacy", field, value)}
             icon={<Shield size={20} className="text-brand-bronze" />}
             sectionTitle="Privacy Beleid"
           />
@@ -202,7 +197,7 @@ export default function AdminContentPage() {
           <LegalSection
             title={content.terms?.title || ""}
             content={content.terms?.content || ""}
-            onUpdate={(field, value) => updateLegalField("terms", field, value)}
+            onUpdate={(field, value) => updateField("terms", field, value)}
             icon={<FileText size={20} className="text-brand-bronze" />}
             sectionTitle="Algemene Voorwaarden"
           />
@@ -215,12 +210,10 @@ export default function AdminContentPage() {
   return (
     <div className="min-h-screen bg-brand-stone flex">
       <AdminSidebar />
-
       <main className="flex-1 p-12">
         <ContentHeader locale={currentLocale} onSave={handleSave} saving={saving} />
         <ContentTip />
         <ContentTabs activeTab={activeTab} onTabChange={setActiveTab} />
-        
         <div className="max-w-4xl pb-24">
           {renderActiveSection()}
         </div>

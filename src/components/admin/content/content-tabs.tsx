@@ -2,9 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Layout, User, Shield, FileText } from "lucide-react";
+import { Layout, User, Shield, FileText, Home, Navigation } from "lucide-react";
 
-type ContentTab = "hero" | "about" | "privacy" | "terms";
+export type ContentTab = "hero" | "home_sections" | "about" | "navigation" | "privacy" | "terms";
 
 interface ContentTabsProps {
   activeTab: ContentTab;
@@ -13,27 +13,29 @@ interface ContentTabsProps {
 
 export const ContentTabs = ({ activeTab, onTabChange }: ContentTabsProps) => {
   const tabs = [
-    { id: "hero" as ContentTab, label: "Home (Hero)", icon: Layout },
+    { id: "hero" as ContentTab, label: "Hero", icon: Layout },
+    { id: "home_sections" as ContentTab, label: "Home Secties", icon: Home },
     { id: "about" as ContentTab, label: "Over Ons", icon: User },
-    { id: "privacy" as ContentTab, label: "Privacy Beleid", icon: Shield },
-    { id: "terms" as ContentTab, label: "Algemene Voorwaarden", icon: FileText },
+    { id: "navigation" as ContentTab, label: "Navigatie & Footer", icon: Navigation },
+    { id: "privacy" as ContentTab, label: "Privacy", icon: Shield },
+    { id: "terms" as ContentTab, label: "Voorwaarden", icon: FileText },
   ];
 
   return (
-    <div className="flex gap-4 mb-8 border-b border-brand-dark/5 pb-4">
+    <div className="flex flex-wrap gap-2 mb-8 border-b border-brand-dark/5 pb-4">
       {tabs.map((tab) => (
         <Button
           key={tab.id}
           variant="ghost"
           onClick={() => onTabChange(tab.id)}
           className={cn(
-            "rounded-none uppercase text-[10px] tracking-widest px-6 py-4 h-auto border-b-2 transition-all",
+            "rounded-none uppercase text-[9px] tracking-widest px-4 py-3 h-auto border-b-2 transition-all",
             activeTab === tab.id
               ? "border-brand-bronze text-brand-bronze bg-brand-bronze/5"
               : "border-transparent text-brand-dark/40 hover:text-brand-dark"
           )}
         >
-          <tab.icon size={14} className="mr-2" />
+          <tab.icon size={12} className="mr-2" />
           {tab.label}
         </Button>
       ))}
