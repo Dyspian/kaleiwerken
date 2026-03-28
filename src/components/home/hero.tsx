@@ -21,14 +21,6 @@ export const Hero = ({ dict }: { dict: any }) => {
     const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
     const scale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
 
-    // Debug: log the dict object
-    console.log("Hero component received dict:", dict);
-    console.log("Dict keys:", Object.keys(dict || {}));
-    console.log("Dict.hero:", dict?.hero);
-    console.log("Dict.title1:", dict?.title1);
-    console.log("Dict.title2:", dict?.title2);
-    console.log("Dict.subtitle:", dict?.subtitle);
-
     // Use default values if dict is empty or undefined
     const title1 = dict?.title1 || "Authentieke";
     const title2 = dict?.title2 || "Kaleiwerken.";
@@ -72,10 +64,10 @@ export const Hero = ({ dict }: { dict: any }) => {
                 >
                     <div className="flex items-center gap-3 mb-6 opacity-80">
                         <span className="h-[1px] w-8 bg-brand-white/60"></span>
-                        <span className="uppercase text-xs tracking-[0.25em] font-medium">{est}</span>
+                        <span className="uppercase text-xs tracking-[0.25em] font-medium text-white">{est}</span>
                     </div>
 
-                    <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl xl:text-9xl leading-[0.85] md:leading-[0.9] tracking-tight mb-8">
+                    <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl xl:text-9xl leading-[0.85] md:leading-[0.9] tracking-tight mb-8 text-white">
                         <span className="block overflow-hidden">
                             <motion.span 
                                 initial={{ y: "100%" }} 
