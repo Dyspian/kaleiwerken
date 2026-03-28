@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useAuth } from "@/components/auth/auth-provider";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -12,8 +12,6 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
-import { DraggableProjectList } from "@/components/admin/projects/draggable-project-list";
-import { EditProjectDialog } from "@/components/admin/projects/edit-project-dialog";
 
 interface Project {
   id: string;
@@ -31,7 +29,6 @@ interface Project {
   start_date?: string;
   end_date?: string;
   planning_status?: 'pending' | 'in_progress' | 'completed' | 'cancelled';
-  display_order?: number;
 }
 
 const PROJECTS_PER_PAGE = 9;
@@ -40,8 +37,6 @@ export default function AdminProjectsPage() {
   const { user, loading: authLoading } = useAuth();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
-  const [editingProject, setEditingProject] = useState<Project | null>(null);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   // Local input state for fluid typing
   const [inputValue, setInputValue] = useState("");
@@ -49,8 +44,8 @@ export default function AdminProjectsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   
   const [filterCategory, setFilterCategory] = useState<string | 'all'>('all');
-  const [sortBy, setSortBy] = useState<keyof Project>('display_order');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [sortBy, setSortBy] = useState<keyof Project>('created_at');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalProjectsCount, setTotalProjectsCount] = useState(0);
   const [categories, setCategories] = useState<string[]>([]);
@@ -124,6 +119,8 @@ export default function AdminProjectsPage() {
     }
   };
 
+  const totalPages = Math.ceil(totalProjectsCount / PROJECTS_PER_PAGE);
+
   const deleteProject = async (id: string) => {
     if (!confirm("Weet je zeker dat je dit project wilt verwijderen?")) return;
 
@@ -141,31 +138,6 @@ export default function AdminProjectsPage() {
         return newSet;
       });
       fetchCategories();
-    }
-  };
-
-  const handleEditProject = (project: Project) => {
-    setEditingProject(project);
-    setIsEditDialogOpen(true);
-  };
-
-  const handleSaveProject = async (updatedProject: Partial<Project>) => {
-    if (!editingProject) return;
-
-    try {
-      const { error } = await supabase
-        .from("projects")
-        .update(updatedProject)
-        .eq("id", editingProject.id);
-
-      if (error) throw error;
-
-      toast.success("Project bijgewerkt");
-      setIsEditDialogOpen(false);
-      setEditingProject(null);
-      fetchProjects(); // Refresh the list
-    } catch (error: any) {
-      toast.error("Fout bij opslaan: " + error.message);
     }
   };
 
@@ -212,35 +184,6 @@ export default function AdminProjectsPage() {
     }
     setLoading(false);
   };
-
-  const handleReorder = async (newProjects: Project[]) => {
-    setProjects(newProjects);
-    
-    try {
-      // Update display_order for all projects
-      const updates = newProjects.map((project, index) => ({
-        id: project.id,
-        display_order: index
-      }));
-
-      const { error } = await supabase
-        .from("projects")
-        .upsert(updates, { onConflict: 'id' });
-
-      if (error) {
-        throw error;
-      }
-
-      toast.success("Volgorde succesvol bijgewerkt");
-    } catch (error: any) {
-      console.error("Error updating project order:", error);
-      toast.error("Fout bij bijwerken volgorde: " + error.message);
-      // Revert to previous order on error
-      fetchProjects();
-    }
-  };
-
-  const totalPages = Math.ceil(totalProjectsCount / PROJECTS_PER_PAGE);
 
   if (authLoading || loading) {
     return (
@@ -299,7 +242,6 @@ export default function AdminProjectsPage() {
               <SelectValue placeholder="Sorteer op" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="display_order">Volgorde</SelectItem>
               <SelectItem value="created_at">Datum</SelectItem>
               <SelectItem value="title">Titel</SelectItem>
               <SelectItem value="year">Jaar</SelectItem>
@@ -329,7 +271,7 @@ export default function AdminProjectsPage() {
           </div>
         )}
 
-        <div className="space-y-6">
+        <div className="grid gap-6">
           {projects.length === 0 && !loading ? (
             <div className="bg-white p-12 text-center border border-brand-dark/5">
               <p className="text-brand-dark/40 italic">Geen projecten gevonden.</p>
@@ -345,14 +287,44 @@ export default function AdminProjectsPage() {
                 <span className="text-xs uppercase tracking-widest text-brand-dark/40">Selecteer alles op deze pagina</span>
               </div>
 
-              <DraggableProjectList
-                projects={projects}
-                onEdit={handleEditProject}
-                onDelete={deleteProject}
-                selectedProjects={selectedProjects}
-                onSelectProject={handleSelectProject}
-                onReorder={handleReorder}
-              />
+              {projects.map((project) => (
+                <div key={project.id} className="bg-white p-6 border border-brand-dark/5 flex items-center justify-between group hover:shadow-md transition-shadow">
+                  <div className="flex items-center gap-6">
+                    <Checkbox
+                      checked={selectedProjects.has(project.id)}
+                      onCheckedChange={(checked) => handleSelectProject(project.id, !!checked)}
+                      className="border-brand-dark/20 data-[state=checked]:bg-brand-bronze data-[state=checked]:text-white"
+                    />
+                    <div className="w-20 h-20 bg-brand-stone flex items-center justify-center overflow-hidden">
+                      {project.image_url ? (
+                        <img src={project.image_url} alt={project.title} className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="text-[10px] uppercase tracking-widest text-brand-dark/20">Geen foto</span>
+                      )}
+                    </div>
+                    <div>
+                      <h3 className="font-serif text-xl">{project.title}</h3>
+                      <p className="text-sm text-brand-dark/40">{project.category} — {project.year}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <Button variant="outline" size="icon" asChild className="rounded-none border-brand-dark/10 hover:bg-brand-stone">
+                      <Link href={`/projecten/${project.id}`} target="_blank">
+                        <ExternalLink size={16} />
+                      </Link>
+                    </Button>
+                    <Button variant="outline" size="icon" asChild className="rounded-none border-brand-dark/10 hover:bg-brand-stone">
+                      <Link href={`/admin/projects/${project.id}/edit`}>
+                        <Edit size={16} />
+                      </Link>
+                    </Button>
+                    <Button variant="outline" size="icon" onClick={() => deleteProject(project.id)} className="rounded-none border-brand-dark/10 hover:bg-red-50 hover:text-red-600">
+                      <Trash2 size={16} />
+                    </Button>
+                  </div>
+                </div>
+              ))}
             </>
           )}
         </div>
@@ -379,13 +351,6 @@ export default function AdminProjectsPage() {
           </div>
         )}
       </main>
-
-      <EditProjectDialog
-        project={editingProject}
-        isOpen={isEditDialogOpen}
-        onOpenChange={setIsEditDialogOpen}
-        onSave={handleSaveProject}
-      />
     </div>
   );
 }
