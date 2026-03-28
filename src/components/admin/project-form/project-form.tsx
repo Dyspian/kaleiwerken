@@ -29,8 +29,6 @@ export const projectSchema = z.object({
   image_url: z.string().nullable().optional(),
   technique: z.string().optional(),
   finishing: z.string().optional(),
-  pigment: z.string().optional(),
-  team: z.string().optional(),
   challenge_text: z.string().nullable().optional(),
   result_text: z.string().nullable().optional(),
   quote_text: z.string().nullable().optional(),
@@ -51,8 +49,6 @@ export interface InitialProjectData {
   stats?: {
     technique?: string;
     finishing?: string;
-    pigment?: string;
-    team?: string;
   };
   challenge_text?: string | null;
   result_text?: string | null;
@@ -81,8 +77,6 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
       image_url: initialData?.image_url ?? null,
       technique: initialData?.stats?.technique ?? "Kalei op maat",
       finishing: initialData?.stats?.finishing ?? "Hydrofuge",
-      pigment: initialData?.stats?.pigment ?? "Mineraal",
-      team: initialData?.stats?.team ?? "Vast team (2)",
       challenge_text: initialData?.challenge_text ?? "",
       result_text: initialData?.result_text ?? "",
       quote_text: initialData?.quote_text ?? "",
@@ -124,8 +118,6 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
     const stats = {
       technique: data.technique,
       finishing: data.finishing,
-      pigment: data.pigment,
-      team: data.team,
     };
 
     const projectData = {

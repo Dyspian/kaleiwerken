@@ -47,8 +47,6 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
   const stats = project.stats || {};
   const technique = stats.technique || "Kalei op maat";
   const finishing = stats.finishing || "Hydrofuge";
-  const pigment = stats.pigment || "Mineraal";
-  const team = stats.team || "Vast team (2)";
 
   // Fallback texts if not provided in DB
   const challengeText = project.challenge_text || dict.projects.challengeDesc;
@@ -163,20 +161,16 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                             <span className="text-brand-bronze text-[10px] uppercase tracking-[0.3em] block mb-6">{dict.projects.specs}</span>
                             <ul className="space-y-6">
                                 <li className="flex justify-between items-end border-b border-white/10 pb-2">
+                                    <span className="text-xs text-white/40 uppercase tracking-widest">Type</span>
+                                    <span className="font-serif text-lg">{project.category}</span>
+                                </li>
+                                <li className="flex justify-between items-end border-b border-white/10 pb-2">
                                     <span className="text-xs text-white/40 uppercase tracking-widest">{dict.projects.technique}</span>
                                     <span className="font-serif text-lg">{technique}</span>
                                 </li>
                                 <li className="flex justify-between items-end border-b border-white/10 pb-2">
                                     <span className="text-xs text-white/40 uppercase tracking-widest">{dict.projects.finishing}</span>
                                     <span className="font-serif text-lg">{finishing}</span>
-                                </li>
-                                <li className="flex justify-between items-end border-b border-white/10 pb-2">
-                                    <span className="text-xs text-white/40 uppercase tracking-widest">{dict.projects.pigment}</span>
-                                    <span className="font-serif text-lg">{pigment}</span>
-                                </li>
-                                <li className="flex justify-between items-end border-b border-white/10 pb-2">
-                                    <span className="text-xs text-white/40 uppercase tracking-widest">{dict.projects.team}</span>
-                                    <span className="font-serif text-lg">{team}</span>
                                 </li>
                             </ul>
                         </div>
@@ -237,7 +231,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
 
       <section className="py-32 bg-brand-dark text-brand-stone overflow-hidden relative">
         <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-0 left-0 w-full h-full bg-[url('https://grainy-gradients.vercel.app/noise.svg')] pointer-events-none" />
+            <div className="absolute top-0 left-0 w-full h-full bg-[url('https://grainy-gradients.vercel.app/noise.svg')] pointer-events-none"></div>
         </div>
         
         <div className="container mx-auto px-6 text-center relative z-10">
