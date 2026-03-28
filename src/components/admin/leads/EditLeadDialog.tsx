@@ -118,7 +118,7 @@ export const EditLeadDialog = ({
             </div>
 
             {/* Project Details - Landscape Layout on Desktop */}
-            <div className="grid lg:grid-cols-3 gap-6">
+            <div className="grid lg:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Project Type</Label>
                 <Select
@@ -133,22 +133,6 @@ export const EditLeadDialog = ({
                     <SelectItem value="binnen">Binnen</SelectItem>
                     <SelectItem value="totaal">Totaal</SelectItem>
                     <SelectItem value="renovatie">Renovatie</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Ondergrond Type</Label>
-                <Select
-                  value={editingLead.surface_type}
-                  onValueChange={(val) => setEditingLead({ ...editingLead, surface_type: val as Lead['surface_type'] })}
-                >
-                  <SelectTrigger className="rounded-none border-brand-dark/10">
-                    <SelectValue placeholder="Selecteer ondergrond type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="baksteen">Baksteen</SelectItem>
-                    <SelectItem value="crepi">Crepi</SelectItem>
-                    <SelectItem value="onbekend">Onbekend</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

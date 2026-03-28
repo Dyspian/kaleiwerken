@@ -78,14 +78,10 @@ export const LeadCard = ({ lead, onEdit, onDelete, onGenerateMessage, isSelected
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-8 pt-6 border-t border-brand-dark/5">
+        <div className="grid grid-cols-2 gap-8 pt-6 border-t border-brand-dark/5">
           <div>
             <span className="text-[10px] uppercase tracking-widest text-brand-dark/30 block mb-1">Project</span>
             <span className="capitalize font-medium">{lead.project_type}</span>
-          </div>
-          <div>
-            <span className="text-[10px] uppercase tracking-widest text-brand-dark/30 block mb-1">Ondergrond</span>
-            <span className="capitalize font-medium">{lead.surface_type}</span>
           </div>
           <div>
             <span className="text-[10px] uppercase tracking-widest text-brand-dark/30 block mb-1">Ontvangen</span>
