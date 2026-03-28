@@ -30,16 +30,26 @@ export const useProjectOrdering = <T extends { id: string; sort_order?: number }
 
   const saveOrder = async () => {
     try {
+      // Get current user for RLS policies
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error("Geen gebruiker gevonden");
+      }
+
       const updates = orderedProjects.map((project, index) => ({
         id: project.id,
         sort_order: index,
+        user_id: user.id // Required for RLS policies
       }));
 
       const { error } = await supabase
         .from('projects')
         .upsert(updates, { onConflict: 'id' });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase error details:", error);
+        throw new Error(`Database error: ${error.message}`);
+      }
 
       toast.success("Volgorde succesvol opgeslagen!");
       setHasChanges(false);
@@ -47,7 +57,8 @@ export const useProjectOrdering = <T extends { id: string; sort_order?: number }
       return true;
     } catch (error: any) {
       console.error("Save order error:", error);
-      toast.error("Fout bij opslaan volgorde: " + error.message);
+      const errorMessage = error.message || "Onbekende fout bij opslaan";
+      toast.error(`Fout bij opslaan volgorde: ${errorMessage}`);
       return false;
     }
   };

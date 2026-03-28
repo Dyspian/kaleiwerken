@@ -81,65 +81,93 @@ export default function AdminProjectsPage() {
 
   const fetchProjects = async () => {
     setLoading(true);
-    let query = supabase
-      .from("projects")
-      .select("*", { count: 'exact' });
+    try {
+      let query = supabase
+        .from("projects")
+        .select("*", { count: 'exact' });
 
-    if (searchQuery) {
-      query = query.or(`title.ilike.%${searchQuery}%,location.ilike.%${searchQuery}%,category.ilike.%${searchQuery}%`);
-    }
-
-    if (filterCategory !== 'all') {
-      query = query.eq("category", filterCategory);
-    }
-
-    if (isReordering) {
-      query = query.order('sort_order', { ascending: true }).order('created_at', { ascending: false });
-    } else {
-      query = query.order(sortBy, { ascending: sortOrder === 'asc' });
-      if (sortBy === 'sort_order') {
-        query = query.order('created_at', { ascending: false });
+      if (searchQuery) {
+        query = query.or(`title.ilike.%${searchQuery}%,location.ilike.%${searchQuery}%,category.ilike.%${searchQuery}%`);
       }
+
+      if (filterCategory !== 'all') {
+        query = query.eq("category", filterCategory);
+      }
+
+      if (isReordering) {
+        query = query.order('sort_order', { ascending: true }).order('created_at', { ascending: false });
+      } else {
+        query = query.order(sortBy, { ascending: sortOrder === 'asc' });
+        if (sortBy === 'sort_order') {
+          query = query.order('created_at', { ascending: false });
+        }
+      }
+
+      const from = (currentPage - 1) * PROJECTS_PER_PAGE;
+      const to = from + PROJECTS_PER_PAGE - 1;
+      query = query.range(from, to);
+
+      const { data, error, count } = await query;
+
+      if (error) {
+        console.error("Error fetching projects:", error);
+        toast.error("Fout bij ophalen projecten");
+      } else {
+        // Initialize sort_order for projects that don't have it
+        const projectsWithSortOrder = (data || []).map((project, index) => ({
+          ...project,
+          sort_order: project.sort_order ?? index
+        }));
+        
+        setProjects(projectsWithSortOrder);
+        setTotalProjectsCount(count || 0);
+      }
+    } catch (error: any) {
+      console.error("Exception fetching projects:", error);
+      toast.error("Fout bij ophalen projecten: " + error.message);
+    } finally {
+      setLoading(false);
     }
-
-    const from = (currentPage - 1) * PROJECTS_PER_PAGE;
-    const to = from + PROJECTS_PER_PAGE - 1;
-    query = query.range(from, to);
-
-    const { data, error, count } = await query;
-
-    if (error) {
-      toast.error("Fout bij ophalen projecten");
-    } else {
-      setProjects(data || []);
-      setTotalProjectsCount(count || 0);
-    }
-    setLoading(false);
   };
 
   const fetchCategories = async () => {
-    const { data } = await supabase.from("projects").select("category");
-    if (data) {
-      const uniqueCategories = Array.from(new Set(data.map(p => p.category).filter(Boolean) as string[]));
-      setCategories(uniqueCategories);
+    try {
+      const { data } = await supabase.from("projects").select("category");
+      if (data) {
+        const uniqueCategories = Array.from(new Set(data.map(p => p.category).filter(Boolean) as string[]));
+        setCategories(uniqueCategories);
+      }
+    } catch (error: any) {
+      console.error("Error fetching categories:", error);
     }
   };
 
   const handleSaveOrder = async () => {
-    const success = await saveOrder();
-    if (success) {
-      fetchProjects();
+    try {
+      const success = await saveOrder();
+      if (success) {
+        await fetchProjects();
+      }
+    } catch (error: any) {
+      console.error("Error in handleSaveOrder:", error);
+      toast.error("Fout bij opslaan volgorde: " + error.message);
     }
   };
 
   const deleteProject = async (id: string) => {
     if (!confirm("Weet je zeker dat je dit project wilt verwijderen?")) return;
-    const { error } = await supabase.from("projects").delete().eq("id", id);
-    if (error) {
-      toast.error("Fout bij verwijderen");
-    } else {
-      toast.success("Project verwijderd");
-      fetchProjects();
+    try {
+      const { error } = await supabase.from("projects").delete().eq("id", id);
+      if (error) {
+        console.error("Error deleting project:", error);
+        toast.error("Fout bij verwijderen");
+      } else {
+        toast.success("Project verwijderd");
+        fetchProjects();
+      }
+    } catch (error: any) {
+      console.error("Exception deleting project:", error);
+      toast.error("Fout bij verwijderen: " + error.message);
     }
   };
 
@@ -164,14 +192,22 @@ export default function AdminProjectsPage() {
     if (!isAnySelected) return;
     if (!confirm(`Weet je zeker dat je ${selectedProjects.size} project(en) wilt verwijderen?`)) return;
     setLoading(true);
-    const { error } = await supabase.from("projects").delete().in("id", Array.from(selectedProjects));
-    if (error) toast.error("Fout bij bulk verwijderen");
-    else {
-      toast.success("Projecten verwijderd");
-      setSelectedProjects(new Set());
-      fetchProjects();
+    try {
+      const { error } = await supabase.from("projects").delete().in("id", Array.from(selectedProjects));
+      if (error) {
+        console.error("Error bulk deleting projects:", error);
+        toast.error("Fout bij bulk verwijderen");
+      } else {
+        toast.success("Projecten verwijderd");
+        setSelectedProjects(new Set());
+        fetchProjects();
+      }
+    } catch (error: any) {
+      console.error("Exception bulk deleting projects:", error);
+      toast.error("Fout bij bulk verwijderen: " + error.message);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const isAllSelected = useMemo(() => {
@@ -278,7 +314,7 @@ export default function AdminProjectsPage() {
               <Checkbox
                 checked={isAllSelected}
                 onCheckedChange={(checked) => handleSelectAllProjects(!!checked)}
-                className="border-brand-dark/20 data-[state=checked]:bg-brand-bronze"
+                className="border-brand-dark/20 data-[state=checked]:bg-brand-bronze data-[state=checked]:text-white"
               />
               <span className="text-xs uppercase tracking-widest text-brand-dark/40">Selecteer alles op deze pagina</span>
             </div>
@@ -296,7 +332,7 @@ export default function AdminProjectsPage() {
               <DraggableProjectCard
                 key={project.id}
                 project={project}
-                onEdit={() => {}}
+                onEdit={() => {}} // Not used in this context
                 onDelete={deleteProject}
                 isSelected={selectedProjects.has(project.id)}
                 onSelect={handleSelectProject}
