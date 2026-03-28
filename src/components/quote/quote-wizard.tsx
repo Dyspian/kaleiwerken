@@ -49,7 +49,7 @@ export const QuoteWizard = ({ dict }: QuoteWizardProps) => {
           postal_code: data.postalCode,
           city: data.city || "",
           comment: data.comment,
-          project_type: "Algemene aanvraag",
+          project_type: "Offerte aanvraag",
           surface_type: "Onbekend",
           timing: "Nader te bepalen",
           status: "nieuw"
