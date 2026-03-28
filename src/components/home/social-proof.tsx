@@ -5,7 +5,7 @@ import { Check } from "lucide-react";
 export const SocialProof = ({ dict }: { dict?: any }) => {
   const items = dict?.socialProof?.items || [
     "10 jaar ervaring",
-    "België & Buitenland", 
+    "België & Buitenland",
     "Eigen pigmenten",
     "Binnen & Buiten",
     "Incl. herstellingen"
@@ -20,7 +20,7 @@ export const SocialProof = ({ dict }: { dict?: any }) => {
               <div className="w-5 h-5 rounded-full border border-brand-bronze flex items-center justify-center group-hover:bg-brand-bronze transition-colors duration-500">
                  <Check className="text-brand-stone w-3 h-3" strokeWidth={3} />
               </div>
-              <span className="text-xs md:text-sm font-medium uppercase tracking-widest text-white">{item}</span>
+              <span className="text-xs md:text-sm font-medium uppercase tracking-widest">{item}</span>
             </div>
           ))}
         </div>
