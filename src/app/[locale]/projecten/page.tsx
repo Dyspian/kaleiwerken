@@ -24,6 +24,7 @@ export default async function ProjectenPage({
   let query = supabase
     .from("projects")
     .select("*")
+    .order("sort_order", { ascending: true })
     .order("created_at", { ascending: false });
 
   if (category && category !== "alle") {

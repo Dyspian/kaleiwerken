@@ -36,7 +36,7 @@ interface Project {
   sort_order?: number;
 }
 
-const PROJECTS_PER_PAGE = 20;
+const PROJECTS_PER_PAGE = 50;
 
 export default function AdminProjectsPage() {
   const { user, loading: authLoading } = useAuth();
@@ -47,8 +47,8 @@ export default function AdminProjectsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   
   const [filterCategory, setFilterCategory] = useState<string | 'all'>('all');
-  const [sortBy, setSortBy] = useState<keyof Project>('created_at');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [sortBy, setSortBy] = useState<keyof Project>('sort_order');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalProjectsCount, setTotalProjectsCount] = useState(0);
   const [categories, setCategories] = useState<string[]>([]);
@@ -62,9 +62,8 @@ export default function AdminProjectsPage() {
     handleReorder,
     saveOrder,
     resetOrder
-  } = useProjectOrdering(projects);
+  } = useProjectOrdering<Project>(projects);
 
-  // Debounce search
   useEffect(() => {
     const timer = setTimeout(() => {
       setSearchQuery(inputValue);
@@ -73,68 +72,65 @@ export default function AdminProjectsPage() {
     return () => clearTimeout(timer);
   }, [inputValue]);
 
-  // Fetch categories once
-  useEffect(() => {
-    if (user) {
-      const fetchCategories = async () => {
-        const { data } = await supabase.from("projects").select("category");
-        if (data) {
-          const uniqueCategories = Array.from(new Set(data.map(p => p.category).filter(Boolean) as string[]));
-          setCategories(uniqueCategories);
-        }
-      };
-      fetchCategories();
-    }
-  }, [user]);
-
-  // Main fetch effect
   useEffect(() => {
     if (!authLoading && user) {
-      const fetchProjects = async () => {
-        setLoading(true);
-        let query = supabase
-          .from("projects")
-          .select("*", { count: 'exact' });
-
-        if (searchQuery) {
-          query = query.or(`title.ilike.%${searchQuery}%,location.ilike.%${searchQuery}%,category.ilike.%${searchQuery}%`);
-        }
-
-        if (filterCategory !== 'all') {
-          query = query.eq("category", filterCategory);
-        }
-
-        if (isReordering) {
-          query = query.order('sort_order', { ascending: true });
-        } else {
-          query = query.order(sortBy, { ascending: sortOrder === 'asc' });
-        }
-
-        const from = (currentPage - 1) * PROJECTS_PER_PAGE;
-        const to = from + PROJECTS_PER_PAGE - 1;
-        query = query.range(from, to);
-
-        const { data, error, count } = await query;
-
-        if (error) {
-          toast.error("Fout bij ophalen projecten");
-        } else {
-          setProjects(data || []);
-          setTotalProjectsCount(count || 0);
-        }
-        setLoading(false);
-      };
-
       fetchProjects();
+      fetchCategories();
     }
   }, [user, authLoading, searchQuery, filterCategory, sortBy, sortOrder, currentPage, isReordering]);
 
-  const isAllSelected = useMemo(() => {
-    if (projects.length === 0) return false;
-    return projects.every(project => selectedProjects.has(project.id));
-  }, [projects, selectedProjects]);
-  
-  const isAnySelected = selectedProjects.size > 0;
+  const fetchProjects = async () => {
+    setLoading(true);
+    let query = supabase
+      .from("projects")
+      .select("*", { count: 'exact' });
+
+    if (searchQuery) {
+      query = query.or(`title.ilike.%${searchQuery}%,location.ilike.%${searchQuery}%,category.ilike.%${searchQuery}%`);
+    }
+
+    if (filterCategory !== 'all') {
+      query = query.eq("category", filterCategory);
+    }
+
+    if (isReordering) {
+      query = query.order('sort_order', { ascending: true }).order('created_at', { ascending: false });
+    } else {
+      query = query.order(sortBy, { ascending: sortOrder === 'asc' });
+      if (sortBy === 'sort_order') {
+        query = query.order('created_at', { ascending: false });
+      }
+    }
+
+    const from = (currentPage - 1) * PROJECTS_PER_PAGE;
+    const to = from + PROJECTS_PER_PAGE - 1;
+    query = query.range(from, to);
+
+    const { data, error, count } = await query;
+
+    if (error) {
+      toast.error("Fout bij ophalen projecten");
+    } else {
+      setProjects(data || []);
+      setTotalProjectsCount(count || 0);
+    }
+    setLoading(false);
+  };
+
+  const fetchCategories = async () => {
+    const { data } = await supabase.from("projects").select("category");
+    if (data) {
+      const uniqueCategories = Array.from(new Set(data.map(p => p.category).filter(Boolean) as string[]));
+      setCategories(uniqueCategories);
+    }
+  };
+
+  const handleSaveOrder = async () => {
+    const success = await saveOrder();
+    if (success) {
+      fetchProjects();
+    }
+  };
 
   const deleteProject = async (id: string) => {
     if (!confirm("Weet je zeker dat je dit project wilt verwijderen?")) return;
@@ -143,8 +139,7 @@ export default function AdminProjectsPage() {
       toast.error("Fout bij verwijderen");
     } else {
       toast.success("Project verwijderd");
-      // Trigger a re-fetch by updating a dependency or calling fetch directly
-      setProjects(prev => prev.filter(p => p.id !== id));
+      fetchProjects();
     }
   };
 
@@ -174,11 +169,17 @@ export default function AdminProjectsPage() {
     else {
       toast.success("Projecten verwijderd");
       setSelectedProjects(new Set());
-      setProjects(prev => prev.filter(p => !selectedProjects.has(p.id)));
+      fetchProjects();
     }
     setLoading(false);
   };
 
+  const isAllSelected = useMemo(() => {
+    if (projects.length === 0) return false;
+    return projects.every(project => selectedProjects.has(project.id));
+  }, [projects, selectedProjects]);
+  
+  const isAnySelected = selectedProjects.size > 0;
   const totalPages = Math.ceil(totalProjectsCount / PROJECTS_PER_PAGE);
 
   if (authLoading || (loading && projects.length === 0)) {
@@ -211,7 +212,7 @@ export default function AdminProjectsPage() {
         <ReorderControls
           isReordering={isReordering}
           onToggleReorder={toggleReordering}
-          onSaveOrder={saveOrder}
+          onSaveOrder={handleSaveOrder}
           onResetOrder={resetOrder}
           hasChanges={hasChanges}
         />
@@ -244,9 +245,10 @@ export default function AdminProjectsPage() {
                 <SelectValue placeholder="Sorteer op" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="created_at">Datum</SelectItem>
+                <SelectItem value="sort_order">Eigen volgorde</SelectItem>
+                <SelectItem value="created_at">Datum toegevoegd</SelectItem>
                 <SelectItem value="title">Titel</SelectItem>
-                <SelectItem value="year">Jaar</SelectItem>
+                <SelectItem value="year">Jaar project</SelectItem>
               </SelectContent>
             </Select>
 
