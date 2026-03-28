@@ -36,16 +36,14 @@ interface Project {
   sort_order?: number;
 }
 
-const PROJECTS_PER_PAGE = 9;
+const PROJECTS_PER_PAGE = 20; // Verhoogd voor makkelijker herschikken
 
 export default function AdminProjectsPage() {
   const { user, loading: authLoading } = useAuth();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Local input state for fluid typing
   const [inputValue, setInputValue] = useState("");
-  // Actual search query used for fetching
   const [searchQuery, setSearchQuery] = useState("");
   
   const [filterCategory, setFilterCategory] = useState<string | 'all'>('all');
@@ -56,7 +54,6 @@ export default function AdminProjectsPage() {
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedProjects, setSelectedProjects] = useState<Set<string>>(new Set());
 
-  // Project ordering state
   const {
     isReordering,
     orderedProjects,
@@ -67,24 +64,18 @@ export default function AdminProjectsPage() {
     resetOrder
   } = useProjectOrdering(projects);
 
-  // Debounce logic: update searchQuery 300ms after typing stops
   useEffect(() => {
     const timer = setTimeout(() => {
       setSearchQuery(inputValue);
       setCurrentPage(1);
     }, 300);
-
     return () => clearTimeout(timer);
   }, [inputValue]);
 
   const isAllSelected = useMemo(() => {
-    const currentProjectsOnPage = projects.filter(project => {
-      const matchesSearch = searchQuery ? (project.title.toLowerCase().includes(searchQuery.toLowerCase()) || (project.location?.toLowerCase().includes(searchQuery.toLowerCase())) || (project.category?.toLowerCase().includes(searchQuery.toLowerCase()))) : true;
-      const matchesCategory = filterCategory !== 'all' ? project.category === filterCategory : true;
-      return matchesSearch && matchesCategory;
-    });
-    return currentProjectsOnPage.length > 0 && currentProjectsOnPage.every(project => selectedProjects.has(project.id));
-  }, [projects, selectedProjects, searchQuery, filterCategory]);
+    if (projects.length === 0) return false;
+    return projects.every(project => selectedProjects.has(project.id));
+  }, [projects, selectedProjects]);
   
   const isAnySelected = selectedProjects.size > 0;
 
@@ -93,7 +84,7 @@ export default function AdminProjectsPage() {
       fetchProjects();
       fetchCategories();
     }
-  }, [user, authLoading, searchQuery, filterCategory, sortBy, sortOrder, currentPage]);
+  }, [user, authLoading, searchQuery, filterCategory, sortBy, sortOrder, currentPage, isReordering]);
 
   const fetchProjects = async () => {
     setLoading(true);
@@ -109,7 +100,6 @@ export default function AdminProjectsPage() {
       query = query.eq("category", filterCategory);
     }
 
-    // When reordering, sort by sort_order instead of the selected sort option
     if (isReordering) {
       query = query.order('sort_order', { ascending: true });
     } else {
@@ -124,7 +114,6 @@ export default function AdminProjectsPage() {
 
     if (error) {
       toast.error("Fout bij ophalen projecten");
-      console.error(error);
     } else {
       setProjects(data || []);
       setTotalProjectsCount(count || 0);
@@ -133,8 +122,8 @@ export default function AdminProjectsPage() {
   };
 
   const fetchCategories = async () => {
-    const { data, error } = await supabase.from("projects").select("category");
-    if (!error && data) {
+    const { data } = await supabase.from("projects").select("category");
+    if (data) {
       const uniqueCategories = Array.from(new Set(data.map(p => p.category).filter(Boolean) as string[]));
       setCategories(uniqueCategories);
     }
@@ -142,44 +131,27 @@ export default function AdminProjectsPage() {
 
   const deleteProject = async (id: string) => {
     if (!confirm("Weet je zeker dat je dit project wilt verwijderen?")) return;
-
     const { error } = await supabase.from("projects").delete().eq("id", id);
-
     if (error) {
       toast.error("Fout bij verwijderen");
     } else {
       toast.success("Project verwijderd");
-      setProjects(projects.filter((p) => p.id !== id));
-      setTotalProjectsCount((prev: number) => prev - 1);
-      setSelectedProjects((prev: Set<string>) => {
-        const newSet = new Set(prev);
-        newSet.delete(id);
-        return newSet;
-      });
-      fetchCategories();
+      fetchProjects();
     }
   };
 
   const handleSelectProject = (id: string, checked: boolean) => {
-    setSelectedProjects((prev: Set<string>) => {
+    setSelectedProjects(prev => {
       const newSet = new Set(prev);
-      if (checked) {
-        newSet.add(id);
-      } else {
-        newSet.delete(id);
-      }
+      if (checked) newSet.add(id);
+      else newSet.delete(id);
       return newSet;
     });
   };
 
   const handleSelectAllProjects = (checked: boolean) => {
     if (checked) {
-      const currentProjectsOnPage = projects.filter(project => {
-        const matchesSearch = searchQuery ? (project.title.toLowerCase().includes(searchQuery.toLowerCase()) || (project.location?.toLowerCase().includes(searchQuery.toLowerCase())) || (project.category?.toLowerCase().includes(searchQuery.toLowerCase()))) : true;
-        const matchesCategory = filterCategory !== 'all' ? project.category === filterCategory : true;
-        return matchesSearch && matchesCategory;
-      });
-      setSelectedProjects(new Set(currentProjectsOnPage.map(project => project.id)));
+      setSelectedProjects(new Set(projects.map(p => p.id)));
     } else {
       setSelectedProjects(new Set());
     }
@@ -188,25 +160,20 @@ export default function AdminProjectsPage() {
   const bulkDeleteProjects = async () => {
     if (!isAnySelected) return;
     if (!confirm(`Weet je zeker dat je ${selectedProjects.size} project(en) wilt verwijderen?`)) return;
-
     setLoading(true);
     const { error } = await supabase.from("projects").delete().in("id", Array.from(selectedProjects));
-
-    if (error) {
-      toast.error("Fout bij bulk verwijderen");
-      console.error(error);
-    } else {
-      toast.success(`${selectedProjects.size} project(en) verwijderd`);
+    if (error) toast.error("Fout bij bulk verwijderen");
+    else {
+      toast.success("Projecten verwijderd");
       setSelectedProjects(new Set());
       fetchProjects();
-      fetchCategories();
     }
     setLoading(false);
   };
 
   const totalPages = Math.ceil(totalProjectsCount / PROJECTS_PER_PAGE);
 
-  if (authLoading || loading) {
+  if (authLoading || (loading && projects.length === 0)) {
     return (
       <div className="min-h-screen bg-brand-stone flex items-center justify-center">
         <Loader2 className="animate-spin text-brand-bronze" size={48} />
@@ -224,14 +191,15 @@ export default function AdminProjectsPage() {
             <h1 className="font-serif text-4xl mb-2">Projecten</h1>
             <p className="text-brand-dark/60">Beheer de realisaties op de website.</p>
           </div>
-          <Button asChild className="bg-brand-dark text-white rounded-none px-6">
-            <Link href="/admin/projects/new">
-              <Plus size={18} className="mr-2" /> Nieuw Project
-            </Link>
-          </Button>
+          {!isReordering && (
+            <Button asChild className="bg-brand-dark text-white rounded-none px-6">
+              <Link href="/admin/projects/new">
+                <Plus size={18} className="mr-2" /> Nieuw Project
+              </Link>
+            </Button>
+          )}
         </div>
 
-        {/* Reordering Controls */}
         <ReorderControls
           isReordering={isReordering}
           onToggleReorder={toggleReordering}
@@ -240,123 +208,99 @@ export default function AdminProjectsPage() {
           hasChanges={hasChanges}
         />
 
-        <div className="bg-white p-6 border border-brand-dark/5 shadow-sm mb-8 flex flex-wrap items-center gap-4">
-          <div className="relative flex-1 min-w-[200px]">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-dark/40" />
-            <Input
-              placeholder="Zoek op titel, locatie of categorie..."
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              className="pl-10 rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze"
-            />
+        {!isReordering && (
+          <div className="bg-white p-6 border border-brand-dark/5 shadow-sm mb-8 flex flex-wrap items-center gap-4">
+            <div className="relative flex-1 min-w-[200px]">
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-dark/40" />
+              <Input
+                placeholder="Zoek op titel, locatie of categorie..."
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                className="pl-10 rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze"
+              />
+            </div>
+
+            <Select value={filterCategory} onValueChange={(val) => setFilterCategory(val)}>
+              <SelectTrigger className="w-[180px] rounded-none border-brand-dark/10">
+                <Filter size={16} className="mr-2 text-brand-dark/40" />
+                <SelectValue placeholder="Categorie" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Alle categorieën</SelectItem>
+                {categories.map(cat => <SelectItem key={cat} value={cat}>{cat}</SelectItem>)}
+              </SelectContent>
+            </Select>
+
+            <Select value={sortBy} onValueChange={(val: any) => setSortBy(val)}>
+              <SelectTrigger className="w-[180px] rounded-none border-brand-dark/10">
+                <SelectValue placeholder="Sorteer op" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="created_at">Datum</SelectItem>
+                <SelectItem value="title">Titel</SelectItem>
+                <SelectItem value="year">Jaar</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+              className="rounded-none border-brand-dark/10"
+            >
+              {sortOrder === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+            </Button>
           </div>
-
-          <Select value={filterCategory} onValueChange={(val: string | 'all') => {
-            setFilterCategory(val);
-            setCurrentPage(1);
-          }}>
-            <SelectTrigger className="w-[180px] rounded-none border-brand-dark/10 focus:ring-brand-bronze">
-              <Filter size={16} className="mr-2 text-brand-dark/40" />
-              <SelectValue placeholder="Filter op categorie" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Alle categorieën</SelectItem>
-              {categories.map(cat => (
-                <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <Select value={sortBy} onValueChange={(val: keyof Project) => setSortBy(val)}>
-            <SelectTrigger className="w-[180px] rounded-none border-brand-dark/10 focus:ring-brand-bronze">
-              <SelectValue placeholder="Sorteer op" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="created_at">Datum</SelectItem>
-              <SelectItem value="title">Titel</SelectItem>
-              <SelectItem value="year">Jaar</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-            className="rounded-none border-brand-dark/10 hover:bg-brand-stone"
-          >
-            {sortOrder === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-          </Button>
-        </div>
+        )}
 
         {isAnySelected && !isReordering && (
           <div className="bg-white p-6 border border-brand-dark/5 shadow-sm mb-8 flex flex-wrap items-center gap-4">
             <span className="text-sm text-brand-dark/60">{selectedProjects.size} geselecteerd</span>
-            <Button
-              variant="destructive"
-              onClick={bulkDeleteProjects}
-              className="rounded-none px-4 py-2 text-xs uppercase tracking-widest"
-            >
+            <Button variant="destructive" onClick={bulkDeleteProjects} className="rounded-none px-4 py-2 text-xs uppercase tracking-widest">
               <Trash2 size={14} className="mr-2" /> Verwijder geselecteerde
             </Button>
           </div>
         )}
 
-        <div className="grid gap-6">
-          {orderedProjects.length === 0 && !loading ? (
-            <div className="bg-white p-12 text-center border border-brand-dark/5">
-              <p className="text-brand-dark/40 italic">Geen projecten gevonden.</p>
+        <div className="grid gap-4">
+          {!isReordering && projects.length > 0 && (
+            <div className="bg-white p-4 border border-brand-dark/5 flex items-center gap-4">
+              <Checkbox
+                checked={isAllSelected}
+                onCheckedChange={(checked) => handleSelectAllProjects(!!checked)}
+                className="border-brand-dark/20 data-[state=checked]:bg-brand-bronze"
+              />
+              <span className="text-xs uppercase tracking-widest text-brand-dark/40">Selecteer alles op deze pagina</span>
             </div>
-          ) : (
-            <>
-              {!isReordering && (
-                <div className="bg-white p-4 border border-brand-dark/5 flex items-center gap-4">
-                  <Checkbox
-                    checked={isAllSelected}
-                    onCheckedChange={(checked) => handleSelectAllProjects(!!checked)}
-                    className="border-brand-dark/20 data-[state=checked]:bg-brand-bronze data-[state=checked]:text-white"
-                  />
-                  <span className="text-xs uppercase tracking-widest text-brand-dark/40">Selecteer alles op deze pagina</span>
-                </div>
-              )}
-
-              <DragDropProvider items={orderedProjects.map(p => p.id)} onReorder={(newOrder) => {
-                const reorderedProjects = newOrder.map(id => orderedProjects.find(p => p.id === id)!);
-                handleReorder(reorderedProjects);
-              }}>
-                {orderedProjects.map((project) => (
-                  <DraggableProjectCard
-                    key={project.id}
-                    project={project}
-                    onEdit={() => {}} // Add edit functionality if needed
-                    onDelete={deleteProject}
-                    isSelected={selectedProjects.has(project.id)}
-                    onSelect={handleSelectProject}
-                  />
-                ))}
-              </DragDropProvider>
-            </>
           )}
+
+          <DragDropProvider 
+            items={orderedProjects.map(p => p.id)} 
+            onReorder={(newOrderIds) => {
+              const newOrderedProjects = newOrderIds.map(id => orderedProjects.find(p => p.id === id)!);
+              handleReorder(newOrderedProjects);
+            }}
+            disabled={!isReordering}
+          >
+            {orderedProjects.map((project) => (
+              <DraggableProjectCard
+                key={project.id}
+                project={project}
+                onEdit={() => {}}
+                onDelete={deleteProject}
+                isSelected={selectedProjects.has(project.id)}
+                onSelect={handleSelectProject}
+                isReordering={isReordering}
+              />
+            ))}
+          </DragDropProvider>
         </div>
 
         {totalPages > 1 && !isReordering && (
           <div className="flex justify-center items-center gap-4 mt-12">
-            <Button
-              variant="outline"
-              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-              className="rounded-none border-brand-dark/10 hover:bg-brand-stone"
-            >
-              Vorige
-            </Button>
+            <Button variant="outline" onClick={() => setCurrentPage(p => Math.max(p - 1, 1))} disabled={currentPage === 1} className="rounded-none border-brand-dark/10">Vorige</Button>
             <span className="text-sm text-brand-dark/60">Pagina {currentPage} van {totalPages}</span>
-            <Button
-              variant="outline"
-              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-              disabled={currentPage === totalPages}
-              className="rounded-none border-brand-dark/10 hover:bg-brand-stone"
-            >
-              Volgende
-            </Button>
+            <Button variant="outline" onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))} disabled={currentPage === totalPages} className="rounded-none border-brand-dark/10">Volgende</Button>
           </div>
         )}
       </main>

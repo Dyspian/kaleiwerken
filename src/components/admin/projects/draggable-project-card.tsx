@@ -3,7 +3,7 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash2, ExternalLink } from "lucide-react";
+import { Edit, Trash2, ExternalLink, GripVertical } from "lucide-react";
 import Link from "next/link";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
@@ -32,6 +32,7 @@ interface DraggableProjectCardProps {
   onDelete: (id: string) => void;
   isSelected: boolean;
   onSelect: (id: string, checked: boolean) => void;
+  isReordering: boolean;
 }
 
 export const DraggableProjectCard = ({ 
@@ -39,7 +40,8 @@ export const DraggableProjectCard = ({
   onEdit, 
   onDelete, 
   isSelected, 
-  onSelect 
+  onSelect,
+  isReordering
 }: DraggableProjectCardProps) => {
   const {
     attributes,
@@ -48,7 +50,10 @@ export const DraggableProjectCard = ({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: project.id });
+  } = useSortable({ 
+    id: project.id,
+    disabled: !isReordering 
+  });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -60,31 +65,34 @@ export const DraggableProjectCard = ({
       ref={setNodeRef}
       style={style}
       className={cn(
-        "bg-white p-6 border border-brand-dark/5 flex items-center justify-between group hover:shadow-md transition-shadow",
-        isDragging ? "opacity-50 scale-105 z-50" : "opacity-100"
+        "bg-white p-6 border border-brand-dark/5 flex items-center justify-between group transition-all",
+        isDragging ? "opacity-50 scale-[1.02] z-50 shadow-xl border-brand-bronze" : "opacity-100",
+        isReordering && "hover:border-brand-bronze/30"
       )}
     >
       <div className="flex items-center gap-6">
         <div 
-          className="cursor-grab active:cursor-grabbing p-2 hover:bg-brand-stone/30 rounded-none transition-colors"
-          {...attributes}
-          {...listeners}
+          className={cn(
+            "p-2 rounded-none transition-all",
+            isReordering 
+              ? "cursor-grab active:cursor-grabbing text-brand-bronze bg-brand-bronze/5" 
+              : "text-brand-dark/10 cursor-not-allowed"
+          )}
+          {...(isReordering ? attributes : {})}
+          {...(isReordering ? listeners : {})}
         >
-          <svg width="20" height="20" viewBox="0 0 20 20" className="text-brand-dark/40">
-            <circle cx="5" cy="5" r="2" fill="currentColor" />
-            <circle cx="15" cy="5" r="2" fill="currentColor" />
-            <circle cx="5" cy="15" r="2" fill="currentColor" />
-            <circle cx="15" cy="15" r="2" fill="currentColor" />
-          </svg>
+          <GripVertical size={20} />
         </div>
         
-        <Checkbox
-          checked={isSelected}
-          onCheckedChange={(checked) => onSelect(project.id, !!checked)}
-          className="border-brand-dark/20 data-[state=checked]:bg-brand-bronze data-[state=checked]:text-white"
-        />
+        {!isReordering && (
+          <Checkbox
+            checked={isSelected}
+            onCheckedChange={(checked) => onSelect(project.id, !!checked)}
+            className="border-brand-dark/20 data-[state=checked]:bg-brand-bronze data-[state=checked]:text-white"
+          />
+        )}
         
-        <div className="w-20 h-20 bg-brand-stone flex items-center justify-center overflow-hidden">
+        <div className="w-20 h-20 bg-brand-stone flex items-center justify-center overflow-hidden border border-brand-dark/5">
           {project.image_url ? (
             <img src={project.image_url} alt={project.title} className="w-full h-full object-cover" />
           ) : (
@@ -98,21 +106,23 @@ export const DraggableProjectCard = ({
         </div>
       </div>
 
-      <div className="flex gap-2">
-        <Button variant="outline" size="icon" asChild className="rounded-none border-brand-dark/10 hover:bg-brand-stone">
-          <Link href={`/projecten/${project.id}`} target="_blank">
-            <ExternalLink size={16} />
-          </Link>
-        </Button>
-        <Button variant="outline" size="icon" asChild className="rounded-none border-brand-dark/10 hover:bg-brand-stone">
-          <Link href={`/admin/projects/${project.id}/edit`}>
-            <Edit size={16} />
-          </Link>
-        </Button>
-        <Button variant="outline" size="icon" onClick={() => onDelete(project.id)} className="rounded-none border-brand-dark/10 hover:bg-red-50 hover:text-red-600">
-          <Trash2 size={16} />
-        </Button>
-      </div>
+      {!isReordering && (
+        <div className="flex gap-2">
+          <Button variant="outline" size="icon" asChild className="rounded-none border-brand-dark/10 hover:bg-brand-stone">
+            <Link href={`/projecten/${project.id}`} target="_blank">
+              <ExternalLink size={16} />
+            </Link>
+          </Button>
+          <Button variant="outline" size="icon" asChild className="rounded-none border-brand-dark/10 hover:bg-brand-stone">
+            <Link href={`/admin/projects/${project.id}/edit`}>
+              <Edit size={16} />
+            </Link>
+          </Button>
+          <Button variant="outline" size="icon" onClick={() => onDelete(project.id)} className="rounded-none border-brand-dark/10 hover:bg-red-50 hover:text-red-600">
+            <Trash2 size={16} />
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
