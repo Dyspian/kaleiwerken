@@ -7,7 +7,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useParams } from "next/navigation";
-import { Locale } from "@/lib/i18n-config";
 import { ContentHeader } from "@/components/admin/content/content-header";
 import { ContentTip } from "@/components/admin/content/content-tip";
 import { ContentTabs } from "@/components/admin/content/content-tabs";
@@ -34,6 +33,24 @@ interface ContentState {
   terms: { title: string; content: string };
 }
 
+const initialState: ContentState = {
+  hero: { title1: "", title2: "", subtitle: "" },
+  about: { 
+    tag: "", 
+    title: "", 
+    description: "",
+    imageUrl: "",
+    personal: "",
+    personalDesc: "",
+    pigments: "",
+    pigmentsDesc: "",
+    protection: "",
+    protectionDesc: ""
+  },
+  privacy: { title: "", content: "" },
+  terms: { title: "", content: "" }
+};
+
 export default function AdminContentPage() {
   const { user, loading: authLoading } = useAuth();
   const params = useParams();
@@ -44,23 +61,7 @@ export default function AdminContentPage() {
   const [uploading, setUploading] = useState(false);
   const [activeTab, setActiveTab] = useState<keyof ContentState>("hero");
   
-  const [content, setContent] = useState<ContentState>({
-    hero: { title1: "", title2: "", subtitle: "" },
-    about: { 
-      tag: "", 
-      title: "", 
-      description: "",
-      imageUrl: "",
-      personal: "",
-      personalDesc: "",
-      pigments: "",
-      pigmentsDesc: "",
-      protection: "",
-      protectionDesc: ""
-    },
-    privacy: { title: "", content: "" },
-    terms: { title: "", content: "" }
-  });
+  const [content, setContent] = useState<ContentState>(initialState);
 
   useEffect(() => {
     if (user) fetchContent();
@@ -79,7 +80,13 @@ export default function AdminContentPage() {
         console.error("Error fetching content:", error);
         toast.error("Fout bij ophalen content: " + error.message);
       } else if (data?.content) {
-        setContent(data.content);
+        // Merge fetched content with initial state to ensure all keys exist
+        setContent({
+          hero: { ...initialState.hero, ...(data.content.hero || {}) },
+          about: { ...initialState.about, ...(data.content.about || {}) },
+          privacy: { ...initialState.privacy, ...(data.content.privacy || {}) },
+          terms: { ...initialState.terms, ...(data.content.terms || {}) }
+        });
       }
     } catch (error: any) {
       console.error("Exception fetching content:", error);
@@ -183,8 +190,8 @@ export default function AdminContentPage() {
       case "privacy":
         return (
           <LegalSection
-            title={content.privacy.title}
-            content={content.privacy.content}
+            title={content.privacy?.title || ""}
+            content={content.privacy?.content || ""}
             onUpdate={(field, value) => updateLegalField("privacy", field, value)}
             icon={<Shield size={20} className="text-brand-bronze" />}
             sectionTitle="Privacy Beleid"
@@ -193,8 +200,8 @@ export default function AdminContentPage() {
       case "terms":
         return (
           <LegalSection
-            title={content.terms.title}
-            content={content.terms.content}
+            title={content.terms?.title || ""}
+            content={content.terms?.content || ""}
             onUpdate={(field, value) => updateLegalField("terms", field, value)}
             icon={<FileText size={20} className="text-brand-bronze" />}
             sectionTitle="Algemene Voorwaarden"
