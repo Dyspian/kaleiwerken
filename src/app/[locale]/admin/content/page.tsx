@@ -36,7 +36,7 @@ const initialState: ContentState = {
   socialProof: { items: [] },
   features: { title: "", subtitle: "", items: [] },
   process: { title: "", desc: "", imageUrl: "", steps: [] },
-  beforeAfter: { tag: "", title: "", instruction: "" },
+  beforeAfter: { tag: "", title: "", instruction: "", beforeImage: "", afterImage: "" },
   about: { 
     tag: "", title: "", description: "", imageUrl: "",
     personal: "", personalDesc: "", pigments: "", pigmentsDesc: "", protection: "", protectionDesc: ""
@@ -111,11 +111,11 @@ export default function AdminContentPage() {
     }
   };
 
-  const handleImageUpload = async (file: File, targetSection: keyof ContentState = "about") => {
+  const handleImageUpload = async (file: File, targetSection: keyof ContentState, fieldName?: string) => {
     setUploading(true);
     try {
       const fileExt = file.name.split('.').pop();
-      const fileName = `${targetSection}-${currentLocale}-${Date.now()}.${fileExt}`;
+      const fileName = `${targetSection}-${fieldName || 'image'}-${currentLocale}-${Date.now()}.${fileExt}`;
       const filePath = `cms/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
@@ -130,11 +130,13 @@ export default function AdminContentPage() {
 
       if (signedError) throw signedError;
 
+      const finalFieldName = fieldName || (targetSection === "about" ? "imageUrl" : targetSection === "process" ? "imageUrl" : targetSection === "hero" ? "imageUrl" : "heroImage");
+
       setContent(prev => ({
         ...prev,
         [targetSection]: { 
           ...prev[targetSection as keyof ContentState], 
-          [targetSection === "about" ? "imageUrl" : targetSection === "process" ? "imageUrl" : targetSection === "hero" ? "imageUrl" : "heroImage"]: signedData.signedUrl 
+          [finalFieldName]: signedData.signedUrl 
         }
       }));
       toast.success("Afbeelding geüpload");
@@ -181,7 +183,7 @@ export default function AdminContentPage() {
           <HomeSectionsEditor 
             content={content} 
             onUpdate={updateField} 
-            onImageUpload={(file, section) => handleImageUpload(file, section as keyof ContentState)}
+            onImageUpload={(file, section, fieldName) => handleImageUpload(file, section as keyof ContentState, fieldName)}
             uploading={uploading}
           />
         );

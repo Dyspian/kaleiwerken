@@ -11,12 +11,17 @@ import { Plus, Trash2 } from "lucide-react";
 interface HomeSectionsEditorProps {
   content: any;
   onUpdate: (section: string, field: string, value: any) => void;
-  onImageUpload: (file: File, section: string) => Promise<void>;
+  onImageUpload: (file: File, section: string, fieldName?: string) => Promise<void>;
   uploading: boolean;
 }
 
 export const HomeSectionsEditor = ({ content, onUpdate, onImageUpload, uploading }: HomeSectionsEditorProps) => {
   const processFileInputRef = useRef<HTMLInputElement>(null);
+  const beforeFileInputRef = useRef<HTMLInputElement>(null);
+  const afterFileInputRef = useRef<HTMLInputElement>(null);
+
+  const defaultBeforeImage = "https://sjfosmcpbekkokmedwil.supabase.co/storage/v1/object/sign/before%20-%20after/voor-foto.jpeg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV85ZjFlYzljYS0wYTI5LTRhZDYtYWY5My0yYWFhZjJmZmNiNzEiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJiZWZvcmUgLSBhZnRlci92b29yLWZvdG8uanBlZyIsImlhdCI6MTc3MzUwNzkyMSwiZXhwIjoyMDg4ODY3OTIxfQ.szVq8e3NYlBPaoh4fJJKQwycCtYZeS1tVqvm0J9yzUg";
+  const defaultAfterImage = "https://sjfosmcpbekkokmedwil.supabase.co/storage/v1/object/sign/before%20-%20after/na-foto.jpeg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV85ZjFlYzljYS0wYTI5LTRhZDYtYWY5My0yYWFhZjJmZmNiNzEiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJiZWZvcmUgLSBhZnRlci9uYS1mb3RvLmpwZWciLCJpYXQiOjE3NzM1MDc5NDgsImV4cCI6MjA4ODg2Nzk0OH0.ggn0wqDGB9VEToA30UbLA4nOK8o6AcN6HmaMdOWDBF4";
 
   // Helper to update arrays
   const updateArrayItem = (section: string, field: string, index: number, subfield: string, value: string) => {
@@ -43,6 +48,20 @@ export const HomeSectionsEditor = ({ content, onUpdate, onImageUpload, uploading
     const file = event.target.files?.[0];
     if (file) {
       await onImageUpload(file, "process");
+    }
+  };
+
+  const handleBeforeFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      await onImageUpload(file, "beforeAfter", "beforeImage");
+    }
+  };
+
+  const handleAfterFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      await onImageUpload(file, "beforeAfter", "afterImage");
     }
   };
 
@@ -173,18 +192,60 @@ export const HomeSectionsEditor = ({ content, onUpdate, onImageUpload, uploading
           <ArrowLeftRight size={20} className="text-brand-bronze" />
           <h2 className="font-serif text-2xl">Voor / Na Sectie</h2>
         </div>
-        <div className="grid gap-6">
-          <div className="space-y-2">
-            <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Kleine Tag</Label>
-            <Input value={content.beforeAfter?.tag} onChange={(e) => onUpdate("beforeAfter", "tag", e.target.value)} className="rounded-none border-brand-dark/10" />
+        <div className="grid md:grid-cols-2 gap-12 mb-8">
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Kleine Tag</Label>
+              <Input value={content.beforeAfter?.tag} onChange={(e) => onUpdate("beforeAfter", "tag", e.target.value)} className="rounded-none border-brand-dark/10" />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Titel</Label>
+              <Input value={content.beforeAfter?.title} onChange={(e) => onUpdate("beforeAfter", "title", e.target.value)} className="rounded-none border-brand-dark/10" />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Instructie tekst</Label>
+              <Input value={content.beforeAfter?.instruction} onChange={(e) => onUpdate("beforeAfter", "instruction", e.target.value)} className="rounded-none border-brand-dark/10" />
+            </div>
           </div>
-          <div className="space-y-2">
-            <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Titel</Label>
-            <Input value={content.beforeAfter?.title} onChange={(e) => onUpdate("beforeAfter", "title", e.target.value)} className="rounded-none border-brand-dark/10" />
-          </div>
-          <div className="space-y-2">
-            <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Instructie tekst</Label>
-            <Input value={content.beforeAfter?.instruction} onChange={(e) => onUpdate("beforeAfter", "instruction", e.target.value)} className="rounded-none border-brand-dark/10" />
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-4">
+              <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40 block mb-2">Voor Foto</Label>
+              <div className="relative aspect-[4/5] bg-brand-stone border border-brand-dark/5 overflow-hidden group">
+                <img src={content.beforeAfter?.beforeImage || defaultBeforeImage} alt="Voor preview" className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-brand-dark/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={() => beforeFileInputRef.current?.click()}
+                    disabled={uploading}
+                    className="bg-white text-brand-dark border-none rounded-none uppercase text-[10px] tracking-widest"
+                  >
+                    {uploading ? <Loader2 className="animate-spin" size={14} /> : <Upload size={14} />}
+                  </Button>
+                </div>
+              </div>
+              <input type="file" ref={beforeFileInputRef} onChange={handleBeforeFileChange} className="hidden" accept="image/*" />
+            </div>
+
+            <div className="space-y-4">
+              <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40 block mb-2">Na Foto</Label>
+              <div className="relative aspect-[4/5] bg-brand-stone border border-brand-dark/5 overflow-hidden group">
+                <img src={content.beforeAfter?.afterImage || defaultAfterImage} alt="Na preview" className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-brand-dark/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={() => afterFileInputRef.current?.click()}
+                    disabled={uploading}
+                    className="bg-white text-brand-dark border-none rounded-none uppercase text-[10px] tracking-widest"
+                  >
+                    {uploading ? <Loader2 className="animate-spin" size={14} /> : <Upload size={14} />}
+                  </Button>
+                </div>
+              </div>
+              <input type="file" ref={afterFileInputRef} onChange={handleAfterFileChange} className="hidden" accept="image/*" />
+            </div>
           </div>
         </div>
       </section>
