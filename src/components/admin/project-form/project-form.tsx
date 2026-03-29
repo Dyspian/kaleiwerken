@@ -10,12 +10,10 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/integrations/supabase/client";
-import { format } from "date-fns";
 import { FormField, FormRow, FormSection } from "./form-fields";
 import { ImageUploadSection } from "./image-upload-section";
-import { PlanningSection } from "./planning-section";
 import { SpecificationsSection } from "./specifications-section";
-import { MessageSquare, ShieldCheck, Info } from "lucide-react";
+import { MessageSquare, Info } from "lucide-react";
 
 export const projectSchema = z.object({
   title: z.string().min(2, "Titel is verplicht"),
@@ -29,9 +27,6 @@ export const projectSchema = z.object({
   technique: z.string().optional(),
   type: z.string().optional(),
   finishing: z.string().optional(),
-  start_date: z.date().nullable().optional(),
-  end_date: z.date().nullable().optional(),
-  planning_status: z.enum(['pending', 'in_progress', 'completed', 'cancelled']),
   challenge_text: z.string().nullable().optional(),
   result_text: z.string().nullable().optional(),
   quote_text: z.string().nullable().optional(),
@@ -54,9 +49,6 @@ export interface InitialProjectData {
     type?: string;
     finishing?: string;
   };
-  start_date?: string | null;
-  end_date?: string | null;
-  planning_status?: 'pending' | 'in_progress' | 'completed' | 'cancelled';
   challenge_text?: string | null;
   result_text?: string | null;
   quote_text?: string | null;
@@ -85,9 +77,6 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
       technique: initialData?.stats?.technique ?? "Kalei op maat",
       type: initialData?.stats?.type ?? "Gevel",
       finishing: initialData?.stats?.finishing ?? "Hydrofuge",
-      start_date: initialData?.start_date ? new Date(initialData.start_date) : null,
-      end_date: initialData?.end_date ? new Date(initialData.end_date) : null,
-      planning_status: initialData?.planning_status ?? 'pending',
       challenge_text: initialData?.challenge_text ?? "",
       result_text: initialData?.result_text ?? "",
       quote_text: initialData?.quote_text ?? "",
@@ -143,9 +132,6 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
       image_url: data.image_url || (data.images.length > 0 ? data.images[0] : null),
       user_id: user.id,
       stats: stats,
-      start_date: data.start_date ? format(data.start_date, 'yyyy-MM-dd') : null,
-      end_date: data.end_date ? format(data.end_date, 'yyyy-MM-dd') : null,
-      planning_status: data.planning_status,
       challenge_text: data.challenge_text,
       result_text: data.result_text,
       quote_text: data.quote_text,
@@ -268,8 +254,6 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
           className="min-h-[80px]"
         />
       </FormSection>
-
-      <PlanningSection watch={watch} setValue={setValue} />
 
       <SpecificationsSection register={register} />
 
