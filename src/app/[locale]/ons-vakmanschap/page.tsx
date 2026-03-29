@@ -17,7 +17,8 @@ export default async function CraftsmanshipPage({ params }: { params: Promise<{ 
     .eq('locale', locale)
     .maybeSingle();
 
-  const content = settings?.content?.craftsmanship || {
+  // Default values
+  const defaults = {
     title: "Ons Vakmanschap",
     subtitle: "Passie voor detail en kwaliteit",
     heroImage: "https://sjfosmcpbekkokmedwil.supabase.co/storage/v1/object/public/hero/hero.jpeg",
@@ -26,7 +27,14 @@ export default async function CraftsmanshipPage({ params }: { params: Promise<{ 
     ctaLink: "https://schilderwerkenvincentvanroey.be/"
   };
 
+  // Merge CMS content with defaults to ensure all fields exist
+  const content = {
+    ...defaults,
+    ...(settings?.content?.craftsmanship || {})
+  };
+
   const renderMarkdown = (text: string) => {
+    if (!text) return "";
     return text
       .replace(/^## (.*$)/gim, '<h2 class="font-serif text-4xl md:text-5xl mb-8 mt-16 text-brand-dark">$1</h2>')
       .replace(/^### (.*$)/gim, '<h3 class="font-serif text-2xl mb-6 mt-12 text-brand-dark">$1</h3>')
@@ -50,7 +58,7 @@ export default async function CraftsmanshipPage({ params }: { params: Promise<{ 
             fill 
             className="object-cover" 
             priority
-            unoptimized
+            unoptimized={content.heroImage.includes('supabase.co')}
           />
           <div className="absolute inset-0 bg-black/40 z-10" />
         </div>
