@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { User, Image as ImageIcon, Upload, Loader2 } from "lucide-react";
+import { User, Image as ImageIcon, Upload, Loader2, Plus, Trash2, Check } from "lucide-react";
 
 interface AboutSectionProps {
   content: {
@@ -13,6 +13,7 @@ interface AboutSectionProps {
     title: string;
     description: string;
     imageUrl: string;
+    features: string[];
     personal: string;
     personalDesc: string;
     pigments: string;
@@ -20,7 +21,7 @@ interface AboutSectionProps {
     protection: string;
     protectionDesc: string;
   };
-  onUpdate: (field: string, value: string) => void;
+  onUpdate: (field: string, value: any) => void;
   onImageUpload: (file: File) => Promise<void>;
   uploading: boolean;
 }
@@ -34,6 +35,21 @@ export const AboutSection = ({ content, onUpdate, onImageUpload, uploading }: Ab
     if (file) {
       await onImageUpload(file);
     }
+  };
+
+  const updateFeature = (index: number, value: string) => {
+    const newFeatures = [...(content.features || [])];
+    newFeatures[index] = value;
+    onUpdate("features", newFeatures);
+  };
+
+  const addFeature = () => {
+    onUpdate("features", [...(content.features || []), "Nieuw kenmerk"]);
+  };
+
+  const removeFeature = (index: number) => {
+    const newFeatures = [...(content.features || [])].filter((_, i) => i !== index);
+    onUpdate("features", newFeatures);
   };
 
   return (
@@ -69,6 +85,39 @@ export const AboutSection = ({ content, onUpdate, onImageUpload, uploading }: Ab
                 onChange={(e) => onUpdate("description", e.target.value)}
                 className="rounded-none border-brand-dark/10 focus-visible:ring-brand-bronze min-h-[120px]"
               />
+            </div>
+
+            <div className="space-y-4 pt-4">
+              <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40 block">Kenmerken (Bullet Points)</Label>
+              <div className="space-y-3">
+                {(content.features || []).map((feature, idx) => (
+                  <div key={idx} className="flex gap-2">
+                    <div className="flex-1 relative">
+                      <Check className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-bronze w-3 h-3" />
+                      <Input 
+                        value={feature} 
+                        onChange={(e) => updateFeature(idx, e.target.value)}
+                        className="rounded-none border-brand-dark/10 pl-10 text-xs"
+                      />
+                    </div>
+                    <Button 
+                      variant="outline" 
+                      size="icon" 
+                      onClick={() => removeFeature(idx)}
+                      className="shrink-0 rounded-none border-brand-dark/10 hover:bg-red-50 hover:text-red-600"
+                    >
+                      <Trash2 size={14} />
+                    </Button>
+                  </div>
+                ))}
+                <Button 
+                  variant="outline" 
+                  onClick={addFeature}
+                  className="w-full rounded-none border-dashed border-brand-dark/20 text-[10px] uppercase tracking-widest hover:bg-brand-stone"
+                >
+                  <Plus size={14} className="mr-2" /> Kenmerk toevoegen
+                </Button>
+              </div>
             </div>
           </div>
 

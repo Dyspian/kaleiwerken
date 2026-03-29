@@ -38,7 +38,7 @@ const initialState: ContentState = {
   process: { title: "", desc: "", imageUrl: "", steps: [] },
   beforeAfter: { tag: "", title: "", instruction: "", beforeImage: "", afterImage: "" },
   about: { 
-    tag: "", title: "", description: "", imageUrl: "",
+    tag: "", title: "", description: "", imageUrl: "", features: [],
     personal: "", personalDesc: "", pigments: "", pigmentsDesc: "", protection: "", protectionDesc: ""
   },
   craftsmanship: { title: "", subtitle: "", heroImage: "", mainContent: "" },
