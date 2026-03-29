@@ -1,9 +1,10 @@
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
-import { Check } from "lucide-react";
+import { Check, ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import { getDictionary } from "@/lib/get-dictionary";
 import { Locale } from "@/lib/i18n-config";
+import { Button } from "@/components/ui/button";
 
 export default async function AboutPage({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params;
@@ -24,9 +25,24 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
                         word.toLowerCase() === 'vakmanschap.' ? <span key={i} className="italic text-brand-bronze"> {word}</span> : <span key={i}> {word}</span>
                     ))}
                 </h1>
-                <p className="text-xl text-brand-dark/70 font-light leading-relaxed mb-8">
+                <p className="text-xl text-brand-dark/70 font-light leading-relaxed mb-12">
                     {dict.about.description}
                 </p>
+
+                {dict.about.ctaLink && (
+                    <div className="mb-12">
+                        <Button 
+                            asChild
+                            className="bg-brand-dark text-white rounded-none px-8 py-7 uppercase text-[10px] tracking-[0.2em] hover:bg-brand-bronze transition-all duration-500 group shadow-xl"
+                        >
+                            <a href={dict.about.ctaLink} target="_blank" rel="noopener noreferrer">
+                                {dict.about.ctaText || "Bezoek onze website"}
+                                <ArrowUpRight className="ml-2 w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                            </a>
+                        </Button>
+                    </div>
+                )}
+
                 <div className="grid sm:grid-cols-2 gap-4">
                     {dict.about.features.map((f: string, i: number) => (
                         <div key={i} className="flex items-center gap-3">

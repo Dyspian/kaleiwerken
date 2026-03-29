@@ -48,6 +48,8 @@ const initialState: ContentState = {
       "Eigen pigmentmenging",
       "Projecten in België & Buitenland"
     ],
+    ctaText: "Bezoek Schilderwerken Vincent Van Roey",
+    ctaLink: "https://schilderwerkenvincentvanroey.be/",
     personal: "", 
     personalDesc: "", 
     pigments: "", 

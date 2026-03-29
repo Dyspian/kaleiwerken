@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { User, Image as ImageIcon, Upload, Loader2, Plus, Trash2, Check } from "lucide-react";
+import { User, Image as ImageIcon, Upload, Loader2, Plus, Trash2, Check, Link as LinkIcon } from "lucide-react";
 
 interface AboutSectionProps {
   content: {
@@ -14,6 +14,8 @@ interface AboutSectionProps {
     description: string;
     imageUrl: string;
     features: string[];
+    ctaText?: string;
+    ctaLink?: string;
     personal: string;
     personalDesc: string;
     pigments: string;
@@ -87,7 +89,34 @@ export const AboutSection = ({ content, onUpdate, onImageUpload, uploading }: Ab
               />
             </div>
 
-            <div className="space-y-4 pt-4">
+            <div className="space-y-4 pt-4 border-t border-brand-dark/5">
+              <div className="flex items-center gap-2 mb-2">
+                <LinkIcon size={14} className="text-brand-bronze" />
+                <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Call to Action Knop</Label>
+              </div>
+              <div className="grid gap-4">
+                <div className="space-y-1">
+                  <Label className="text-[9px] uppercase text-brand-dark/30">Knop Tekst</Label>
+                  <Input 
+                    value={content.ctaText || ""} 
+                    onChange={(e) => onUpdate("ctaText", e.target.value)}
+                    placeholder="Bijv. Bezoek onze schilderwerken website"
+                    className="rounded-none border-brand-dark/10 text-xs"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-[9px] uppercase text-brand-dark/30">Knop Link (URL)</Label>
+                  <Input 
+                    value={content.ctaLink || ""} 
+                    onChange={(e) => onUpdate("ctaLink", e.target.value)}
+                    placeholder="https://..."
+                    className="rounded-none border-brand-dark/10 text-xs"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-4 pt-4 border-t border-brand-dark/5">
               <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40 block">Kenmerken (Bullet Points)</Label>
               <div className="space-y-3">
                 {(content.features || []).map((feature, idx) => (
