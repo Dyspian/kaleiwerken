@@ -4,6 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { getDictionary } from "@/lib/get-dictionary";
 import { Locale } from "@/lib/i18n-config";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { ArrowUpRight } from "lucide-react";
 
 export default async function CraftsmanshipPage({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params;
@@ -19,7 +21,9 @@ export default async function CraftsmanshipPage({ params }: { params: Promise<{ 
     title: "Ons Vakmanschap",
     subtitle: "Passie voor detail en kwaliteit",
     heroImage: "https://sjfosmcpbekkokmedwil.supabase.co/storage/v1/object/public/hero/hero.jpeg",
-    mainContent: "<h2>Traditionele Technieken</h2><p>Wij combineren jarenlange ervaring met de beste materialen om uw gevel te transformeren.</p>"
+    mainContent: "<h2>Traditionele Technieken</h2><p>Wij combineren jarenlange ervaring met de beste materialen om uw gevel te transformeren.</p>",
+    ctaText: "Bezoek Schilderwerken Vincent Van Roey",
+    ctaLink: "https://schilderwerkenvincentvanroey.be/"
   };
 
   const renderMarkdown = (text: string) => {
@@ -66,9 +70,23 @@ export default async function CraftsmanshipPage({ params }: { params: Promise<{ 
         <div className="container mx-auto px-6 md:px-12">
           <div className="max-w-4xl mx-auto">
             <div 
-              className="prose prose-lg prose-headings:font-serif prose-p:font-light text-brand-dark/70 max-w-none leading-relaxed"
+              className="prose prose-lg prose-headings:font-serif prose-p:font-light text-brand-dark/70 max-w-none leading-relaxed mb-16"
               dangerouslySetInnerHTML={{ __html: renderMarkdown(content.mainContent) }}
             />
+
+            {content.ctaLink && (
+                <div className="pt-12 border-t border-brand-dark/5 text-center">
+                    <Button 
+                        asChild
+                        className="bg-brand-dark text-white rounded-none px-10 py-8 uppercase text-[11px] tracking-[0.25em] hover:bg-brand-bronze transition-all duration-500 group shadow-2xl"
+                    >
+                        <a href={content.ctaLink} target="_blank" rel="noopener noreferrer">
+                            {content.ctaText || "Bezoek onze website"}
+                            <ArrowUpRight className="ml-3 w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                        </a>
+                    </Button>
+                </div>
+            )}
           </div>
         </div>
       </section>

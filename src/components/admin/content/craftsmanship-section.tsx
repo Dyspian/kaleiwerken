@@ -3,9 +3,8 @@
 import { useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Award, Upload, Loader2, X } from "lucide-react";
+import { Award, Upload, Loader2, X, Link as LinkIcon } from "lucide-react";
 import { RichTextEditor } from "./rich-text-editor";
 
 interface CraftsmanshipSectionProps {
@@ -14,6 +13,8 @@ interface CraftsmanshipSectionProps {
     subtitle: string;
     heroImage: string;
     mainContent: string;
+    ctaText?: string;
+    ctaLink?: string;
   };
   onUpdate: (field: string, value: string) => void;
   onImageUpload: (file: File) => Promise<void>;
@@ -59,38 +60,67 @@ export const CraftsmanshipSection = ({ content, onUpdate, onImageUpload, uploadi
           </div>
         </div>
 
-        <div className="space-y-4">
-          <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40 block mb-2">Banner Foto</Label>
-          <div className="relative aspect-video bg-brand-stone border border-brand-dark/5 overflow-hidden group max-w-2xl">
-            {content.heroImage ? (
-              <img src={content.heroImage} alt="Vakmanschap preview" className="w-full h-full object-cover" />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-brand-dark/20 text-xs uppercase tracking-widest">Geen afbeelding</div>
-            )}
-            <div className="absolute inset-0 bg-brand-dark/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
-              <Button 
-                type="button" 
-                variant="outline" 
-                onClick={() => fileInputRef.current?.click()}
-                disabled={uploading}
-                className="bg-white text-brand-dark border-none rounded-none uppercase text-[10px] tracking-widest"
-              >
-                {uploading ? <Loader2 className="animate-spin mr-2" size={14} /> : <Upload className="mr-2" size={14} />}
-                Foto Wijzigen
-              </Button>
-              {content.heroImage && (
+        <div className="grid md:grid-cols-2 gap-12">
+          <div className="space-y-4">
+            <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40 block mb-2">Banner Foto</Label>
+            <div className="relative aspect-video bg-brand-stone border border-brand-dark/5 overflow-hidden group">
+              {content.heroImage ? (
+                <img src={content.heroImage} alt="Vakmanschap preview" className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-brand-dark/20 text-xs uppercase tracking-widest">Geen afbeelding</div>
+              )}
+              <div className="absolute inset-0 bg-brand-dark/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
                 <Button 
                   type="button" 
-                  variant="destructive" 
-                  onClick={() => onUpdate("heroImage", "")}
-                  className="rounded-none uppercase text-[10px] tracking-widest"
+                  variant="outline" 
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading}
+                  className="bg-white text-brand-dark border-none rounded-none uppercase text-[10px] tracking-widest"
                 >
-                  <X className="mr-2" size={14} /> Verwijderen
+                  {uploading ? <Loader2 className="animate-spin mr-2" size={14} /> : <Upload className="mr-2" size={14} />}
+                  Foto Wijzigen
                 </Button>
-              )}
+                {content.heroImage && (
+                  <Button 
+                    type="button" 
+                    variant="destructive" 
+                    onClick={() => onUpdate("heroImage", "")}
+                    className="rounded-none uppercase text-[10px] tracking-widest"
+                  >
+                    <X className="mr-2" size={14} /> Verwijderen
+                  </Button>
+                )}
+              </div>
+            </div>
+            <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*" />
+          </div>
+
+          <div className="space-y-6">
+            <div className="flex items-center gap-2 mb-2">
+              <LinkIcon size={14} className="text-brand-bronze" />
+              <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">Call to Action Knop</Label>
+            </div>
+            <div className="grid gap-4">
+              <div className="space-y-1">
+                <Label className="text-[9px] uppercase text-brand-dark/30">Knop Tekst</Label>
+                <Input 
+                  value={content.ctaText || ""} 
+                  onChange={(e) => onUpdate("ctaText", e.target.value)}
+                  placeholder="Bijv. Bezoek onze schilderwerken website"
+                  className="rounded-none border-brand-dark/10 text-xs"
+                />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-[9px] uppercase text-brand-dark/30">Knop Link (URL)</Label>
+                <Input 
+                  value={content.ctaLink || ""} 
+                  onChange={(e) => onUpdate("ctaLink", e.target.value)}
+                  placeholder="https://..."
+                  className="rounded-none border-brand-dark/10 text-xs"
+                />
+              </div>
             </div>
           </div>
-          <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*" />
         </div>
 
         <div className="space-y-2">

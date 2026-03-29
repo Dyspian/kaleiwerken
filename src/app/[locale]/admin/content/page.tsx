@@ -48,8 +48,6 @@ const initialState: ContentState = {
       "Eigen pigmentmenging",
       "Projecten in België & Buitenland"
     ],
-    ctaText: "Bezoek Schilderwerken Vincent Van Roey",
-    ctaLink: "https://schilderwerkenvincentvanroey.be/",
     personal: "", 
     personalDesc: "", 
     pigments: "", 
@@ -57,7 +55,14 @@ const initialState: ContentState = {
     protection: "", 
     protectionDesc: ""
   },
-  craftsmanship: { title: "", subtitle: "", heroImage: "", mainContent: "" },
+  craftsmanship: { 
+    title: "", 
+    subtitle: "", 
+    heroImage: "", 
+    mainContent: "",
+    ctaText: "Bezoek Schilderwerken Vincent Van Roey",
+    ctaLink: "https://schilderwerkenvincentvanroey.be/"
+  },
   projects: { tag: "", title: "", subtitle: "" },
   privacy: { title: "", content: "" },
   terms: { title: "", content: "" }
