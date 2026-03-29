@@ -38,8 +38,8 @@ export default async function CraftsmanshipPage({ params }: { params: Promise<{ 
     return text
       .replace(/^## (.*$)/gim, '<h2 class="font-serif text-4xl md:text-5xl mb-8 mt-16 text-brand-dark">$1</h2>')
       .replace(/^### (.*$)/gim, '<h3 class="font-serif text-2xl mb-6 mt-12 text-brand-dark">$1</h3>')
-      .replace(/\*\*(.*)\*\*/g, '<strong class="font-bold text-brand-dark">$1</strong>')
-      .replace(/\*(.*)\*/g, '<em class="italic">$1</em>')
+      .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-brand-dark">$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
       .replace(/^- (.*$)/gim, '<li class="ml-6 mb-2 list-disc">$1</li>')
       .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" class="text-brand-bronze hover:underline">$1</a>')
       .replace(/\n\n/g, '</p><p class="mb-6">')

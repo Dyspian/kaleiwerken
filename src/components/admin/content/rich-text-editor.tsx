@@ -76,8 +76,8 @@ export const RichTextEditor = ({ value, onChange, placeholder, className = "" }:
     return value
       .replace(/^## (.*$)/gim, '<h2 class="font-serif text-xl font-semibold mt-6 mb-3">$1</h2>')
       .replace(/^### (.*$)/gim, '<h3 class="font-serif text-lg font-semibold mt-4 mb-2">$1</h3>')
-      .replace(/\*\*(.*)\*\*/g, '<strong class="font-bold">$1</strong>')
-      .replace(/\*(.*)\*/g, '<em class="italic">$1</em>')
+      .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold">$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
       .replace(/^- (.*$)/gim, '<li class="ml-4 mb-1">$1</li>')
       .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" class="text-brand-bronze hover:underline">$1</a>')
       .replace(/\n\n/g, '</p><p class="mb-4">')
