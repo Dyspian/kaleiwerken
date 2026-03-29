@@ -27,9 +27,8 @@ export const projectSchema = z.object({
   images: z.array(z.string()),
   image_url: z.string().nullable().optional(),
   technique: z.string().optional(),
+  type: z.string().optional(),
   finishing: z.string().optional(),
-  pigment: z.string().optional(),
-  team: z.string().optional(),
   start_date: z.date().nullable().optional(),
   end_date: z.date().nullable().optional(),
   planning_status: z.enum(['pending', 'in_progress', 'completed', 'cancelled']),
@@ -52,9 +51,8 @@ export interface InitialProjectData {
   image_url?: string | null;
   stats?: {
     technique?: string;
+    type?: string;
     finishing?: string;
-    pigment?: string;
-    team?: string;
   };
   start_date?: string | null;
   end_date?: string | null;
@@ -85,9 +83,8 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
       images: initialData?.images ?? [],
       image_url: initialData?.image_url ?? null,
       technique: initialData?.stats?.technique ?? "Kalei op maat",
+      type: initialData?.stats?.type ?? "Gevel",
       finishing: initialData?.stats?.finishing ?? "Hydrofuge",
-      pigment: initialData?.stats?.pigment ?? "Mineraal",
-      team: initialData?.stats?.team ?? "Vast team (2)",
       start_date: initialData?.start_date ? new Date(initialData.start_date) : null,
       end_date: initialData?.end_date ? new Date(initialData.end_date) : null,
       planning_status: initialData?.planning_status ?? 'pending',
@@ -131,9 +128,8 @@ export const ProjectForm = ({ initialData, isEditing }: ProjectFormProps) => {
 
     const stats = {
       technique: data.technique,
+      type: data.type,
       finishing: data.finishing,
-      pigment: data.pigment,
-      team: data.team,
     };
 
     const projectData = {

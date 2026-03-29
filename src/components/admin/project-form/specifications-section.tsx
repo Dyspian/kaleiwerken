@@ -13,9 +13,8 @@ interface SpecificationsSectionProps {
 export const SpecificationsSection = ({ register }: SpecificationsSectionProps) => {
   const specifications = [
     { name: "technique", label: "Techniek", placeholder: "Bijv. Kalei op maat" },
+    { name: "type", label: "Type", placeholder: "Bijv. Gevel" },
     { name: "finishing", label: "Afwerking", placeholder: "Bijv. Hydrofuge" },
-    { name: "pigment", label: "Pigment", placeholder: "Bijv. Mineraal" },
-    { name: "team", label: "Team", placeholder: "Bijv. Vast team (2)" },
   ] as const;
 
   return (
@@ -25,7 +24,7 @@ export const SpecificationsSection = ({ register }: SpecificationsSectionProps) 
         <h3 className="font-serif text-xl">Specificaties</h3>
       </div>
       
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid md:grid-cols-3 gap-6">
         {specifications.map((spec) => (
           <div key={spec.name} className="space-y-2">
             <Label className="text-[10px] uppercase tracking-widest text-brand-dark/40">{spec.label}</Label>

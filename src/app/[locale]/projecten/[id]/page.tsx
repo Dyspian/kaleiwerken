@@ -46,9 +46,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
   
   const stats = project.stats || {};
   const technique = stats.technique || "Kalei op maat";
+  const type = stats.type || "Gevel";
   const finishing = stats.finishing || "Hydrofuge";
-  const pigment = stats.pigment || "Mineraal";
-  const team = stats.team || "Vast team (2)";
 
   // Fallback texts if not provided in DB
   const challengeText = project.challenge_text || dict.projects.challengeDesc;
@@ -167,16 +166,12 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
                                     <span className="font-serif text-lg">{technique}</span>
                                 </li>
                                 <li className="flex justify-between items-end border-b border-white/10 pb-2">
+                                    <span className="text-xs text-white/40 uppercase tracking-widest">{dict.projects.type}</span>
+                                    <span className="font-serif text-lg">{type}</span>
+                                </li>
+                                <li className="flex justify-between items-end border-b border-white/10 pb-2">
                                     <span className="text-xs text-white/40 uppercase tracking-widest">{dict.projects.finishing}</span>
                                     <span className="font-serif text-lg">{finishing}</span>
-                                </li>
-                                <li className="flex justify-between items-end border-b border-white/10 pb-2">
-                                    <span className="text-xs text-white/40 uppercase tracking-widest">{dict.projects.pigment}</span>
-                                    <span className="font-serif text-lg">{pigment}</span>
-                                </li>
-                                <li className="flex justify-between items-end border-b border-white/10 pb-2">
-                                    <span className="text-xs text-white/40 uppercase tracking-widest">{dict.projects.team}</span>
-                                    <span className="font-serif text-lg">{team}</span>
                                 </li>
                             </ul>
                         </div>
