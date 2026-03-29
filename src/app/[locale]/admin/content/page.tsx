@@ -32,7 +32,7 @@ interface ContentState {
 }
 
 const initialState: ContentState = {
-  hero: { title1: "", title2: "", subtitle: "" },
+  hero: { title1: "", title2: "", subtitle: "", imageUrl: "" },
   socialProof: { items: [] },
   features: { title: "", subtitle: "", items: [] },
   process: { title: "", desc: "", imageUrl: "", steps: [] },
@@ -134,7 +134,7 @@ export default function AdminContentPage() {
         ...prev,
         [targetSection]: { 
           ...prev[targetSection as keyof ContentState], 
-          [targetSection === "about" ? "imageUrl" : targetSection === "process" ? "imageUrl" : "heroImage"]: signedData.signedUrl 
+          [targetSection === "about" ? "imageUrl" : targetSection === "process" ? "imageUrl" : targetSection === "hero" ? "imageUrl" : "heroImage"]: signedData.signedUrl 
         }
       }));
       toast.success("Afbeelding geüpload");
@@ -168,7 +168,14 @@ export default function AdminContentPage() {
   const renderActiveSection = () => {
     switch (activeTab) {
       case "hero":
-        return <HeroSection content={content.hero} onUpdate={(field, value) => updateField("hero", field, value)} />;
+        return (
+          <HeroSection 
+            content={content.hero} 
+            onUpdate={(field, value) => updateField("hero", field, value)} 
+            onImageUpload={(file) => handleImageUpload(file, "hero")}
+            uploading={uploading}
+          />
+        );
       case "home_sections":
         return (
           <HomeSectionsEditor 

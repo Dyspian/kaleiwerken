@@ -21,6 +21,8 @@ export const Hero = ({ dict }: { dict: any }) => {
     const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
     const scale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
 
+    const heroImage = dict.imageUrl || "https://sjfosmcpbekkokmedwil.supabase.co/storage/v1/object/public/hero/hero.jpeg";
+
     return (
         <section ref={containerRef} className="relative h-screen w-full flex items-center justify-center overflow-hidden">
             
@@ -31,13 +33,13 @@ export const Hero = ({ dict }: { dict: any }) => {
                 <div className="absolute inset-0 bg-black/40 z-10" />
                 
                 <Image
-                    src="https://sjfosmcpbekkokmedwil.supabase.co/storage/v1/object/public/hero/hero.jpeg"
+                    src={heroImage}
                     alt="Authentieke kaleiwerken"
                     fill
                     className="object-cover object-center"
                     priority
                     quality={90}
-                    unoptimized
+                    unoptimized={heroImage.includes('supabase.co')}
                 />
             </motion.div>
 
