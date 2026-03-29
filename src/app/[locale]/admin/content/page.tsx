@@ -38,8 +38,22 @@ const initialState: ContentState = {
   process: { title: "", desc: "", imageUrl: "", steps: [] },
   beforeAfter: { tag: "", title: "", instruction: "", beforeImage: "", afterImage: "" },
   about: { 
-    tag: "", title: "", description: "", imageUrl: "", features: [],
-    personal: "", personalDesc: "", pigments: "", pigmentsDesc: "", protection: "", protectionDesc: ""
+    tag: "", 
+    title: "", 
+    description: "", 
+    imageUrl: "", 
+    features: [
+      "10 jaar gespecialiseerde ervaring",
+      "Vast team van 2 vakmensen",
+      "Eigen pigmentmenging",
+      "Projecten in België & Buitenland"
+    ],
+    personal: "", 
+    personalDesc: "", 
+    pigments: "", 
+    pigmentsDesc: "", 
+    protection: "", 
+    protectionDesc: ""
   },
   craftsmanship: { title: "", subtitle: "", heroImage: "", mainContent: "" },
   projects: { tag: "", title: "", subtitle: "" },
